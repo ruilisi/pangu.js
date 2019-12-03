@@ -1,57 +1,13 @@
 import I, { Set, isImmutable } from 'immutable'
-import moment from 'moment'
 
 export const VIEW_SET = 'VIEW_SET'
 export const VIEW_SET_IN = 'VIEW_SET_IN'
 export const VIEW_MERGE_IN = 'VIEW_MERGE_IN'
 
 const initialState = I.fromJS({
-  signup: {
-    type: 'personal',
-    settings: {
-      country_code: '+86'
-    }
-  },
-  changePassword: {},
-  findPassword: {},
   loginDialogOpen: false,
   signupDialogOpen: false,
-  payment: {
-    months: 12,
-    goodId: '',
-    pickedNum: 2,
-    totalPrice: '',
-    coupon: {
-      code: ''
-    },
-    couponChecked: false
-  },
-  login: {
-    mobile: '',
-    mobileCountryCode: '+86',
-    method: 'password'
-  },
-  paymentState: {
-    month: moment().month(),
-    year: moment().year(),
-    stashed: [`${moment().year()}-${moment().month()}`]
-  },
-  articles: {},
-  tables: {
-    articles: {
-      indexType: 'active',
-      sort: {
-        columnKey: 'created_at',
-        order: 'descend'
-      }
-    },
-    payments: {
-      sort: {
-        columnKey: 'created_at',
-        order: 'descend'
-      }
-    }
-  }
+  tables: {}
 }).update('tables', tables =>
   tables.map(table =>
     table.mergeDeep(
@@ -94,5 +50,4 @@ export default function(aView = initialState, action) {
 
 export const viewSet = value => ({ type: VIEW_SET, value })
 export const viewSetIn = (path, value) => ({ type: VIEW_SET_IN, path, value })
-export const setSort = (table, sort) => D => D(viewSetIn(['tables', table, 'sort'], I.fromJS(sort)))
 export const mergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value })

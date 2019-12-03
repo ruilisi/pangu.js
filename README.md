@@ -4,7 +4,7 @@
 
 该框架实现以下几点：
 
-1、SEO友好：利于搜索引起爬取页面信息
+1、SEO友好：利于搜索引擎爬取页面信息
 
 ```
 import React from 'react'
@@ -30,14 +30,38 @@ export default Head
 搜索引擎会根据这几个标签里的内容爬取网页的关键信息，然后用户在搜索的时候根据这些关键字匹配程度做搜索结果页面展现。
 （当然展现算法远远不止参考这些信息，页面标签的语意化，关键字密度，外链，内链，访问量，用户停留时间...）
 
-3、实现服务端渲染：SSR让你永久告别菊花圈。
+3、实现服务端渲染：提高页面相应速度，对于前端性能优化更加得心应手，SSR让你永久告别菊花圈。
 
 4、路由美化：在pages文件夹下每个*.js 文件将变成一个路由，自动处理和渲染，这样的路由简洁明了，再也不会有同事乱放文件了。
 
 5、引入了Redux，实现全局状态的存储和使用
 
+```
+import { applyMiddleware, createStore } from 'redux'
+import thunk from 'redux-thunk'
+import makeRootReducer from './state'
+
+export default (initialState = {}) => {
+  return createStore(makeRootReducer(), initialState, applyMiddleware(thunk))
+}
+
+```
+
 6、适配IE9、10、11，大大提高了网站的浏览器兼容性，解决了IE适配的疑难杂症，让老爷机也能发光发热。
 
-7、国际化：使用react-intl实现网页和antd的国际化，从而与国际接轨。
+7、国际化：使用react-intl实现网页的国际化，从而与国际接轨。
+
+```
+<IntlProvider locale={locale} messages={localeData[locale]}>
+  <Provider store={store}>
+    <Head />
+    <Nav />
+    <div style={{ minHeight: '100vh'  }}>
+      <Component {...pageProps} />
+    </div>
+  </Provider>
+</IntlProvider>
+
+```
 
 总的来说，Nextjs Pangu能够让初学者也能够轻松使用，因为它足够简单，开箱即用。
