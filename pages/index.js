@@ -26,33 +26,14 @@ const IndexPage = () => {
             height: auto;
             max-width: 100%;
           }
-          .slogan-text {
-            text-align: left;
-            font-family: Microsoft YaHei;
-            color: #513c66;
-            margin-top: 15vh;
-          }
           @media (max-width: 768px) {
             .fs-img-parallax {
               margin-bottom: 10vh;
-            }
-            .slogan-text {
-              margin-top: 10vh;
-              text-align: center;
             }
             .support-imgs {
               height: 280px;
               margin-top: 10vh;
             }
-          }
-          .product-imgs {
-            height: auto;
-            width: 450px;
-            max-width: 100%;
-          }
-          .icon-imgs {
-            height: auto !important;
-            width: 400px;
           }
           .hero-caption {
             z-index: 1;
@@ -65,12 +46,6 @@ const IndexPage = () => {
           }
           .hero-caption.caption-height-middle {
             top: 10%;
-          }
-          @media (min-width: 1200px) {
-            .slogan-margin {
-              margin-top: 10vh;
-              margin-bottom: 5vh;
-            }
           }
         `}
       </style>
