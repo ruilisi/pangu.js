@@ -1,0 +1,118 @@
+@mixin number-classes() {
+  @for $i from 1 through 9 {
+    .FW-#{$i} {
+      font-weight: 100 * $i;
+    }
+  }
+  @for $i from 0 through 10 {
+    .zIndex-#{$i} {
+      z-index: 100 * $i !important;
+    }
+    .BR-#{$i} {
+      border-radius: #{$i}px !important;
+    }
+    .BRTL-#{$i} {
+      border-top-left-radius: #{$i}px !important;
+    }
+    .BRTR-#{$i} {
+      border-top-right-radius: #{$i}px !important;
+    }
+  }
+  @for $i from 0 through 50 {
+    .W-#{$i} {
+      width: 10px * $i !important;
+    }
+  }
+  @for $i from -180 through 180 {
+    .ROTATE-#{$i} {
+      transform: rotate(1deg * $i);
+    }
+  }
+  @for $i from 0 through 50 {
+    .FS-#{$i} {
+      font-size: 2px * $i !important;
+    }
+    .P-#{$i} {
+      padding: 2px * $i !important;
+    }
+    .PR-#{$i} {
+      padding-right: 2px * $i !important;
+    }
+    .PL-#{$i} {
+      padding-left: 2px * $i !important;
+    }
+    .PT-#{$i} {
+      padding-top: 2px * $i !important;
+    }
+    .PB-#{$i} {
+      padding-bottom: 2px * $i !important;
+    }
+    .PLR-#{$i} {
+      padding-left: 2px * $i !important;
+      padding-right: 2px * $i !important;
+    }
+    .PTB-#{$i} {
+      padding-top: 2px * $i !important;
+      padding-bottom: 2px * $i !important;
+    }
+    .M-#{$i} {
+      margin: 2px * $i !important;
+    }
+    .MB-#{$i} {
+      margin-bottom: 2px * $i !important;
+    }
+    .MT-#{$i} {
+      margin-top: 2px * $i !important;
+    }
+    .ML-#{$i} {
+      margin-left: 2px * $i !important;
+    }
+    .MR-#{$i} {
+      margin-right: 2px * $i !important;
+    }
+    .MLR-#{$i} {
+      margin-right: 2px * $i !important;
+      margin-left: 2px * $i !important;
+    }
+    .MTB-#{$i} {
+      margin-top: 2px * $i !important;
+      margin-bottom: 2px * $i !important;
+    }
+    .H-#{$i} {
+      height: 2px * $i !important;
+    }
+    .L-#{$i} {
+      left: 2px * $i !important;
+    }
+    .R-#{$i} {
+      right: 2px * $i !important;
+    }
+    .T-#{$i} {
+      top: 2px * $i !important;
+    }
+    .B-#{$i} {
+      bottom: 2px * $i !important;
+    }
+    .MW-#{$i} {
+      max-width: 20px * $i !important;
+    }
+    .MH-#{$i} {
+      max-height: 20px * $i !important;
+    }
+    .MIW-#{$i} {
+      min-width: 5px * $i !important;
+    }
+    .MIH-#{$i} {
+      min-height: 20px * $i !important;
+    }
+    .LH-#{$i} {
+      line-height: 4px * $i !important;
+    }
+    .TI-#{$i} {
+      text-indent: 2px * $i !important;
+    }
+  }
+}
+@mixin rounded($radius) {
+  border-radius: $radius !important;
+}
