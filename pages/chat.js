@@ -1,37 +1,87 @@
-import React from 'react'
+import I, { Map, List } from 'immutable'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
+import { get, getToken } from '../utils/request'
+import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
+
+const getRooms = async () => {
+  const res = await get('rooms')
+  return res
+}
+
+const roomChannels = {}
+const messageSocket = roomId => {
+  if (!window.cable) {
+    window.cable = ActionCable.createConsumer('http://192.168.1.6:88/cable')
+  }
+  if (!roomChannels[roomId]) {
+    const channel = window.cable.subscriptions.create(
+      { channel: 'RoomsChannel', authorization: getToken(), room_id: roomId },
+      {
+        connected: () => {
+          channel.load('messages', { room_id: roomId })
+        },
+        subscribed: () => console.info('subscripted'),
+        received: data => {
+          console.info('received', data)
+          switch (data.path) {
+            case 'messages':
+              DISPATCH(roomsMessagesSet(data.room_id, data.messages))
+              break
+            case 'add_message':
+              DISPATCH(roomsMessagesAdd(data.room_id, data.message))
+              break
+            default:
+          }
+        },
+        load(path, data) {
+          return this.perform('load', {
+            path,
+            data
+          })
+        }
+      }
+    )
+    roomChannels[roomId] = channel
+  }
+}
 
 const Chat = () => {
+  const dispatch = useDispatch()
+  const [roomId, setRoomId] = useState('')
+  const [text, setText] = useState('')
+  const rooms = useSelector(state => state.rooms)
+  const room = rooms.get(roomId, Map())
+  useEffect(() => {
+    getRooms().then(body => {
+      dispatch(roomsSet(I.fromJS(body)))
+    })
+  }, [])
   return (
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
         <Card style={{ height: '90vh', overflowY: 'scroll' }} bordered={false} title={<div className="TA-C FS-10">房间列表</div>}>
           <Menu className="TA-C">
-            {[
-              '量子波动速读群',
-              '万有引力讨论群',
-              '疯狂英语学习群',
-              '白宫重要领导群',
-              '中东石油交易群',
-              '非洲长跑报名群',
-              '巴黎时装展览群',
-              '泰国变性组团群',
-              '韩国整容组团群',
-              '量子波动速读群',
-              '万有引力讨论群',
-              '疯狂英语学习群',
-              '白宫重要领导群',
-              '中东石油交易群',
-              '非洲长跑报名群',
-              '巴黎时装展览群',
-              '泰国变性组团群',
-              '韩国整容组团群',
-              '日本动作交流群'
-            ].map(v => (
-              <Menu.Item key={v}>{v}</Menu.Item>
-            ))}
+            {rooms
+              .map(v => {
+                const { id, title } = v.toJS()
+                return (
+                  <Menu.Item
+                    key={id}
+                    onClick={() => {
+                      setRoomId(id)
+                      messageSocket(id)
+                    }}
+                  >
+                    {title}
+                  </Menu.Item>
+                )
+              })
+              .toList()}
           </Menu>
         </Card>
+
         <div className="MT-5 TA-C">
           <Button type="primary" size="large" style={{ paddingLeft: 30, paddingRight: 30 }}>
             创建房间
@@ -40,73 +90,43 @@ const Chat = () => {
       </Col>
       <Col span={20} style={{ overflow: 'hidden' }}>
         <Card style={{ background: '#e1e1e1', height: '90vh', overflowY: 'scroll' }} bordered={false} title={<span className="FS-10">量子波动速读群</span>}>
-          <Row>
-            <Col span={1}>
-              <Avatar icon="user" />
-            </Col>
-            <Col span={10}>
-              <div>李狗蛋</div>
-              <div>2023-03-03</div>
-              <p className="other-text">我要参加巴黎时装周，因为我比较帅，我真TM太帅了吧，不要跟我比帅，我懒得跟你比！!</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={10} push={13}>
-              <div className="TA-R MR-5">李狗蛋</div>
-              <div className="TA-R MR-5">2023-03-03</div>
-              <p className="my-text">不好意思，我吴彦祖还没发话！</p>
-            </Col>
-            <Col span={1} push={13}>
-              <Avatar icon="user" />
-            </Col>
-          </Row>
-          <Row>
-            <Col span={1}>
-              <Avatar icon="user" />
-            </Col>
-            <Col span={10}>
-              <div>李狗蛋</div>
-              <div>2023-03-03</div>
-              <p className="other-text">在下陈冠希，未请教？</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={10} push={13}>
-              <div className="TA-R MR-5">李狗蛋</div>
-              <div className="TA-R MR-5">2023-03-03</div>
-              <p className="my-text">我看你就是个捡垃圾的吧？</p>
-            </Col>
-            <Col span={1} push={13}>
-              <Avatar icon="user" />
-            </Col>
-          </Row>
-          <Row>
-            <Col span={1}>
-              <Avatar icon="user" />
-            </Col>
-            <Col span={10}>
-              <div>李狗蛋</div>
-              <div>2023-03-03</div>
-              <p className="other-text">呵呵！我已经帅到你开始说胡话了</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={10} push={13}>
-              <div className="TA-R MR-5">李狗蛋</div>
-              <div className="TA-R MR-5">2023-03-03</div>
-              <p className="my-text">你可能从来没照过镜子？</p>
-            </Col>
-            <Col span={1} push={13}>
-              <Avatar icon="user" />
-            </Col>
-          </Row>
+          {room.get('messages', List()).map(v => {
+            return (
+              <Row key={v.get('id')}>
+                <Col span={1}>
+                  <Avatar icon="user" />
+                </Col>
+                <Col span={10}>
+                  <div>{v.getIn(['data', 'email'])}</div>
+                  <div>{v.get('created_at')}</div>
+                  <p className="other-text">{v.get('text')}</p>
+                </Col>
+              </Row>
+            )
+          })}
         </Card>
         <div className="MT-5 TA-C">
           <Col span={18} push={2}>
-            <Input size="large" placeholder="随便吐槽一下吧" style={{ background: '#e1e1e1' }} />
+            <Input
+              value={text}
+              size="large"
+              placeholder="随便吐槽一下吧"
+              style={{ background: '#e1e1e1' }}
+              onChange={e => {
+                setText(e.target.value)
+              }}
+            />
           </Col>
           <Col span={4} push={2}>
-            <Button size="large" type="primary">
+            <Button
+              size="large"
+              type="primary"
+              onClick={() => {
+                if (text === '') return
+                const channel = roomChannels[roomId]
+                channel.load('add_message', { room_id: roomId, text })
+              }}
+            >
               发送
             </Button>
           </Col>

@@ -1,5 +1,6 @@
 module.exports = {
   globals: {
+    ActionCable: true,
     CONFIG: true,
     DISPATCH: true,
     NODE_ENV: true,

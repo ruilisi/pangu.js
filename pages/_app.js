@@ -25,6 +25,9 @@ class MyApp extends App {
   }
 
   componentDidMount() {
+    const { props } = this
+    const { store } = props
+    window.DISPATCH = store.dispatch
     if (navigator.userAgent.indexOf('MicroMessenger') >= 0 && navigator.userAgent.indexOf('Android') >= 0) {
       delete global.Intl
     }

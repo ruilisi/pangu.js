@@ -1,12 +1,10 @@
 import fetch from 'isomorphic-unfetch'
 import localStorage from 'localStorage'
 
-const API_HOST = 'http://localhost'
+export const API_ROOT = 'http://192.168.1.6:88'
 const DEVICE_TYPE = 'WEB'
-const token = ''
 export const setToken = s => {
-  const S = s.replace('Bearer ', '')
-  return localStorage.setItem(`Token`, S)
+  return localStorage.setItem(`Token`, s)
 }
 
 export const getToken = () => {
@@ -19,7 +17,7 @@ export const clearToken = () => {
 
 const headers = () => {
   return {
-    Authorization: `Bearer ${getToken() || token}`,
+    Authorization: getToken(),
     Accept: 'application/json',
     'Content-Type': 'application/json'
   }
@@ -54,7 +52,7 @@ export const get = async (path, data = {}) => {
   const query = Object.keys(params)
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
     .join('&')
-  const res = await fetch(`${API_HOST}/${path}?${query}`, {
+  const res = await fetch(`${API_ROOT}/${path}?${query}`, {
     method: 'GET',
     headers: headers()
   })
@@ -63,7 +61,7 @@ export const get = async (path, data = {}) => {
 }
 
 const requestMethod = method => async (path, data) => {
-  const res = await fetch(`${API_HOST}/${path}`, {
+  const res = await fetch(`${API_ROOT}/${path}`, {
     method,
     headers: headers(),
     body: JSON.stringify(body(data))

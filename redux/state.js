@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import self from './modules/self'
 import view from './modules/view'
+import rooms from './modules/rooms'
 import reduceReducers from './reduceReducers'
 
 const STATE_SET = 'STATE_SET'
@@ -19,6 +20,7 @@ export default asyncReducers =>
   reduceReducers(
     combineReducers({
       self,
+      rooms,
       view,
       ...asyncReducers
     }),

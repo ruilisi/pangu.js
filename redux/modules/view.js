@@ -7,6 +7,22 @@ export const VIEW_MERGE_IN = 'VIEW_MERGE_IN'
 const initialState = I.fromJS({
   loginDialogOpen: false,
   signupDialogOpen: false,
+  messages: [
+    {
+      id: '',
+      user_id: '',
+      room_id: '',
+      updated_at: '',
+      created_at: '',
+      text: ''
+    }
+  ],
+  rooms: [
+    {
+      id: '',
+      title: ''
+    }
+  ],
   tables: {}
 }).update('tables', tables =>
   tables.map(table =>
@@ -36,12 +52,15 @@ export default function(aView = initialState, action) {
   if (!Array.isArray(action.path)) {
     path = [path]
   }
+
   switch (action.type) {
     case VIEW_SET:
       return value
     case VIEW_SET_IN:
       return view.setIn(path, value)
     case VIEW_MERGE_IN:
+      console.info('++++')
+      console.info(value)
       return view.mergeIn(path, value)
     default:
       return view

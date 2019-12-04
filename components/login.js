@@ -12,13 +12,14 @@ const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const postLogin = async params => {
-    const res = await post('users/sign_in', params)
+  const postLogin = async (_username, _password) => {
+    const res = await post('users/sign_in', { user: { email: _username, password: _password } })
     return res
   }
-  const login = async params => {
-    const res = await postLogin(params)
+  const login = async (u, p) => {
+    const res = await postLogin(u, p)
     if (res.id) {
+      dispatch(viewSetIn(['user'], res))
       message.success('登录成功')
       dispatch(viewSetIn(['loginDialogOpen'], false))
     } else {
