@@ -28,15 +28,7 @@ module.exports = {
       if (moduleName === 'next') {
         return [/next[\\/]dist[\\/]next-server[\\/]lib/, /next[\\/]dist[\\/]client/, /next[\\/]dist[\\/]pages/].some(regex => regex.test(path))
       }
-      const moduleToBeResolved = [
-        'react-intl',
-        'intl-messageformat',
-        'intl-messageformat-parser',
-        'query-string',
-        'split-on-first',
-        'engine.io-client',
-        'strict-uri-encode'
-      ]
+      const moduleToBeResolved = ['react-intl', 'intl-messageformat', 'intl-messageformat-parser', 'split-on-first', 'engine.io-client', 'strict-uri-encode']
       return moduleToBeResolved.includes(moduleName)
     }
     return true
