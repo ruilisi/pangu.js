@@ -24,7 +24,7 @@ const navigatorLanguage = () => {
   return l
 }
 
-const Nav = () => {
+const Nav = ({ children }) => {
   const view = useSelector(state => state.view)
   const dispatch = useDispatch()
   const PathFromPathname = pathname => {
@@ -196,6 +196,7 @@ const Nav = () => {
           </div>
         </div>
       </nav>
+      {children}
       <Modal
         width={420}
         visible={view.getIn(['loginDialogOpen'])}

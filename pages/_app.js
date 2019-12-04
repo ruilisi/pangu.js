@@ -5,7 +5,6 @@ import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
 import Head from '../components/head'
-import Nav from '../components/nav'
 import createStore from '../redux/createStore'
 import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
@@ -49,7 +48,6 @@ class MyApp extends App {
       <IntlProvider locale={locale} messages={localeData[locale]}>
         <Provider store={store}>
           <Head />
-          <Nav />
           <div style={{ minHeight: '100vh' }}>
             <Component {...pageProps} />
           </div>
