@@ -7,22 +7,6 @@ export const VIEW_MERGE_IN = 'VIEW_MERGE_IN'
 const initialState = I.fromJS({
   loginDialogOpen: false,
   signupDialogOpen: false,
-  messages: [
-    {
-      id: '',
-      user_id: '',
-      room_id: '',
-      updated_at: '',
-      created_at: '',
-      text: ''
-    }
-  ],
-  rooms: [
-    {
-      id: '',
-      title: ''
-    }
-  ],
   tables: {}
 }).update('tables', tables =>
   tables.map(table =>

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
+import localStorage from 'localStorage'
 import { TR } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
 import { post, clearToken } from '../utils/request'
@@ -22,7 +23,7 @@ const Login = () => {
     clearToken()
     const res = await postLogin(u, p)
     if (res.id) {
-      dispatch(viewSetIn(['user'], res))
+      localStorage.setItem('Id', res.id)
       message.success('登录成功')
       dispatch(viewSetIn(['loginDialogOpen'], false))
       router.push('/chat')

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
+import localStorage from 'localStorage'
 import { get, httpDelete, getToken, clearToken } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 
@@ -103,7 +104,18 @@ const Chat = () => {
       <Col span={20} style={{ overflow: 'hidden' }}>
         <Card style={{ background: '#e1e1e1', height: '90vh', overflowY: 'scroll' }} bordered={false} title={<span className="FS-10">量子波动速读群</span>}>
           {room.get('messages', List()).map(v => {
-            return (
+            return v.get('user_id') === localStorage.getItem('Id') ? (
+              <Row key={v.get('id')}>
+                <Col span={10} push={13}>
+                  <div>{v.getIn(['data', 'email'])}</div>
+                  <div>{v.get('created_at')}</div>
+                  <p className="my-text">{v.get('text')}</p>
+                </Col>
+                <Col span={1} push={13}>
+                  <Avatar icon="user" />
+                </Col>
+              </Row>
+            ) : (
               <Row key={v.get('id')}>
                 <Col span={1}>
                   <Avatar icon="user" />

@@ -4,7 +4,7 @@ import localStorage from 'localStorage'
 export const API_ROOT = 'http://192.168.1.6:88'
 const DEVICE_TYPE = 'WEB'
 export const setToken = s => {
-  return localStorage.setItem(`Token`, s)
+  localStorage.setItem(`Token`, s)
 }
 
 export const getToken = () => {
@@ -12,7 +12,8 @@ export const getToken = () => {
 }
 
 export const clearToken = () => {
-  return localStorage.removeItem('Token')
+  localStorage.removeItem('Id')
+  localStorage.removeItem('Token')
 }
 
 const headers = () => {
