@@ -1,22 +1,10 @@
 import * as qiniu from 'qiniu-js'
 import React from 'react'
 import { Upload, Button, Icon } from 'antd'
-import { useDispatch } from 'react-redux'
-import { dataSetIn } from '../redux/modules/data'
 import { put } from '../utils/request'
 
-const uploadWrap = ({ token, name, id }) => {
-  if (!id) {
-    return (
-      <Upload>
-        <Button>
-          <Icon type="upload" /> 上传
-        </Button>
-      </Upload>
-    )
-  }
-  const dispatch = useDispatch()
-  const uploadFile = ({ file, onSuccess }) => {
+const uploadWrap = ({ token, name, id, onSuccess }) => {
+  const uploadFile = ({ file }) => {
     const qiniuToken = token
     const key = `student_${new Date().getTime()}`
     const config = {
@@ -37,10 +25,9 @@ const uploadWrap = ({ token, name, id }) => {
         console.info(errResult)
       },
       complete: result => {
-        console.info(result)
-        onSuccess(result)
         const uploadUrl = 'http://res.paiyou.co/'
         const fileUrl = uploadUrl + key
+        onSuccess(fileUrl)
         if (name === 'logo') {
           const submit = async () => {
             let params = {}
@@ -49,7 +36,6 @@ const uploadWrap = ({ token, name, id }) => {
           }
           submit()
         }
-        dispatch(dataSetIn([name], fileUrl))
       }
     })
   }

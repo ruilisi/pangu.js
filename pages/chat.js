@@ -2,10 +2,12 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
+import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
 import localStorage from 'localStorage'
 import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
+import UploadFile from '../components/UploadFile'
+import { selfSet, selfSetIn } from '../redux/modules/self'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -33,16 +35,21 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
           switch (data.path) {
             case 'messages':
               DISPATCH(roomsMessagesSet(data.room_id, data.messages))
+              DISPATCH(selfSet(data.user))
               scrollToBottom()
               break
             case 'add_message':
               DISPATCH(roomsMessagesAdd(data.room_id, data.message))
               scrollToBottom()
               break
+            case 'set_avatar':
+              DISPATCH(selfSetIn(['data', 'avatar'], data.avatar))
+              break
             default:
           }
         },
         load(path, data) {
+          console.info(path, data)
           return this.perform('load', {
             path,
             data
@@ -58,9 +65,12 @@ const Chat = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const [roomId, setRoomId] = useState('')
+  const [qiniuToken, setQiniuToken] = useState()
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
+  const self = useSelector(state => state.self)
   const room = rooms.get(roomId, Map())
+  const channel = roomChannels[roomId]
 
   const sendMessageButtonRef = useRef(null)
   useEffect(() => {
@@ -70,12 +80,15 @@ const Chat = () => {
       setRoomId(id)
       messageSocket(id, sendMessageButtonRef)
     })
+
+    get('qiniu_token').then(data => {
+      setQiniuToken(data.qiniuToken)
+    })
   }, [])
 
   const onKeyPress = e => {
     if (e.key === 'Enter') {
       if (text === '') return
-      const channel = roomChannels[roomId]
       channel.load('add_message', { room_id: roomId, text })
       setText('')
     }
@@ -86,6 +99,17 @@ const Chat = () => {
         <div className="FS-10 TA-C PT-20" style={{ height: '10vh' }}>
           房间列表
         </div>
+
+        {qiniuToken ? (
+          <UploadFile
+            token={qiniuToken}
+            onSuccess={avatar => {
+              channel.load('set_avatar', { avatar })
+            }}
+          />
+        ) : (
+          <Spin />
+        )}
         <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
           <Menu className="TA-C" selectedKeys={[roomId]}>
             {rooms
@@ -137,7 +161,7 @@ const Chat = () => {
                   <p className="my-text">{v.get('text')}</p>
                 </Col>
                 <Col span={1} push={13}>
-                  <Avatar icon="user" />
+                  <Avatar src={self.getIn(['data', 'avatar'])} />
                 </Col>
               </Row>
             ) : (

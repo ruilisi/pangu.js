@@ -6231,6 +6231,11 @@ punycode@^2.1.0:
   resolved "https://registry.npm.taobao.org/punycode/download/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha1-tYsBCsQMIsVldhbI0sLALHv0eew=
 
+qiniu-js@^2.5.5:
+  version "2.5.5"
+  resolved "https://registry.npm.taobao.org/qiniu-js/download/qiniu-js-2.5.5.tgz?cache=0&sync_timestamp=1571819746863&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fqiniu-js%2Fdownload%2Fqiniu-js-2.5.5.tgz#77d295f222620f9377d6148f3f757d189a1e4977"
+  integrity sha1-d9KV8iJiD5N31hSPP3V9GJoeSXc=
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.npm.taobao.org/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
