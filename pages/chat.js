@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
 import localStorage from 'localStorage'
-import { get, httpDelete, getToken, clearToken } from '../utils/request'
+import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 
 const getRooms = async () => {
@@ -15,7 +15,7 @@ const getRooms = async () => {
 const roomChannels = {}
 const messageSocket = roomId => {
   if (!window.cable) {
-    window.cable = ActionCable.createConsumer('http://192.168.1.6:88/cable')
+    window.cable = ActionCable.createConsumer(`${API_ROOT}/cable`)
   }
   if (!roomChannels[roomId]) {
     const channel = window.cable.subscriptions.create(
@@ -59,6 +59,9 @@ const Chat = () => {
   useEffect(() => {
     getRooms().then(body => {
       dispatch(roomsSet(I.fromJS(body)))
+      const id = Object.keys(body)[0]
+      setRoomId(id)
+      messageSocket(id)
     })
   }, [])
 
@@ -78,7 +81,7 @@ const Chat = () => {
           房间列表
         </div>
         <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
-          <Menu className="TA-C">
+          <Menu className="TA-C" selectedKeys={[roomId]}>
             {rooms
               .map(v => {
                 const { id, title } = v.toJS()
@@ -116,7 +119,7 @@ const Chat = () => {
       </Col>
       <Col span={20} style={{ overflow: 'hidden' }}>
         <div className="FS-10 ML-5 PT-10" style={{ height: '10vh' }}>
-          量子波动速度群
+          {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
         </div>
         <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
           {room.get('messages', List()).map(v => {
@@ -163,7 +166,7 @@ const Chat = () => {
               size="large"
               type="primary"
               onClick={() => {
-                if (text === '') return
+                if (text === '' || roomId === '') return
                 const channel = roomChannels[roomId]
                 channel.load('add_message', { room_id: roomId, text })
                 setText('')
