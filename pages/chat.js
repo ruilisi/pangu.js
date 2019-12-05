@@ -109,7 +109,7 @@ const Chat = () => {
             onClick={() => {
               httpDelete('users/sign_out').then(() => {
                 clearToken()
-                router.push('/')
+                router.replace('/')
               })
             }}
           >

@@ -135,8 +135,8 @@ const Nav = ({ children }) => {
       <ul className="nav navbar-nav bold">
         {i18nMenuHorizontal()}
         <li className="mega-menu">
-          <Link href="/my/account">
-            <a className="C-P underline">{T('Account')}</a>
+          <Link href="/chat">
+            <a className="C-P underline">{T('Chat')}</a>
           </Link>
         </li>
         <li className="mega-menu">
