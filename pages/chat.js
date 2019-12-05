@@ -61,6 +61,16 @@ const Chat = () => {
       dispatch(roomsSet(I.fromJS(body)))
     })
   }, [])
+
+  const onKeyPress = e => {
+    if (e.key === 'Enter') {
+      if (text === '') return
+      const channel = roomChannels[roomId]
+      channel.load('add_message', { room_id: roomId, text })
+      setText('')
+    }
+  }
+
   return (
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
@@ -139,6 +149,7 @@ const Chat = () => {
               onChange={e => {
                 setText(e.target.value)
               }}
+              onKeyPress={onKeyPress}
             />
           </Col>
           <Col span={4} push={2}>
