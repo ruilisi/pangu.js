@@ -74,7 +74,10 @@ const Chat = () => {
   return (
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
-        <Card style={{ height: '90vh', overflowY: 'scroll' }} bordered={false} title={<div className="TA-C FS-10">房间列表</div>}>
+        <div className="FS-10 TA-C PT-20" style={{ height: '10vh' }}>
+          房间列表
+        </div>
+        <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
           <Menu className="TA-C">
             {rooms
               .map(v => {
@@ -112,7 +115,10 @@ const Chat = () => {
         </div>
       </Col>
       <Col span={20} style={{ overflow: 'hidden' }}>
-        <Card style={{ background: '#e1e1e1', height: '90vh', overflowY: 'scroll' }} bordered={false} title={<span className="FS-10">量子波动速读群</span>}>
+        <div className="FS-10 ML-5 PT-10" style={{ height: '10vh' }}>
+          量子波动速度群
+        </div>
+        <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
           {room.get('messages', List()).map(v => {
             return v.get('user_id') === localStorage.getItem('Id') ? (
               <Row key={v.get('id')}>
