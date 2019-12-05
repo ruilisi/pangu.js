@@ -1,8 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 import localStorage from 'localStorage'
 
-export const API_ROOT = 'http://192.168.1.6:88'
-const DEVICE_TYPE = 'WEB'
+export const API_ROOT = 'https://limitless-falls-17517.herokuapp.com'
 export const setToken = s => {
   localStorage.setItem(`Token`, s)
 }
@@ -26,8 +25,6 @@ const headers = () => {
 
 const body = data => {
   return {
-    DEVICE_TYPE,
-    ORIGIN: global.location.origin,
     ...data
   }
 }
