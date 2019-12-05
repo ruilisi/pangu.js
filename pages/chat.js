@@ -1,5 +1,5 @@
 import I, { Map, List } from 'immutable'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
@@ -13,7 +13,10 @@ const getRooms = async () => {
 }
 
 const roomChannels = {}
-const messageSocket = roomId => {
+const messageSocket = (roomId, sendMessageButtonRef) => {
+  const scrollToBottom = () => {
+    sendMessageButtonRef.current.scrollIntoView({ behavior: 'smooth' })
+  }
   if (!window.cable) {
     window.cable = ActionCable.createConsumer(`${API_ROOT}/cable`)
   }
@@ -30,9 +33,11 @@ const messageSocket = roomId => {
           switch (data.path) {
             case 'messages':
               DISPATCH(roomsMessagesSet(data.room_id, data.messages))
+              scrollToBottom()
               break
             case 'add_message':
               DISPATCH(roomsMessagesAdd(data.room_id, data.message))
+              scrollToBottom()
               break
             default:
           }
@@ -56,12 +61,14 @@ const Chat = () => {
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
   const room = rooms.get(roomId, Map())
+
+  const sendMessageButtonRef = useRef(null)
   useEffect(() => {
     getRooms().then(body => {
       dispatch(roomsSet(I.fromJS(body)))
       const id = Object.keys(body)[0]
       setRoomId(id)
-      messageSocket(id)
+      messageSocket(id, sendMessageButtonRef)
     })
   }, [])
 
@@ -73,7 +80,6 @@ const Chat = () => {
       setText('')
     }
   }
-
   return (
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
@@ -147,6 +153,7 @@ const Chat = () => {
               </Row>
             )
           })}
+          <div ref={sendMessageButtonRef} />
         </Card>
         <div className="MT-5 TA-C">
           <Col span={18} push={2}>
