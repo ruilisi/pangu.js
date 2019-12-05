@@ -167,7 +167,7 @@ const Chat = () => {
             ) : (
               <Row key={v.get('id')}>
                 <Col span={1}>
-                  <Avatar icon="user" />
+                  <Avatar src={v.getIn(['data', 'avatar'])} />
                 </Col>
                 <Col span={10}>
                   <div>{v.getIn(['data', 'email'])}</div>
