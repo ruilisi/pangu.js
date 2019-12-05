@@ -1,8 +1,9 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
-import { get, getToken } from '../utils/request'
+import { get, httpDelete, getToken, clearToken } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 
 const getRooms = async () => {
@@ -49,6 +50,7 @@ const messageSocket = roomId => {
 
 const Chat = () => {
   const dispatch = useDispatch()
+  const router = useRouter()
   const [roomId, setRoomId] = useState('')
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
@@ -83,8 +85,18 @@ const Chat = () => {
         </Card>
 
         <div className="MT-5 TA-C">
-          <Button type="primary" size="large" style={{ paddingLeft: 30, paddingRight: 30 }}>
-            创建房间
+          <Button
+            type="primary"
+            size="large"
+            style={{ paddingLeft: 30, paddingRight: 30 }}
+            onClick={() => {
+              httpDelete('users/sign_out').then(() => {
+                clearToken()
+                router.push('/')
+              })
+            }}
+          >
+            退出登录
           </Button>
         </div>
       </Col>
@@ -125,6 +137,7 @@ const Chat = () => {
                 if (text === '') return
                 const channel = roomChannels[roomId]
                 channel.load('add_message', { room_id: roomId, text })
+                setText('')
               }}
             >
               发送

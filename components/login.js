@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import { TR } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
-import { post } from '../utils/request'
+import { post, clearToken } from '../utils/request'
 
 const Login = () => {
   const dispatch = useDispatch()
+  const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -17,11 +19,13 @@ const Login = () => {
     return res
   }
   const login = async (u, p) => {
+    clearToken()
     const res = await postLogin(u, p)
     if (res.id) {
       dispatch(viewSetIn(['user'], res))
       message.success('登录成功')
       dispatch(viewSetIn(['loginDialogOpen'], false))
+      router.push('/chat')
     } else {
       message.error(res.error)
     }

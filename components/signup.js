@@ -16,7 +16,7 @@ const Signup = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
   const signup = async params => {
-    const res = await post('users', params)
+    const res = await post('users', { user: params })
     if (res.id) {
       message.success('注册成功')
       dispatch(viewSetIn(['signupDialogOpen'], false))
@@ -65,7 +65,7 @@ const Signup = () => {
           onClick={e => {
             setLoading(true)
             e.preventDefault()
-            signup({ username, password, password_confirmation: passwordConfirmation })
+            signup({ email: username, password, password_confirmation: passwordConfirmation })
           }}
         >
           {T('Signup')}
