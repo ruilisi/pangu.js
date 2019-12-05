@@ -65,9 +65,6 @@ const nextConfig = {
   serverRuntimeConfig: {
     // Will only be available on the server side
     mySecret: 'secret'
-  },
-  publicRuntimeConfig: {
-    NODE_ENV: process.env.NODE_ENV
   }
 }
 
