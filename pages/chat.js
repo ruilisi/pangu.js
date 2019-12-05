@@ -221,6 +221,7 @@ const Chat = () => {
             background: #2a2a2a;
             color: white;
             padding: 10px;
+            float: right;
             margin-right: 10px;
             border-top-left-radius: 8px;
             border-bottom-left-radius: 8px;
@@ -229,6 +230,7 @@ const Chat = () => {
           .other-text {
             background: white;
             color: black;
+            float: left;
             padding: 10px;
             border-top-right-radius: 8px;
             border-bottom-left-radius: 8px;
