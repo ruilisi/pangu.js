@@ -102,18 +102,23 @@ const Chat = () => {
         <div className="FS-10 TA-C PT-20" style={{ height: '10vh' }}>
           房间列表
         </div>
-
-        {qiniuToken ? (
-          <UploadFile
-            token={qiniuToken}
-            onSuccess={avatar => {
-              channel.load('set_avatar', { avatar })
-            }}
-          />
-        ) : (
-          <Spin />
-        )}
-        <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
+        <div className="TA-C">
+          {qiniuToken ? (
+            avatars ? (
+              <Avatar icon="user" shape="circle" size="large" />
+            ) : (
+              <UploadFile
+                token={qiniuToken}
+                onSuccess={avatar => {
+                  channel.load('set_avatar', { avatar })
+                }}
+              />
+            )
+          ) : (
+            <Spin />
+          )}
+        </div>
+        <Card style={{ height: '65vh', overflowY: 'scroll' }} bordered={false}>
           <Menu className="TA-C" selectedKeys={[roomId]}>
             {rooms
               .map(v => {
@@ -134,7 +139,7 @@ const Chat = () => {
           </Menu>
         </Card>
 
-        <div className="MT-5 TA-C">
+        <div className="MT-5 TA-C MB-50">
           <Button
             type="primary"
             size="large"
@@ -151,7 +156,7 @@ const Chat = () => {
         </div>
       </Col>
       <Col span={20} style={{ overflow: 'hidden' }}>
-        <div className="FS-10 ML-5 PT-10" style={{ height: '10vh' }}>
+        <div className="FS-10 ML-5" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
           {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
         </div>
         <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
@@ -182,23 +187,24 @@ const Chat = () => {
           })}
           <div ref={sendMessageButtonRef} />
         </Card>
-        <div className="MT-5 TA-C">
-          <Col span={18} push={2}>
+        <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
+          <Col className="display-center" span={18} push={2}>
             <Input
               value={text}
               size="large"
               placeholder="随便吐槽一下吧"
-              style={{ background: '#e1e1e1' }}
+              style={{ background: '#e1e1e1', width: '100%' }}
               onChange={e => {
                 setText(e.target.value)
               }}
               onKeyPress={onKeyPress}
             />
           </Col>
-          <Col span={4} push={2}>
+          <Col className="display-center" span={4} push={2}>
             <Button
               size="large"
               type="primary"
+              className="PLR-15"
               onClick={() => {
                 if (text === '' || roomId === '') return
                 const channel = roomChannels[roomId]

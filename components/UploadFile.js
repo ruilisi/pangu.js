@@ -34,7 +34,7 @@ const uploadWrap = ({ token, onSuccess }) => {
   return (
     <Upload customRequest={uploadFile}>
       <Button>
-        <Icon type="upload" /> 上传
+        <Icon type="upload" /> 上传头像
       </Button>
     </Upload>
   )
