@@ -29,6 +29,8 @@ app.prepare().then(() => {
     // This tells it to parse the query portion of the URL.
     const parsedUrl = parse(req.url, true)
     const { pathname, query } = parsedUrl
+    console.info(pathname)
+    console.info(req.cookies)
     const checkLoginState = (okPath, failPath) => {
       let token = ''
       if (req.headers.cookie) {
@@ -44,12 +46,12 @@ app.prepare().then(() => {
     }
 
     if (pathname === '/chat') {
-      checkLoginState('/chat', '/')
+      checkLoginState('/', '/')
     } else {
       handle(req, res, parsedUrl)
     }
-  }).listen(3008, err => {
+  }).listen(3000, err => {
     if (err) throw err
-    console.log('> Ready on http://localhost:3008')
+    console.log('> Ready on http://localhost:3000')
   })
 })
