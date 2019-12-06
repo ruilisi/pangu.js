@@ -18,8 +18,24 @@ const nextConfig = {
     }
 
     // https://github.com/zeit/next.js/blob/master/packages/next/build/webpack-config.ts
-    config.module.rules[0].include = '/'
-    config.module.rules[0].exclude = []
+    if (!isDev) {
+      const moduleToBeResolved = /node_modules[\\\/](bizcharts|react-intl|intl-messageformat|intl-messageformat-parser|query-string|split-on-first|engine.io-client|strict-uri-encode)[\\\/]/
+      config.module.rules[0].include.push(/(browser|common)\.js/, moduleToBeResolved)
+      config.module.rules[0].exclude = path => {
+        if (
+          /next[\\/]dist[\\/]next-server[\\/]lib/.test(path) ||
+          /next[\\/]dist[\\/]client/.test(path) ||
+          /next[\\/]dist[\\/]pages/.test(path) ||
+          /[\\/](strip-ansi|ansi-regex)[\\/]/.test(path) ||
+          /(browser|common)\.js/.test(path)
+        ) {
+          return false
+        }
+        if (/node_modules/.test(path)) {
+          return !moduleToBeResolved.test(path)
+        }
+      }
+    }
 
     const originalEntry = config.entry
 
