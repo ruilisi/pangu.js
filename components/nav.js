@@ -10,6 +10,7 @@ import { T } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
 import { logout } from '../http/self'
 import { LANGUAGE_NAME, SUPPORTED_LANGUAGES } from '../consts'
+import { getToken } from '../utils/request'
 
 const setLanguage = l => {
   localStorage.setItem('LANGUAGE', l)
@@ -187,12 +188,12 @@ const Nav = ({ children }) => {
             <div className="navbar-header">
               <div className="inner-nav">
                 <ul>
-                  <li className="navbar-toggle">{localStorage.getItem('Token') ? rightIconMenuLoggedIn() : rightIconMenuNotLoggedIn()}</li>
+                  <li className="navbar-toggle">{getToken() ? rightIconMenuLoggedIn() : rightIconMenuNotLoggedIn()}</li>
                   <li className="navbar-toggle">{i18nRightMenu()}</li>
                 </ul>
               </div>
             </div>
-            <div className="navbar-collapse collapse inner-nav">{localStorage.getItem('Token') ? horizontalMenuLoggedIn() : horizontalMenuNotLoggedIn()}</div>
+            <div className="navbar-collapse collapse inner-nav">{getToken() ? horizontalMenuLoggedIn() : horizontalMenuNotLoggedIn()}</div>
           </div>
         </div>
       </nav>

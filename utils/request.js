@@ -1,24 +1,25 @@
 import fetch from 'isomorphic-unfetch'
-import localStorage from 'localStorage'
+import cookie from 'js-cookie'
 
 // export const API_ROOT = 'http://localhost:88'
 export const API_ROOT = 'https://limitless-falls-17517.herokuapp.com'
-export const setToken = s => {
-  localStorage.setItem(`Token`, s)
+const DEVICE_TYPE = 'WEB'
+
+export const setToken = token => {
+  cookie.set('token', token, { expires: 3600 })
 }
 
 export const getToken = () => {
-  return localStorage.getItem('Token')
+  return cookie.get('token')
 }
 
 export const clearToken = () => {
-  localStorage.removeItem('Id')
-  localStorage.removeItem('Token')
+  cookie.remove('token')
 }
 
-const headers = () => {
+const headers = _token => {
   return {
-    Authorization: getToken(),
+    Authorization: _token,
     Accept: 'application/json',
     'Content-Type': 'application/json'
   }
@@ -26,6 +27,7 @@ const headers = () => {
 
 const body = data => {
   return {
+    DEVICE_TYPE,
     ...data
   }
 }
@@ -39,30 +41,39 @@ const parseResponse = async res => {
     if (res.status >= 400) {
       json.status = res.status
     }
+    if (res.status === 401) {
+      const default401Message = '登录已过期，请重新登录'
+      cookie.remove('token')
+      console.info(default401Message)
+      if (json.error.indexOf('revoke') >= 0) {
+        json.error = default401Message
+      }
+      // createToast(json.error || default401Message)
+    }
     return json
   } catch (error) {
-    console.info('ping')
+    // skip
+    return null
   }
-  return false
 }
 
-export const get = async (path, data = {}) => {
+export const get = async (path, data = {}, _token = '') => {
   const params = body(data)
   const query = Object.keys(params)
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
     .join('&')
   const res = await fetch(`${API_ROOT}/${path}?${query}`, {
     method: 'GET',
-    headers: headers()
+    headers: headers(_token)
   })
   const content = await parseResponse(res)
   return content
 }
 
-const requestMethod = method => async (path, data) => {
+const requestMethod = method => async (path, data, _token = '') => {
   const res = await fetch(`${API_ROOT}/${path}`, {
     method,
-    headers: headers(),
+    headers: headers(_token),
     body: JSON.stringify(body(data))
   })
   const content = await parseResponse(res)
