@@ -8,7 +8,7 @@ import Login from './login'
 import Signup from './signup'
 import { T } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
-import { logout } from '../http/self'
+import { logout } from '../utils/http'
 import { LANGUAGE_NAME, SUPPORTED_LANGUAGES } from '../consts'
 import { getToken } from '../utils/request'
 

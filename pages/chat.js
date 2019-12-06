@@ -1,5 +1,6 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
+import nextCookie from 'next-cookies'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
@@ -8,6 +9,7 @@ import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/reques
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import UploadFile from '../components/UploadFile'
 import { selfSetIn, selfMergeIn } from '../redux/modules/self'
+import { userInfo } from '../utils/http'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -63,9 +65,9 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
   }
 }
 
-const Chat = () => {
-  const dispatch = useDispatch()
+const Chat = ({ user }) => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
   const [qiniuToken, setQiniuToken] = useState()
   const [text, setText] = useState('')
@@ -207,8 +209,8 @@ const Chat = () => {
               className="PLR-15"
               onClick={() => {
                 if (text === '' || roomId === '') return
-                const channel = roomChannels[roomId]
-                channel.load('add_message', { room_id: roomId, text })
+                const _channel = roomChannels[roomId]
+                _channel.load('add_message', { room_id: roomId, text })
                 setText('')
               }}
             >
@@ -247,6 +249,19 @@ const Chat = () => {
       </style>
     </div>
   )
+}
+
+Chat.getInitialProps = async ctx => {
+  const { res } = ctx
+  const { token } = nextCookie(ctx)
+  const user = await userInfo(token)
+  if (user.id === undefined) {
+    res.writeHead(302, {
+      Location: '/'
+    })
+    res.end()
+  }
+  return { user }
 }
 
 export default Chat
