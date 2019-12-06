@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 import localStorage from 'localStorage'
 
+// export const API_ROOT = 'http://localhost:88'
 export const API_ROOT = 'https://limitless-falls-17517.herokuapp.com'
 export const setToken = s => {
   localStorage.setItem(`Token`, s)

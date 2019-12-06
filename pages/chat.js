@@ -7,7 +7,7 @@ import localStorage from 'localStorage'
 import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import UploadFile from '../components/UploadFile'
-import { selfSet, selfSetIn } from '../redux/modules/self'
+import { selfSetIn, selfMergeIn } from '../redux/modules/self'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -32,10 +32,11 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
         subscribed: () => console.info('subscripted'),
         received: data => {
           console.info('received', data)
+          const a = {}
           switch (data.path) {
             case 'messages':
               DISPATCH(roomsMessagesSet(data.room_id, data.messages))
-              DISPATCH(selfSet(data.user))
+              DISPATCH(selfSetIn(['avatars'], data.avatars))
               scrollToBottom()
               break
             case 'add_message':
@@ -43,7 +44,8 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
               scrollToBottom()
               break
             case 'set_avatar':
-              DISPATCH(selfSetIn(['data', 'avatar'], data.avatar))
+              a[data.user_id] = data.avatar
+              DISPATCH(selfMergeIn(['avatars'], I.fromJS(a)))
               break
             default:
           }
@@ -69,6 +71,7 @@ const Chat = () => {
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
   const self = useSelector(state => state.self)
+  const avatars = self.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
   const channel = roomChannels[roomId]
 
@@ -161,13 +164,13 @@ const Chat = () => {
                   <p className="my-text">{v.get('text')}</p>
                 </Col>
                 <Col span={1} push={13}>
-                  <Avatar src={self.getIn(['data', 'avatar'])} />
+                  <Avatar src={avatars[v.get('user_id')]} />
                 </Col>
               </Row>
             ) : (
               <Row key={v.get('id')}>
                 <Col span={1}>
-                  <Avatar src={v.getIn(['data', 'avatar'])} />
+                  <Avatar src={avatars[v.get('user_id')]} />
                 </Col>
                 <Col span={10}>
                   <div>{v.getIn(['data', 'email'])}</div>

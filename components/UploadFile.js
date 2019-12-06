@@ -1,9 +1,8 @@
 import * as qiniu from 'qiniu-js'
 import React from 'react'
 import { Upload, Button, Icon } from 'antd'
-import { put } from '../utils/request'
 
-const uploadWrap = ({ token, name, id, onSuccess }) => {
+const uploadWrap = ({ token, onSuccess }) => {
   const uploadFile = ({ file }) => {
     const qiniuToken = token
     const key = `student_${new Date().getTime()}`
@@ -28,14 +27,6 @@ const uploadWrap = ({ token, name, id, onSuccess }) => {
         const uploadUrl = 'http://res.paiyou.co/'
         const fileUrl = uploadUrl + key
         onSuccess(fileUrl)
-        if (name === 'logo') {
-          const submit = async () => {
-            let params = {}
-            params = { logo: fileUrl }
-            await put(`companies/info/${id}`, params)
-          }
-          submit()
-        }
       }
     })
   }
