@@ -2,15 +2,13 @@ import React from 'react'
 import { Icon, Button, Dropdown, Menu, Modal } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import Link from 'next/link'
-import localStorage from 'localStorage'
 import Router from 'next/router'
 import Login from './login'
 import Signup from './signup'
 import { T } from '../utils/translation'
-import { viewSetIn } from '../redux/modules/view'
+import { viewSetIn, authorized } from '%view'
 import { logout } from '../utils/http'
 import { LANGUAGE_NAME, SUPPORTED_LANGUAGES } from '../consts'
-import { getToken } from '../utils/request'
 
 const setLanguage = l => {
   localStorage.setItem('LANGUAGE', l)
@@ -37,6 +35,9 @@ const Nav = ({ children }) => {
   }
 
   const i18nMenuHorizontal = pathname => {
+    if (!process.browser) {
+      return null
+    }
     const path = PathFromPathname(pathname)
     return (
       <li className="dropdown mega-menu">
@@ -188,12 +189,12 @@ const Nav = ({ children }) => {
             <div className="navbar-header">
               <div className="inner-nav">
                 <ul>
-                  <li className="navbar-toggle">{getToken() ? rightIconMenuLoggedIn() : rightIconMenuNotLoggedIn()}</li>
+                  <li className="navbar-toggle">{authorized(view) === true ? rightIconMenuLoggedIn() : rightIconMenuNotLoggedIn()}</li>
                   <li className="navbar-toggle">{i18nRightMenu()}</li>
                 </ul>
               </div>
             </div>
-            <div className="navbar-collapse collapse inner-nav">{getToken() ? horizontalMenuLoggedIn() : horizontalMenuNotLoggedIn()}</div>
+            <div className="navbar-collapse collapse inner-nav">{authorized(view) === true ? horizontalMenuLoggedIn() : horizontalMenuNotLoggedIn()}</div>
           </div>
         </div>
       </nav>

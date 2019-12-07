@@ -1,9 +1,9 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import localStorage from 'localStorage'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
+import _ from 'lodash'
 import Head from '../components/head'
 import createStore from '../redux/createStore'
 import { bindShortcuts } from '~/utils'
@@ -15,6 +15,10 @@ import '../styles/main.scss'
 const localeData = { zh, en }
 
 class MyApp extends App {
+  state = {
+    locale: ''
+  }
+
   static async getInitialProps({ Component, ctx }) {
     if (typeof window === 'undefined') {
       global.navigator = {}
@@ -25,11 +29,22 @@ class MyApp extends App {
     return { pageProps }
   }
 
+  setLocale(locale) {
+    this.setState({ locale })
+  }
+
   componentDidMount() {
     const { props } = this
     const { store } = props
     window.DISPATCH = store.dispatch
     bindShortcuts()
+    const language = localStorage.getItem('LANGUAGE')
+    if (!language) {
+      this.setLocale('zh')
+    } else if (language !== this.state.locale) {
+      this.setLocale(language)
+    }
+
     if (navigator.userAgent.indexOf('MicroMessenger') >= 0 && navigator.userAgent.indexOf('Android') >= 0) {
       delete global.Intl
     }
@@ -43,11 +58,7 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps, store } = this.props
-    let navigatorLanguage = 'zh'
-    if (global.navigator.language !== 'zh-CN' && global.navigator.language !== undefined) {
-      navigatorLanguage = 'en'
-    }
-    const locale = localStorage.getItem('LANGUAGE') || navigatorLanguage
+    const { locale } = this.state
 
     return (
       <IntlProvider locale={locale} messages={localeData[locale]}>
