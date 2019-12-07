@@ -45,6 +45,10 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
               DISPATCH(roomsMessagesAdd(data.room_id, data.message))
               scrollToBottom()
               break
+            case 'dice':
+              console.info(data)
+              DISPATCH(roomsMessagesAdd(data.room_id, data.message))
+              break
             case 'set_avatar':
               a[data.user_id] = data.avatar
               DISPATCH(selfMergeIn(['avatars'], I.fromJS(a)))
@@ -203,6 +207,17 @@ const Chat = ({ user }) => {
             />
           </Col>
           <Col className="display-center" span={4} push={2}>
+            <Button
+              size="large"
+              type="primary"
+              className="PLR-15"
+              onClick={() => {
+                const _channel = roomChannels[roomId]
+                _channel.load('dice', { room_id: roomId })
+              }}
+            >
+              掷骰子
+            </Button>
             <Button
               size="large"
               type="primary"
