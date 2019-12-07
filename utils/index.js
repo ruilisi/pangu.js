@@ -1,3 +1,5 @@
+import Mousetrap from 'mousetrap'
+
 export function isMobile() {
   return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
 }
@@ -24,4 +26,15 @@ export function isIE() {
 
 export function isSafari() {
   return /^((?!chrome|android).)*safari/i.test(navigator.userAgent.toLowerCase())
+}
+
+export function bindShortcuts() {
+  Mousetrap.bind('esc l', () => {
+    localStorage.setItem('resolveByLocal', true)
+    window.location.reload()
+  })
+  Mousetrap.bind('esc r', () => {
+    localStorage.setItem('resolveByLocal', false)
+    window.location.reload()
+  })
 }

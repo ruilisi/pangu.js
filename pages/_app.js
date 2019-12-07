@@ -6,6 +6,7 @@ import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
 import Head from '../components/head'
 import createStore from '../redux/createStore'
+import { bindShortcuts } from '~/utils'
 import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
@@ -28,6 +29,7 @@ class MyApp extends App {
     const { props } = this
     const { store } = props
     window.DISPATCH = store.dispatch
+    bindShortcuts()
     if (navigator.userAgent.indexOf('MicroMessenger') >= 0 && navigator.userAgent.indexOf('Android') >= 0) {
       delete global.Intl
     }
