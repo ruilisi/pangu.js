@@ -3,12 +3,11 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
-import localStorage from 'localStorage'
 import I from 'immutable'
 import { TR } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
 import { selfSet } from '../redux/modules/self'
-import { post, clearToken } from '../utils/request'
+import { post, removeAuthorization } from '../utils/request'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -22,7 +21,7 @@ const Login = () => {
     return res
   }
   const login = async (u, p) => {
-    clearToken()
+    removeAuthorization()
     const res = await postLogin(u, p)
     if (res.id) {
       localStorage.setItem('Id', res.id)

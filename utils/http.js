@@ -1,8 +1,8 @@
 import Router from 'next/router'
-import { clearToken, get, API_ROOT } from './request'
+import { removeAuthorization, get, API_ROOT } from './request'
 
 export const logout = () => {
-  clearToken()
+  removeAuthorization()
   Router.push('/')
 }
 

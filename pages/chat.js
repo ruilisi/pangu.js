@@ -4,7 +4,7 @@ import nextCookie from 'next-cookies'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
-import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/request'
+import { get, httpDelete, getAuthorization, removeAuthorization, API_ROOT } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import UploadFile from '../components/UploadFile'
 import { viewSetIn, viewMergeIn } from '../redux/modules/view'
@@ -26,7 +26,7 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
   }
   if (!roomChannels[roomId]) {
     const channel = window.cable.subscriptions.create(
-      { channel: 'RoomsChannel', authorization: getToken(), room_id: roomId },
+      { channel: 'RoomsChannel', authorization: getAuthorization(), room_id: roomId },
       {
         connected: () => {
           channel.load('messages', { room_id: roomId })
@@ -158,7 +158,7 @@ const Chat = () => {
             style={{ paddingLeft: 30, paddingRight: 30 }}
             onClick={() => {
               httpDelete('users/sign_out').then(() => {
-                clearToken()
+                removeAuthorization()
                 router.replace('/')
               })
             }}

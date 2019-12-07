@@ -1,4 +1,5 @@
 import I, { Set, isImmutable } from 'immutable'
+import { HttpState } from '~/consts'
 
 export const VIEW_SET = 'VIEW_SET'
 export const VIEW_SET_IN = 'VIEW_SET_IN'
@@ -7,6 +8,9 @@ export const VIEW_MERGE_IN = 'VIEW_MERGE_IN'
 const initialState = I.fromJS({
   loginDialogOpen: false,
   signupDialogOpen: false,
+  login: {
+    authorized: HttpState.UNKNOWN
+  },
   avatars: {},
   tables: {}
 }).update('tables', tables =>
@@ -53,3 +57,6 @@ export default function(aView = initialState, action) {
 export const viewSet = value => ({ type: VIEW_SET, value })
 export const viewSetIn = (path, value) => ({ type: VIEW_SET_IN, path, value })
 export const viewMergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value })
+export const authorizedPath = ['login', 'authorized']
+export const setAuthorized = value => D => D(viewSetIn(authorizedPath, value))
+export const authorized = view => view.getIn(authorizedPath)

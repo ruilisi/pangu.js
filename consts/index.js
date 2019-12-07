@@ -16,3 +16,9 @@ export const antLanguage = {
   en: En,
   zh: Zh
 }
+
+export const HttpState = {
+  UNKNOWN: 'UNKNOWN',
+  REQUESTING: 'REQUESTING',
+  REQUESTED: 'REQUESTED'
+}
