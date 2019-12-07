@@ -1,10 +1,39 @@
 import fetch from 'isomorphic-unfetch'
+import dns from './dns'
 
-// export const API_ROOT = 'http://localhost:88'
-export const API_ROOT = 'https://limitless-falls-17517.herokuapp.com'
 const DEVICE_TYPE = 'WEB'
-
 const authorizationKey = 'AUTHORIZATION'
+
+export const testApiRoot = async rootUrl => {
+  const response = await fetch(`${rootUrl}/ping`)
+  const { ok, status } = response
+  if (ok && status === 200) {
+    const text = await response.text()
+    if (text === 'pong') {
+      return rootUrl
+    }
+    return Promise.reject()
+  }
+  return Promise.reject(new Error(`ok: ${ok}, status: ${status}`))
+}
+
+export const setApiRoot = async newApiRoot => {
+  dns.API_ROOT = newApiRoot
+  localStorage.setItem('API_ROOT', newApiRoot)
+}
+
+export const getApiRoot = async () => {
+  if (localStorage.getItem('resolveByLocal') === 'true') {
+    return setApiRoot(dns.API_ROOT_LOCAL)
+  }
+  try {
+    const newApiRoot = await Promise.race(dns.REMOTE_HOSTS.map(testApiRoot))
+    return setApiRoot(newApiRoot)
+  } catch (error) {
+    const msg = `Failed to ping any remote: ${error}`
+    return Promise.reject(new Error(msg))
+  }
+}
 
 export const getAuthorization = () => {
   return localStorage.getItem(authorizationKey)

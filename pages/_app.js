@@ -11,6 +11,7 @@ import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
+import { getApiRoot } from '~/utils/request'
 
 const localeData = { zh, en }
 

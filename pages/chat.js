@@ -272,16 +272,4 @@ const Chat = () => {
   )
 }
 
-Chat.getInitialProps = async ctx => {
-  const { res } = ctx
-  const { token } = nextCookie(ctx)
-  const body = await authPing(token)
-  if (body !== 'pong') {
-    res.writeHead(302, {
-      Location: '/'
-    })
-    res.end()
-  }
-}
-
 export default Chat

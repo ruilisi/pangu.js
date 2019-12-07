@@ -1,5 +1,6 @@
 import Router from 'next/router'
-import { removeAuthorization, get, API_ROOT } from './request'
+import { removeAuthorization, get } from './request'
+import dns from './dns'
 
 export const logout = () => {
   removeAuthorization()
@@ -22,7 +23,7 @@ export const userInfo = async token => {
 }
 
 export const authPing = async token => {
-  const res = await fetch(`${API_ROOT}/auth_ping`, {
+  const res = await fetch(`${dns.API_ROOT}/auth_ping`, {
     method: 'POST',
     headers: {
       Authorization: token,
