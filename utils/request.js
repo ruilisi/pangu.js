@@ -1,25 +1,26 @@
 import fetch from 'isomorphic-unfetch'
-import cookie from 'js-cookie'
 
 // export const API_ROOT = 'http://localhost:88'
 export const API_ROOT = 'https://limitless-falls-17517.herokuapp.com'
 const DEVICE_TYPE = 'WEB'
 
-export const setToken = token => {
-  cookie.set('token', token, { expires: 3600 })
+const authorizationKey = 'AUTHORIZATION'
+
+export const getAuthorization = () => {
+  return localStorage.getItem(authorizationKey)
 }
 
-export const getToken = () => {
-  return cookie.get('token')
+export const setAuthorization = s => {
+  localStorage.setItem(authorizationKey, s)
 }
 
-export const clearToken = () => {
-  cookie.remove('token')
+export const removeAuthorization = () => {
+  localStorage.removeItem(authorizationKey)
 }
 
 const headers = () => {
   return {
-    Authorization: getToken(),
+    Authorization: getAuthorization(),
     Accept: 'application/json',
     'Content-Type': 'application/json'
   }
@@ -34,7 +35,7 @@ const body = data => {
 
 const parseResponse = async res => {
   if (res.headers.get('Authorization')) {
-    setToken(res.headers.get('Authorization'))
+    setAuthorization(res.headers.get('Authorization'))
   }
   try {
     const json = await res.json()
@@ -43,7 +44,7 @@ const parseResponse = async res => {
     }
     if (res.status === 401) {
       const default401Message = '登录已过期，请重新登录'
-      cookie.remove('token')
+      removeAuthorization()
       console.info(default401Message)
       if (json.error.indexOf('revoke') >= 0) {
         json.error = default401Message
