@@ -52,8 +52,9 @@ The reasons why projects built with `Next.js` does not support `IE 9-11` are mai
     }
 ```
 
-#### i18n 
-`react-intl` and related config code is added as a default i18n solution.
+## Javascript libraries included
+#### `readt-intl`
+This library provides React components and an API to format dates, numbers, and strings, including pluralization and handling translations.
 ```
 <IntlProvider locale={locale} messages={localeData[locale]}>
   <Provider store={store}>
@@ -83,3 +84,48 @@ export default (initialState = {}) => {
 #### Http connection (jwt authentication) with rails-pangu
 
 #### Action Cable(rails way of websocket) connection (jwt authentication) with rails-pangu
+
+#### babel-plugin-root-import
+This module together with `eslint-import-resolver-babel-plugin-root-import` make importing long but often used paths easy by replacing paths with special characters, such as `~`, `%`. Below is related config code:
+```js
+  plugins: [
+    '@babel/plugin-transform-arrow-functions',
+    [
+      'babel-plugin-root-import',
+      {
+        paths: [
+          {
+            rootPathSuffix: '.',
+            rootPathPrefix: '~'
+          },
+          {
+            rootPathSuffix: './redux/modules/',
+            rootPathPrefix: '%'
+          }
+        ]
+      }
+    ]
+  ]
+  // babel.config.js
+
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: [
+          './'
+        ]
+      },
+      'babel-plugin-root-import': [
+          {
+            'rootPathSuffix': '.',
+            'rootPathPrefix': '~'
+          },
+          {
+            'rootPathSuffix': './redux/modules/',
+            'rootPathPrefix': '%'
+          }
+      ]
+    }
+  }
+  // .eslintrc.js
+```

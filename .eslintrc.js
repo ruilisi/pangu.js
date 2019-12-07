@@ -34,7 +34,17 @@ module.exports = {
         paths: [
           './'
         ]
-      }
+      },
+      'babel-plugin-root-import': [
+          {
+            'rootPathSuffix': '.',
+            'rootPathPrefix': '~'
+          },
+          {
+            'rootPathSuffix': './redux/modules/',
+            'rootPathPrefix': '%'
+          }
+      ]
     }
   },
   parser: 'babel-eslint',
