@@ -4,8 +4,10 @@ import { useRouter } from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import localStorage from 'localStorage'
+import I from 'immutable'
 import { TR } from '../utils/translation'
 import { viewSetIn } from '../redux/modules/view'
+import { selfSet } from '../redux/modules/self'
 import { post, clearToken } from '../utils/request'
 
 const Login = () => {
@@ -25,6 +27,7 @@ const Login = () => {
     if (res.id) {
       localStorage.setItem('Id', res.id)
       message.success('登录成功')
+      dispatch(selfSet(I.fromJS(res)))
       dispatch(viewSetIn(['loginDialogOpen'], false))
       router.push('/chat')
     } else {

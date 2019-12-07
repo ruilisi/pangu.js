@@ -17,9 +17,9 @@ export const clearToken = () => {
   cookie.remove('token')
 }
 
-const headers = _token => {
+const headers = () => {
   return {
-    Authorization: _token,
+    Authorization: getToken(),
     Accept: 'application/json',
     'Content-Type': 'application/json'
   }

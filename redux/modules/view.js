@@ -52,4 +52,4 @@ export default function(aView = initialState, action) {
 
 export const viewSet = value => ({ type: VIEW_SET, value })
 export const viewSetIn = (path, value) => ({ type: VIEW_SET_IN, path, value })
-export const mergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value })
+export const viewMergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value })

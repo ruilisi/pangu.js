@@ -1,11 +1,8 @@
 import React from 'react'
-import nextCookie from 'next-cookies'
 import { Col } from 'antd'
 import Nav from '../components/nav'
 
-const IndexPage = ctx => {
-  const { token } = nextCookie(ctx)
-  console.info('toknen', token)
+const IndexPage = () => {
   return (
     <Nav>
       <div>

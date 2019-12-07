@@ -4,12 +4,12 @@ import nextCookie from 'next-cookies'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
-import localStorage from 'localStorage'
 import { get, httpDelete, getToken, clearToken, API_ROOT } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import UploadFile from '../components/UploadFile'
-import { selfSetIn, selfMergeIn } from '../redux/modules/self'
-import { userInfo } from '../utils/http'
+import { viewSetIn, viewMergeIn } from '../redux/modules/view'
+import { selfSet, selfSetIn } from '../redux/modules/self'
+import { userInfo, authPing } from '../utils/http'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -18,9 +18,9 @@ const getRooms = async () => {
 
 const roomChannels = {}
 const messageSocket = (roomId, sendMessageButtonRef) => {
-  const scrollToBottom = () => {
-    sendMessageButtonRef.current.scrollIntoView({ behavior: 'smooth' })
-  }
+  // const scrollToBottom = () => {
+  //   sendMessageButtonRef.current.scrollIntoView({ behavior: 'smooth' })
+  // }
   if (!window.cable) {
     window.cable = ActionCable.createConsumer(`${API_ROOT}/cable`)
   }
@@ -38,12 +38,12 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
           switch (data.path) {
             case 'messages':
               DISPATCH(roomsMessagesSet(data.room_id, data.messages))
-              DISPATCH(selfSetIn(['avatars'], data.avatars))
-              scrollToBottom()
+              DISPATCH(viewSetIn(['avatars'], data.avatars))
+              // scrollToBottom()
               break
             case 'add_message':
               DISPATCH(roomsMessagesAdd(data.room_id, data.message))
-              scrollToBottom()
+              // scrollToBottom()
               break
             case 'dice':
               console.info(data)
@@ -51,7 +51,8 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
               break
             case 'set_avatar':
               a[data.user_id] = data.avatar
-              DISPATCH(selfMergeIn(['avatars'], I.fromJS(a)))
+              DISPATCH(viewMergeIn(['avatars'], I.fromJS(a)))
+              DISPATCH(selfSetIn(['data', 'avatar'], data.avatar))
               break
             default:
           }
@@ -69,17 +70,22 @@ const messageSocket = (roomId, sendMessageButtonRef) => {
   }
 }
 
-const Chat = ({ user }) => {
+const Chat = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
   const [qiniuToken, setQiniuToken] = useState()
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
+  const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
-  const avatars = self.getIn(['avatars']).toJS()
+  const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
   const channel = roomChannels[roomId]
+
+  useEffect(() => {
+    userInfo().then(user => dispatch(selfSet(I.fromJS(user))))
+  }, [])
 
   const sendMessageButtonRef = useRef(null)
   useEffect(() => {
@@ -110,8 +116,8 @@ const Chat = ({ user }) => {
         </div>
         <div className="TA-C">
           {qiniuToken ? (
-            avatars ? (
-              <Avatar icon="user" shape="circle" size="large" />
+            self.getIn(['data', 'avatar']) ? (
+              <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
             ) : (
               <UploadFile
                 token={qiniuToken}
@@ -167,7 +173,7 @@ const Chat = ({ user }) => {
         </div>
         <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
           {room.get('messages', List()).map(v => {
-            return v.get('user_id') === localStorage.getItem('Id') ? (
+            return v.get('user_id') === self.get('id') ? (
               <Row key={v.get('id')}>
                 <Col span={10} push={13}>
                   <div>{v.getIn(['data', 'email'])}</div>
@@ -269,14 +275,13 @@ const Chat = ({ user }) => {
 Chat.getInitialProps = async ctx => {
   const { res } = ctx
   const { token } = nextCookie(ctx)
-  const user = await userInfo(token)
-  if (user.id === undefined) {
+  const body = await authPing(token)
+  if (body !== 'pong') {
     res.writeHead(302, {
       Location: '/'
     })
     res.end()
   }
-  return { user }
 }
 
 export default Chat
