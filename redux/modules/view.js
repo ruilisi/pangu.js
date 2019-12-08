@@ -1,4 +1,7 @@
 import I, { Set, isImmutable } from 'immutable'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import { HttpState } from '~/consts'
 
 export const VIEW_SET = 'VIEW_SET'
@@ -60,3 +63,14 @@ export const viewMergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value 
 export const authorizedPath = ['login', 'authorized']
 export const setAuthorized = value => D => D(viewSetIn(authorizedPath, value))
 export const authorized = view => view.getIn(authorizedPath)
+
+export const redirectIfAuthorized = nextPath => {
+  const router = useRouter()
+  const view = useSelector(state => state.view)
+
+  useEffect(() => {
+    if (authorized(view) === true) {
+      router.push(nextPath)
+    }
+  })
+}
