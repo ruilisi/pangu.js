@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
-import _ from 'lodash'
 import Head from '../components/head'
 import createStore from '../redux/createStore'
 import { bindShortcuts } from '~/utils'
@@ -12,12 +11,13 @@ import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
 import { getApiRoot } from '~/utils/request'
+import usersChannel from '../utils/usersChannel'
 
 const localeData = { zh, en }
 
 class MyApp extends App {
   state = {
-    locale: ''
+    locale: 'en'
   }
 
   static async getInitialProps({ Component, ctx }) {
@@ -39,6 +39,7 @@ class MyApp extends App {
     const { store } = props
     window.DISPATCH = store.dispatch
     bindShortcuts()
+    getApiRoot().then(() => DISPATCH(usersChannel()))
     const language = localStorage.getItem('LANGUAGE')
     if (!language) {
       this.setLocale('zh')

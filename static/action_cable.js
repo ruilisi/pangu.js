@@ -18,7 +18,7 @@
         },
         WebSocket: window.WebSocket,
         logger: window.console,
-        createConsumer(url, jwt_token = nil) {
+        createConsumer(url, jwt_token = null) {
           let ref
           if (url == null) {
             url = (ref = this.getConfig('url')) != null ? ref : this.INTERNAL.default_mount_path

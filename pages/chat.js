@@ -1,15 +1,15 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
-import nextCookie from 'next-cookies'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
-import { get, httpDelete, getAuthorization, removeAuthorization, API_ROOT } from '../utils/request'
+import { get, httpDelete, getAuthorization, removeAuthorization } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import UploadFile from '../components/UploadFile'
 import { viewSetIn, viewMergeIn } from '../redux/modules/view'
 import { selfSet, selfSetIn } from '../redux/modules/self'
-import { userInfo, authPing } from '../utils/http'
+import { userInfo } from '../utils/http'
+import dns from '../utils/dns'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -17,12 +17,12 @@ const getRooms = async () => {
 }
 
 const roomChannels = {}
-const messageSocket = (roomId, sendMessageButtonRef) => {
+const messageSocket = roomId => {
   // const scrollToBottom = () => {
   //   sendMessageButtonRef.current.scrollIntoView({ behavior: 'smooth' })
   // }
   if (!window.cable) {
-    window.cable = ActionCable.createConsumer(`${API_ROOT}/cable`)
+    window.cable = ActionCable.createConsumer(`${dns.API_ROOT}/cable`)
   }
   if (!roomChannels[roomId]) {
     const channel = window.cable.subscriptions.create(

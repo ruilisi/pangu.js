@@ -217,18 +217,6 @@ const Nav = ({ children }) => {
       >
         <Signup />
       </Modal>
-      <style jsx>
-        {`
-          .logo {
-            display: inline-block;
-            vertical-align: middle;
-            background: url(/static/imgs/logo.jpg) no-repeat;
-            background-size: cover;
-            height: 50px;
-            width: 50px;
-          }
-        `}
-      </style>
     </div>
   )
 }

@@ -20,6 +20,7 @@ export const testApiRoot = async rootUrl => {
 export const setApiRoot = async newApiRoot => {
   dns.API_ROOT = newApiRoot
   localStorage.setItem('API_ROOT', newApiRoot)
+  return newApiRoot
 }
 
 export const getApiRoot = async () => {
@@ -92,7 +93,7 @@ export const get = async (path, data = {}, _token = '') => {
   const query = Object.keys(params)
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
     .join('&')
-  const res = await fetch(`${API_ROOT}/${path}?${query}`, {
+  const res = await fetch(`${dns.API_ROOT}/${path}?${query}`, {
     method: 'GET',
     headers: headers(_token)
   })
@@ -101,7 +102,7 @@ export const get = async (path, data = {}, _token = '') => {
 }
 
 const requestMethod = method => async (path, data, _token = '') => {
-  const res = await fetch(`${API_ROOT}/${path}`, {
+  const res = await fetch(`${dns.API_ROOT}/${path}`, {
     method,
     headers: headers(_token),
     body: JSON.stringify(body(data))

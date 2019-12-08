@@ -1,32 +1,40 @@
 import _ from 'lodash'
-// eslint-disable-next-line import/no-cycle
+import { getAuthorization } from './request'
+import { viewSetIn, authorizedPath } from '%view'
+import { HttpState } from '../consts'
+import { selfSet } from '../redux/modules/self'
+import actionCable from './actionCable'
 
 const usedAuthorizations = []
-const API_ROOT = 'http://192.168.1.6:88'
-export default authorization => {
+export default () => (D, S) => {
+  const authorization = getAuthorization()
   if (_.includes(usedAuthorizations, authorization)) {
     return
   }
   usedAuthorizations.push(authorization)
-
-  // eslint-disable-next-line no-undef
-  const cable = ActionCable.createConsumer(`${API_ROOT}/cable`)
+  const cable = actionCable()
   const usersChannel = cable.subscriptions.create(
-    { channel: 'UsersChannel', authorization },
+    { channel: 'UsersChannel' },
     {
       connected: data => {
         console.info('connected', data)
+        if (S().view.getIn(authorizedPath) !== true) {
+          D(viewSetIn(authorizedPath, true))
+        }
         usersChannel.load('self', {})
-        usersChannel.load('login_state', {})
+      },
+      disconnected: () => {
+        if (S().view.getIn(authorizedPath) === HttpState.UNKNOWN) {
+          D(viewSetIn(authorizedPath, false))
+        }
       },
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
         console.info('receivedData', receivedData)
         const { data, type } = receivedData
         switch (type) {
-          case 'login_state':
-            console.info(data)
-            // DISPATCH(viewSetIn(['loginState', 'result'], data))
+          case 'self':
+            D(selfSet(data))
             break
           default:
             break
