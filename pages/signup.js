@@ -27,8 +27,7 @@ const Signup = () => {
   }
 
   return (
-    <div>
-      <Nav />
+    <Nav>
       <Row className="MT-45">
         <Col xs={{ span: 24 }} sm={{ offset: 6, span: 12 }} md={{ offset: 8, span: 8 }}>
           <div className="MB-10 FS-15 TA-C">注册</div>
@@ -78,7 +77,7 @@ const Signup = () => {
           </div>
         </Col>
       </Row>
-    </div>
+    </Nav>
   )
 }
 
