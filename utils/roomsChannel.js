@@ -2,6 +2,7 @@ import actionCable from './actionCable'
 
 export default authorization => {
   const cable = actionCable()
+  if (!cable) return
   const roomsChannel = cable.subscriptions.create(
     { channel: 'RoomsChannel', authorization },
     {

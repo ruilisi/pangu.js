@@ -5,6 +5,7 @@ import actionCable from './actionCable'
 
 export default () => (D, S) => {
   const cable = actionCable()
+  if (!cable) return
   const usersChannel = cable.subscriptions.create(
     { channel: 'UsersChannel' },
     {
