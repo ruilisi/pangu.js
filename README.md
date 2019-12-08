@@ -56,6 +56,13 @@ The reasons why projects built with `Next.js` does not support `IE 9-11` are mai
 * By enter key strokes `esc l`, page gets reloaded and the frontend will use `API_ROOT_LOCAL` of [dns.js](utils/dns.js) as local api host.
 * By enter key strokes `esc r`, page gets reloaded and the frontend will figure out and use the best remote api host in `REMOTE_HOSTS` of [dns.js](utils/dns.js) by `ping` each remote hosts.
 
+## Quick start
+* While this project is developed with Nodejs `v12.1.0`, you can try any version of Nodejs that works.
+* Run `yarn` => `yarn dev`.
+
+## Deployment
+[Dockerfile](./Dockerfile) is attached for building this project, and run `bin/build.sh` to build it.
+
 ## Javascript libraries included
 #### `readt-intl`
 This library provides React components and an API to format dates, numbers, and strings, including pluralization and handling translations.
