@@ -1,11 +1,10 @@
 import * as qiniu from 'qiniu-js'
 import React from 'react'
-import { Upload, Button, Icon } from 'antd'
+import { Upload } from 'antd'
 
-const uploadWrap = ({ token, onSuccess }) => {
+export default ({ children, qiniuToken, onSuccess, keyPrefix = 'file' }) => {
   const uploadFile = ({ file }) => {
-    const qiniuToken = token
-    const key = `student_${new Date().getTime()}`
+    const key = `${keyPrefix}_${new Date().getTime()}`
     const config = {
       useCdnDomain: true,
       region: null
@@ -26,18 +25,11 @@ const uploadWrap = ({ token, onSuccess }) => {
       complete: result => {
         const uploadUrl = 'http://res.paiyou.co/'
         const fileUrl = uploadUrl + key
+        console.info(result)
         onSuccess(fileUrl)
       }
     })
   }
 
-  return (
-    <Upload customRequest={uploadFile}>
-      <Button>
-        <Icon type="upload" /> 上传头像
-      </Button>
-    </Upload>
-  )
+  return <Upload customRequest={uploadFile}>{children}</Upload>
 }
-
-export default uploadWrap

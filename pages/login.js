@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
-import { Input, Button, message, Row, Col } from 'antd'
+import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import I from 'immutable'
 import { TR } from '../utils/translation'
 import { viewSetIn, redirectIfAuthorized } from '../redux/modules/view'
 import { selfSet } from '../redux/modules/self'
 import { post, removeAuthorization } from '../utils/request'
-import Nav from '../components/nav'
+import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Login = () => {
   redirectIfAuthorized('/')
@@ -43,59 +43,54 @@ const Login = () => {
     }
   }
   return (
-    <Nav>
-      <Row className="MT-45">
-        <Col xs={{ span: 24 }} sm={{ offset: 6, span: 12 }} md={{ offset: 8, span: 8 }}>
-          <div className="MB-10 FS-15 TA-C">登录</div>
-          <div>
-            <FormattedMessage id="Email or Mobile">
-              {placeholder => (
-                <Input
-                  key="1"
-                  size="large"
-                  type="text"
-                  placeholder={placeholder}
-                  autoFocus
-                  className="H-21"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                />
-              )}
-            </FormattedMessage>
-            <FormattedMessage id="Password">
-              {placeholder => (
-                <Input
-                  key="2"
-                  size="large"
-                  type="password"
-                  placeholder={placeholder}
-                  className="MT-12 H-21"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  onKeyPress={onKeyPress}
-                />
-              )}
-            </FormattedMessage>
-            <div key="3" className="MT-22">
-              <Button
-                className="H-21"
-                type="primary"
-                size="large"
-                loading={submitting}
-                onClick={e => {
-                  setSubmitting(true)
-                  e.preventDefault()
-                  login(username, password)
-                }}
-                style={{ width: '100%' }}
-              >
-                {TR('Login')}
-              </Button>
-            </div>
-          </div>
-        </Col>
-      </Row>
-    </Nav>
+    <FormUnderNavLayout title="Login">
+      <div>
+        <FormattedMessage id="Email or Mobile">
+          {placeholder => (
+            <Input
+              key="1"
+              size="large"
+              type="text"
+              placeholder={placeholder}
+              autoFocus
+              className="H-21"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+          )}
+        </FormattedMessage>
+        <FormattedMessage id="Password">
+          {placeholder => (
+            <Input
+              key="2"
+              size="large"
+              type="password"
+              placeholder={placeholder}
+              className="MT-12 H-21"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyPress={onKeyPress}
+            />
+          )}
+        </FormattedMessage>
+        <div key="3" className="MT-22">
+          <Button
+            className="H-21"
+            type="primary"
+            size="large"
+            loading={submitting}
+            onClick={e => {
+              setSubmitting(true)
+              e.preventDefault()
+              login(username, password)
+            }}
+            style={{ width: '100%' }}
+          >
+            {TR('Login')}
+          </Button>
+        </div>
+      </div>
+    </FormUnderNavLayout>
   )
 }
 

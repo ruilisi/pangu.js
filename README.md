@@ -26,6 +26,9 @@ Optimized for a smaller build size, faster dev compilation and dozens of other i
 #### ActionCable
 An altered version of [action_cable.js](./static/action_cable.js) is provided which supports `jwt` authentication. The magic is merely by appending `jwt` token to `Sec-WebSocket-Protocol` in request headers of websocket.
 
+#### CSS shortcuts
+TODO 
+
 #### Supports IE11, IE10, IE9
 While `IE` stuff is fading out of browser world cause its weird implementation which results in poor support for new js/css syntax, `IE` family still shares a tremendous market of browsers. Statistics from [netmarketshare](https://gs.statcounter.com/browser-market-share/desktop/worldwide) shows that `IE`  family still accounts for `3.67%` of the whole desktop market at the moment of writing this README (Dec 07, 2019).
 <img src="./doc/desktop-browser-market-share.png" width="60%" align="middle" />

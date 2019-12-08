@@ -7,12 +7,11 @@ export default authorization => {
     { channel: 'RoomsChannel', authorization },
     {
       connected: data => {
-        console.info('connected', data)
-        roomsChannel.load('self', {})
+        console.info('connected rooms', data)
       },
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
-        console.info('receivedData', receivedData)
+        console.info('receivedData rooms', receivedData)
         const { data, type } = receivedData
         switch (type) {
           default:

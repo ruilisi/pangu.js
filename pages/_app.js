@@ -37,8 +37,9 @@ class MyApp extends App {
     const { props } = this
     const { store } = props
     window.DISPATCH = store.dispatch
+    window.STATE = store.getState
     bindShortcutsToSwitchApiHost()
-    getApiRoot().then(() => DISPATCH(usersChannel()))
+    getApiRoot().then(usersChannel)
     const language = localStorage.getItem('LANGUAGE')
     if (!language) {
       this.setLocale('zh')

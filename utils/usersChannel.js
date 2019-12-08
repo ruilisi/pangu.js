@@ -3,31 +3,31 @@ import { HttpState } from '../consts'
 import { selfSet } from '../redux/modules/self'
 import actionCable from './actionCable'
 
-export default () => (D, S) => {
+export default function() {
   const cable = actionCable()
-  if (!cable) return
-  const usersChannel = cable.subscriptions.create(
+  if (!cable) return null
+  const channel = cable.subscriptions.create(
     { channel: 'UsersChannel' },
     {
       connected: data => {
-        console.info('connected', data)
-        if (S().view.getIn(authorizedPath) !== true) {
-          D(viewSetIn(authorizedPath, true))
+        console.info('connected users', data)
+        if (STATE().view.getIn(authorizedPath) !== true) {
+          DISPATCH(viewSetIn(authorizedPath, true))
         }
-        usersChannel.load('self', {})
+        channel.load('self', {})
       },
       disconnected: () => {
-        if (S().view.getIn(authorizedPath) === HttpState.UNKNOWN) {
-          D(viewSetIn(authorizedPath, false))
+        if (STATE().view.getIn(authorizedPath) === HttpState.UNKNOWN) {
+          DISPATCH(viewSetIn(authorizedPath, false))
         }
       },
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
-        console.info('receivedData', receivedData)
-        const { data, type } = receivedData
-        switch (type) {
+        console.info('receivedData users', receivedData)
+        const { data, path } = receivedData
+        switch (path) {
           case 'self':
-            D(selfSet(data))
+            DISPATCH(selfSet(data))
             break
           default:
             break
@@ -41,4 +41,5 @@ export default () => (D, S) => {
       }
     }
   )
+  return channel
 }

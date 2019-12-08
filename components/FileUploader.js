@@ -11,7 +11,6 @@ export default ({ token, onSuccess, keyPrefix = 'file' }) => {
   const [name, setName] = useState('')
 
   const handleAvatarChange = ({ file }) => {
-    console.info(file)
     if (file.status === 'uploading') {
       setUploading(true)
       return

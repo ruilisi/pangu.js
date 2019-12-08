@@ -14,6 +14,7 @@ const initialState = I.fromJS({
   login: {
     authorized: HttpState.UNKNOWN
   },
+  qiniuToken: null,
   avatars: {},
   tables: {}
 }).update('tables', tables =>
@@ -64,12 +65,12 @@ export const authorizedPath = ['login', 'authorized']
 export const setAuthorized = value => D => D(viewSetIn(authorizedPath, value))
 export const authorized = view => view.getIn(authorizedPath)
 
-export const redirectIfAuthorized = nextPath => {
+export const redirectIfAuthorized = (nextPath, authorizedValue = true) => {
   const router = useRouter()
   const view = useSelector(state => state.view)
 
   useEffect(() => {
-    if (authorized(view) === true) {
+    if (authorized(view) === authorizedValue) {
       router.push(nextPath)
     }
   })
