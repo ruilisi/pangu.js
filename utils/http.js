@@ -1,11 +1,5 @@
-import Router from 'next/router'
-import { removeAuthorization, get } from './request'
+import { get } from './request'
 import dns from './dns'
-
-export const logout = () => {
-  removeAuthorization()
-  Router.push('/')
-}
 
 export const getGoods = async () => {
   const res = await get('inapp/all_goods')

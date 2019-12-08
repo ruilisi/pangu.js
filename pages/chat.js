@@ -163,7 +163,7 @@ const Chat = () => {
               })
             }}
           >
-            退出登录
+            Logout
           </Button>
         </div>
       </Col>

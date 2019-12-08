@@ -1,12 +1,12 @@
 import React from 'react'
 import { Icon, Dropdown, Menu } from 'antd'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Link from 'next/link'
 import Router from 'next/router'
 import { T } from '../utils/translation'
 import { authorized } from '%view'
-import { logout } from '../utils/http'
 import { LANGUAGE_NAME, SUPPORTED_LANGUAGES } from '../consts'
+import { logout } from '../api/sessions'
 
 const setLanguage = l => {
   localStorage.setItem('LANGUAGE', l)
@@ -23,6 +23,7 @@ const navigatorLanguage = () => {
 
 const Nav = ({ children }) => {
   const view = useSelector(state => state.view)
+
   const PathFromPathname = pathname => {
     let path = pathname || ''
     if (path.length > 0 && path[0] === '/') {
@@ -30,6 +31,8 @@ const Nav = ({ children }) => {
     }
     return path
   }
+
+  const D = useDispatch()
 
   const i18nMenuHorizontal = pathname => {
     if (!process.browser) {
@@ -136,7 +139,7 @@ const Nav = ({ children }) => {
         </li>
         <li className="mega-menu">
           <a>
-            <span className="C-P" role="presentation" onClick={() => logout()}>
+            <span className="C-P" role="presentation" onClick={() => D(logout())}>
               {T('Logout')}
             </span>
           </a>
