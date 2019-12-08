@@ -1,12 +1,10 @@
 import React from 'react'
-import { Icon, Button, Dropdown, Menu, Modal } from 'antd'
-import { useDispatch, useSelector } from 'react-redux'
+import { Icon, Dropdown, Menu } from 'antd'
+import { useSelector } from 'react-redux'
 import Link from 'next/link'
 import Router from 'next/router'
-import Login from './login'
-import Signup from './signup'
 import { T } from '../utils/translation'
-import { viewSetIn, authorized } from '%view'
+import { authorized } from '%view'
 import { logout } from '../utils/http'
 import { LANGUAGE_NAME, SUPPORTED_LANGUAGES } from '../consts'
 
@@ -25,7 +23,6 @@ const navigatorLanguage = () => {
 
 const Nav = ({ children }) => {
   const view = useSelector(state => state.view)
-  const dispatch = useDispatch()
   const PathFromPathname = pathname => {
     let path = pathname || ''
     if (path.length > 0 && path[0] === '/') {
@@ -90,14 +87,14 @@ const Nav = ({ children }) => {
     const menu = (
       <Menu>
         <Menu.Item>
-          <span role="presentation" onClick={() => dispatch(viewSetIn(['loginDialogOpen'], true))}>
-            {T('Login')}
-          </span>
+          <Link href="/login">
+            <a> {T('Login')}</a>
+          </Link>
         </Menu.Item>
         <Menu.Item>
-          <span role="presentation" onClick={() => dispatch(viewSetIn(['signupDialogOpen'], true))}>
-            {T('Signup')}
-          </span>
+          <Link href="/signup">
+            <a> {T('Signup')}</a>
+          </Link>
         </Menu.Item>
       </Menu>
     )
@@ -115,18 +112,14 @@ const Nav = ({ children }) => {
       <ul className="nav navbar-nav bold">
         {i18nMenuHorizontal()}
         <li className="mega-menu">
-          <a>
-            <span role="presentation" onClick={() => dispatch(viewSetIn(['loginDialogOpen'], true))}>
-              {T('Login')}
-            </span>
-          </a>
+          <Link href="/login">
+            <a className="C-P underline">{T('Login')}</a>
+          </Link>
         </li>
         <li className="mega-menu">
-          <a>
-            <Button type="primary" className="lingti-btn-primary" onClick={() => dispatch(viewSetIn(['signupDialogOpen'], true))}>
-              {T('Signup')}
-            </Button>
-          </a>
+          <Link href="/signup">
+            <a className="C-P underline">{T('Signup')}</a>
+          </Link>
         </li>
       </ul>
     )
@@ -199,24 +192,6 @@ const Nav = ({ children }) => {
         </div>
       </nav>
       {children}
-      <Modal
-        width={420}
-        visible={view.getIn(['loginDialogOpen'])}
-        closable={false}
-        footer={null}
-        onCancel={() => dispatch(viewSetIn(['loginDialogOpen'], false))}
-      >
-        <Login />
-      </Modal>
-      <Modal
-        width={420}
-        visible={view.getIn(['signupDialogOpen'])}
-        closable={false}
-        footer={null}
-        onCancel={() => dispatch(viewSetIn(['signupDialogOpen'], false))}
-      >
-        <Signup />
-      </Modal>
     </div>
   )
 }
