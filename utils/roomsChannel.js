@@ -1,21 +1,13 @@
-import _ from 'lodash'
-import dns from '~/utils/dns'
+import actionCable from './actionCable'
 
-const usedAuthorizations = []
 export default authorization => {
-  if (_.includes(usedAuthorizations, authorization)) {
-    return
-  }
-  usedAuthorizations.push(authorization)
-
-  // eslint-disable-next-line no-undef
-  const cable = ActionCable.createConsumer(`${dns.API_ROOT}/cable`)
-  const usersChannel = cable.subscriptions.create(
-    { channel: 'UsersChannel', authorization },
+  const cable = actionCable()
+  const roomsChannel = cable.subscriptions.create(
+    { channel: 'RoomsChannel', authorization },
     {
       connected: data => {
         console.info('connected', data)
-        usersChannel.load('self', {})
+        roomsChannel.load('self', {})
       },
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
