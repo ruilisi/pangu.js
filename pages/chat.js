@@ -2,10 +2,9 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Col, Input, Button, Avatar, Row, Menu, Card, Spin } from 'antd'
+import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
 import { get, httpDelete, getAuthorization, removeAuthorization } from '../utils/request'
 import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
-import UploadFile from '../components/QiniuUploader'
 import { viewSetIn, viewMergeIn } from '../redux/modules/view'
 import { selfSet, selfSetIn } from '../redux/modules/self'
 import { userInfo } from '../utils/http'
@@ -74,7 +73,6 @@ const Chat = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
-  const [qiniuToken, setQiniuToken] = useState()
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
@@ -95,10 +93,6 @@ const Chat = () => {
       setRoomId(id)
       messageSocket(id, sendMessageButtonRef)
     })
-
-    get('qiniu_token').then(data => {
-      setQiniuToken(data.qiniuToken)
-    })
   }, [])
 
   const onKeyPress = e => {
@@ -111,24 +105,8 @@ const Chat = () => {
   return (
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
-        <div className="FS-10 TA-C PT-20" style={{ height: '10vh' }}>
-          房间列表
-        </div>
-        <div className="TA-C">
-          {qiniuToken ? (
-            self.getIn(['data', 'avatar']) ? (
-              <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
-            ) : (
-              <UploadFile
-                token={qiniuToken}
-                onSuccess={avatar => {
-                  channel.load('set_avatar', { avatar })
-                }}
-              />
-            )
-          ) : (
-            <Spin />
-          )}
+        <div className="FS-10 TA-C PT-20">
+          <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
         </div>
         <Card style={{ height: '65vh', overflowY: 'scroll' }} bordered={false}>
           <Menu className="TA-C" selectedKeys={[roomId]}>
