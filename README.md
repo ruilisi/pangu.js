@@ -36,7 +36,31 @@ An altered version of [action_cable.js](./action_cable.js) is provided which sup
 
 #### CSS shortcuts
 
-TODO
+Since we adopted NextJS, it supports CSS / Sass / Less / Stylus files, which is convenient for us to add CSS styles freely.
+
+```js
+:global {
+  .example {
+    font-size: 20px;
+  }
+}
+
+export default () => <div className="example">Example</div>
+```
+
+Besides, we also added support for variables, such as:
+
+```js
+@mixin number-classes() {
+  @for $i from 1 through 50 {
+    .FS-#{$i} {
+      font-size: 2px * $i;
+    }
+  }
+}
+
+export default () => <div className="FS-10">Example</div>
+```
 
 #### Supports IE11, IE10, IE9
 
