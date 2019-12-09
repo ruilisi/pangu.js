@@ -1,10 +1,12 @@
 import dns from './dns'
 import { getAuthorization } from './request'
+import { viewSetIn, authorizedPath } from '%view'
 
 export const authorization2ActionCable = {}
 export default () => {
   const authorization = getAuthorization()
   if (!authorization) {
+    DISPATCH(viewSetIn(authorizedPath, false))
     return null
   }
   if (!authorization2ActionCable[authorization]) {

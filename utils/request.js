@@ -67,25 +67,20 @@ const parseResponse = async res => {
   if (res.headers.get('Authorization')) {
     setAuthorization(res.headers.get('Authorization'))
   }
-  try {
-    const json = await res.json()
-    if (res.status >= 400) {
-      json.status = res.status
-    }
-    if (res.status === 401) {
-      const default401Message = '登录已过期，请重新登录'
-      removeAuthorization()
-      console.info(default401Message)
-      if (json.error.indexOf('revoke') >= 0) {
-        json.error = default401Message
-      }
-      // createToast(json.error || default401Message)
-    }
-    return json
-  } catch (error) {
-    // skip
-    return null
+  const json = await res.json()
+  if (res.status >= 400) {
+    json.status = res.status
   }
+  if (res.status === 401) {
+    const default401Message = '登录已过期，请重新登录'
+    removeAuthorization()
+    console.info(default401Message)
+    if (json.error.indexOf('revoke') >= 0) {
+      json.error = default401Message
+    }
+    // createToast(json.error || default401Message)
+  }
+  return json
 }
 
 export const get = async (path, data = {}, _token = '') => {

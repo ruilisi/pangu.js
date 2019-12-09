@@ -1,6 +1,6 @@
 import I, { Set, isImmutable } from 'immutable'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { HttpState } from '~/consts'
 

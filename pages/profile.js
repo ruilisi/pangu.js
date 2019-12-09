@@ -17,7 +17,7 @@ const Profile = () => {
   useEffect(() => {
     if (!qiniuToken) {
       get('qiniu_token').then(data => {
-        D(viewSetIn(['qiniuToken'], data.qiniuToken))
+        D(viewSetIn(['qiniuToken'], data && data.qiniuToken))
       })
     }
   }, [])
