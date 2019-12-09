@@ -418,64 +418,55 @@ class ActionCableSubscriptions {
   }
 }
 
-;(function() {
-  const context = this
-
-  ;(function() {
-    ;(function() {
-      const { slice } = []
-
-      this.ActionCable = {
-        INTERNAL,
-        createConsumer(url, jwt_token = null) {
-          let ref
-          if (url == null) {
-            url = (ref = this.getConfig('url')) != null ? ref : this.INTERNAL.default_mount_path
-          }
-          if (jwt_token) {
-            this.INTERNAL.protocols.push(jwt_token)
-          }
-          return new ActionCableConsumer(this.createWebSocketURL(url))
-        },
-        getConfig(name) {
-          const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
-          return element != null ? element.getAttribute('content') : void 0
-        },
-        createWebSocketURL(url) {
-          let a
-          if (url && !/^wss?:/i.test(url)) {
-            a = document.createElement('a')
-            a.href = url
-            a.href = a.href
-            a.protocol = a.protocol.replace('http', 'ws')
-            return a.href
-          }
-          return url
-        },
-        startDebugging() {
-          return (this.debugging = true)
-        },
-        stopDebugging() {
-          return (this.debugging = null)
-        },
-        log() {
-          let messages
-          let ref
-          messages = arguments.length >= 1 ? slice.call(arguments, 0) : []
-          if (this.debugging) {
-            messages.push(Date.now())
-            return (ref = console).log.apply(ref, ['[ActionCable]'].concat(slice.call(messages)))
-          }
-        }
+export default {
+  INTERNAL,
+  createConsumer: (url, jwtToken = null) => {
+    let _url
+    if (url == null) {
+      const configUrl = this.getConfig('url')
+      if (configUrl === null) {
+        _url = INTERNAL.default_mount_path
+      } else {
+        _url = configUrl
       }
-    }.call(this))
-  }.call(context))
+    } else {
+      _url = url
+    }
+    if (jwtToken) {
+      this.INTERNAL.protocols.push(jwtToken)
+    }
+    return new ActionCableConsumer(this.createWebSocketURL(_url))
+  },
 
-  const { ActionCable } = context
+  getConfig: name => {
+    const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
+    return element != null ? element.getAttribute('content') : void 0
+  },
 
-  if (typeof module === 'object' && module.exports) {
-    module.exports = ActionCable
-  } else if (typeof define === 'function' && define.amd) {
-    define(ActionCable)
+  createWebSocketURL: url => {
+    let a
+    if (url && !/^wss?:/i.test(url)) {
+      a = document.createElement('a')
+      a.href = url
+      a.protocol = a.protocol.replace('http', 'ws')
+      return a.href
+    }
+    return url
+  },
+  startDebugging: () => {
+    this.debugging = true
+    return this.debugging
+  },
+  stopDebugging: () => {
+    this.debugging = null
+    return this.debugging
+  },
+  log: (...args) => {
+    if (this.debugging) {
+      const ref = console
+      args.push(Date.now())
+      return ref.log.apply(ref, ['[ActionCable]', ...args])
+    }
+    return null
   }
-}.call(this))
+}
