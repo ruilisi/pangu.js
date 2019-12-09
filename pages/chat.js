@@ -9,6 +9,7 @@ import { viewSetIn, viewMergeIn } from '../redux/modules/view'
 import { selfSet, selfSetIn } from '../redux/modules/self'
 import { userInfo } from '../utils/http'
 import dns from '../utils/dns'
+import ActionCable from '../public/action_cable'
 
 const getRooms = async () => {
   const res = await get('rooms')

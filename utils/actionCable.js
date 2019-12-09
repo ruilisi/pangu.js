@@ -1,6 +1,7 @@
 import dns from './dns'
 import { getAuthorization } from './request'
 import { viewSetIn, authorizedPath } from '%view'
+import ActionCable from '../public/action_cable'
 
 export const authorization2ActionCable = {}
 export default () => {

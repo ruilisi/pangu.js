@@ -6,6 +6,188 @@ const bind = (fn, me) => {
   }
 }
 
+const INTERNAL = {
+  message_types: {
+    welcome: 'welcome',
+    ping: 'ping',
+    confirmation: 'confirm_subscription',
+    rejection: 'reject_subscription'
+  },
+  default_mount_path: '/cable',
+  protocols: ['actioncable-v1-json', 'actioncable-unsupported']
+}
+
+class ActionCableSubscription {
+  constructor(consumer, params, mixin) {
+    this.consumer = consumer
+    this.identifier = JSON.stringify(params || {})
+    Object.assign(this, mixin)
+  }
+
+  perform = (action, data = {}) => {
+    const _data = data || {}
+    _data.action = action
+    return this.send(_data)
+  }
+
+  send = data =>
+    this.consumer.send({
+      command: 'message',
+      identifier: this.identifier,
+      data: JSON.stringify(data)
+    })
+
+  unsubscribe = () => this.consumer.subscriptions.remove(this)
+}
+
+class ActionCableSubscriptions {
+  constructor(consumer) {
+    this.consumer = consumer
+    this.subscriptions = []
+  }
+
+  create = (channel, mixin) => {
+    const params = typeof channel === 'object' ? channel : { channel }
+    const subscription = new ActionCableSubscription(this.consumer, params, mixin)
+    return this.add(subscription)
+  }
+
+  add = subscription => {
+    this.subscriptions.push(subscription)
+    this.consumer.ensureActiveConnection()
+    this.notify(subscription, 'initialized')
+    this.sendCommand(subscription, 'subscribe')
+    return subscription
+  }
+
+  remove = subscription => {
+    this.forget(subscription)
+    if (!this.findAll(subscription.identifier).length) {
+      this.sendCommand(subscription, 'unsubscribe')
+    }
+    return subscription
+  }
+
+  reject = identifier => {
+    const subscriptions = this.findAll(identifier)
+    const results = []
+    subscriptions.forEach(subscription => {
+      this.forget(subscription)
+      this.notify(subscription, 'rejected')
+      results.push(subscription)
+    })
+    return results
+  }
+
+  forget = subscription => {
+    this.subscriptions = this.subscriptions.filter(s => s !== subscription)
+    return subscription
+  }
+
+  findAll = identifier => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      if (subscription.identifier === identifier) {
+        results.push(subscription)
+      }
+    })
+    return results
+  }
+
+  reload = () => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      results.push(this.sendCommand(subscription, 'subscribe'))
+    })
+    return results
+  }
+
+  notifyAll = (callbackName, ...args) => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      results.push(this.notify.apply(this, [subscription, callbackName, ...args]))
+    })
+    return results
+  }
+
+  notify = (subscription, callbackName, ...args) => {
+    let subscriptions
+    if (typeof subscription === 'string') {
+      subscriptions = this.findAll(subscription)
+    } else {
+      subscriptions = [subscription]
+    }
+    const results = []
+    subscriptions.forEach(s => {
+      // eslint-disable-next-line prefer-spread
+      results.push(typeof s[callbackName] === 'function' ? s[callbackName].apply(s, args) : void 0)
+    })
+    return results
+  }
+
+  sendCommand = (subscription, command) => {
+    const { identifier } = subscription
+    return this.consumer.send({
+      command,
+      identifier
+    })
+  }
+}
+
+const ActionCable = {
+  INTERNAL,
+  createConsumer: (url, jwtToken = null) => {
+    let _url
+    if (url == null) {
+      const configUrl = ActionCable.getConfig('url')
+      if (configUrl === null) {
+        _url = INTERNAL.default_mount_path
+      } else {
+        _url = configUrl
+      }
+    } else {
+      _url = url
+    }
+    if (jwtToken) {
+      ActionCable.INTERNAL.protocols.push(jwtToken)
+    }
+    // eslint-disable-next-line no-use-before-define
+    return new ActionCableConsumer(ActionCable.createWebSocketURL(_url))
+  },
+
+  getConfig: name => {
+    const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
+    return element != null ? element.getAttribute('content') : void 0
+  },
+
+  createWebSocketURL: url => {
+    let a
+    if (url && !/^wss?:/i.test(url)) {
+      a = document.createElement('a')
+      a.href = url
+      a.protocol = a.protocol.replace('http', 'ws')
+      return a.href
+    }
+    return url
+  },
+  startDebugging: () => {
+    ActionCable.debugging = true
+    return ActionCable.debugging
+  },
+  stopDebugging: () => {
+    ActionCable.debugging = null
+    return ActionCable.debugging
+  },
+  log: (...args) => {
+    if (ActionCable.debugging) {
+      const ref = console
+      args.push(Date.now())
+      return ref.log.apply(ref, ['[ActionCable]', ...args])
+    }
+    return null
+  }
+}
+
 class ActionCableConnectionMonitor {
   static pollInterval = {
     min: 3,
@@ -129,16 +311,6 @@ class ActionCableConnectionMonitor {
   clamp = (number, min, max) => Math.max(min, Math.min(max, number))
 }
 
-const INTERNAL = {
-  message_types: {
-    welcome: 'welcome',
-    ping: 'ping',
-    confirmation: 'confirm_subscription',
-    rejection: 'reject_subscription'
-  },
-  default_mount_path: '/cable',
-  protocols: ['actioncable-v1-json', 'actioncable-unsupported']
-}
 class ActionCableConnection {
   static reopenDelay = 500
 
@@ -281,29 +453,6 @@ class ActionCableConnection {
   }
 }
 
-class ActionCableSubscription {
-  constructor(consumer, params, mixin) {
-    this.consumer = consumer
-    this.identifier = JSON.stringify(params || {})
-    Object.assign(this, mixin)
-  }
-
-  perform = (action, data = {}) => {
-    const _data = data || {}
-    _data.action = action
-    return this.send(_data)
-  }
-
-  send = data =>
-    this.consumer.send({
-      command: 'message',
-      identifier: this.identifier,
-      data: JSON.stringify(data)
-    })
-
-  unsubscribe = () => this.consumer.subscriptions.remove(this)
-}
-
 class ActionCableConsumer {
   constructor(url) {
     this.url = url
@@ -324,149 +473,4 @@ class ActionCableConsumer {
   }
 }
 
-class ActionCableSubscriptions {
-  constructor(consumer) {
-    this.consumer = consumer
-    this.subscriptions = []
-  }
-
-  create = (channel, mixin) => {
-    const params = typeof channel === 'object' ? channel : { channel }
-    const subscription = new ActionCableSubscription(this.consumer, params, mixin)
-    return this.add(subscription)
-  }
-
-  add = subscription => {
-    this.subscriptions.push(subscription)
-    this.consumer.ensureActiveConnection()
-    this.notify(subscription, 'initialized')
-    this.sendCommand(subscription, 'subscribe')
-    return subscription
-  }
-
-  remove = subscription => {
-    this.forget(subscription)
-    if (!this.findAll(subscription.identifier).length) {
-      this.sendCommand(subscription, 'unsubscribe')
-    }
-    return subscription
-  }
-
-  reject = identifier => {
-    const subscriptions = this.findAll(identifier)
-    const results = []
-    subscriptions.forEach(subscription => {
-      this.forget(subscription)
-      this.notify(subscription, 'rejected')
-      results.push(subscription)
-    })
-    return results
-  }
-
-  forget = subscription => {
-    this.subscriptions = this.subscriptions.filter(s => s !== subscription)
-    return subscription
-  }
-
-  findAll = identifier => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      if (subscription.identifier === identifier) {
-        results.push(subscription)
-      }
-    })
-    return results
-  }
-
-  reload = () => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      results.push(this.sendCommand(subscription, 'subscribe'))
-    })
-    return results
-  }
-
-  notifyAll = (callbackName, ...args) => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      results.push(this.notify.apply(this, [subscription, callbackName, ...args]))
-    })
-    return results
-  }
-
-  notify = (subscription, callbackName, ...args) => {
-    let subscriptions
-    if (typeof subscription === 'string') {
-      subscriptions = this.findAll(subscription)
-    } else {
-      subscriptions = [subscription]
-    }
-    const results = []
-    subscriptions.forEach(s => {
-      // eslint-disable-next-line prefer-spread
-      results.push(typeof s[callbackName] === 'function' ? s[callbackName].apply(s, args) : void 0)
-    })
-    return results
-  }
-
-  sendCommand = (subscription, command) => {
-    const { identifier } = subscription
-    return this.consumer.send({
-      command,
-      identifier
-    })
-  }
-}
-
-export default {
-  INTERNAL,
-  createConsumer: (url, jwtToken = null) => {
-    let _url
-    if (url == null) {
-      const configUrl = this.getConfig('url')
-      if (configUrl === null) {
-        _url = INTERNAL.default_mount_path
-      } else {
-        _url = configUrl
-      }
-    } else {
-      _url = url
-    }
-    if (jwtToken) {
-      this.INTERNAL.protocols.push(jwtToken)
-    }
-    return new ActionCableConsumer(this.createWebSocketURL(_url))
-  },
-
-  getConfig: name => {
-    const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
-    return element != null ? element.getAttribute('content') : void 0
-  },
-
-  createWebSocketURL: url => {
-    let a
-    if (url && !/^wss?:/i.test(url)) {
-      a = document.createElement('a')
-      a.href = url
-      a.protocol = a.protocol.replace('http', 'ws')
-      return a.href
-    }
-    return url
-  },
-  startDebugging: () => {
-    this.debugging = true
-    return this.debugging
-  },
-  stopDebugging: () => {
-    this.debugging = null
-    return this.debugging
-  },
-  log: (...args) => {
-    if (this.debugging) {
-      const ref = console
-      args.push(Date.now())
-      return ref.log.apply(ref, ['[ActionCable]', ...args])
-    }
-    return null
-  }
-}
+export default ActionCable
