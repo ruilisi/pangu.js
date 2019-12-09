@@ -307,7 +307,7 @@ class ActionCableSubscription {
 class ActionCableConsumer {
   constructor(url) {
     this.url = url
-    this.subscriptions = new ActionCable.Subscriptions(this)
+    this.subscriptions = new ActionCableSubscriptions(this)
     this.connection = new ActionCableConnection(this)
   }
 
@@ -321,6 +321,100 @@ class ActionCableConsumer {
     if (!this.connection.isActive()) {
       this.connection.open()
     }
+  }
+}
+
+class ActionCableSubscriptions {
+  constructor(consumer) {
+    this.consumer = consumer
+    this.subscriptions = []
+  }
+
+  create = (channel, mixin) => {
+    const params = typeof channel === 'object' ? channel : { channel }
+    const subscription = new ActionCableSubscription(this.consumer, params, mixin)
+    return this.add(subscription)
+  }
+
+  add = subscription => {
+    this.subscriptions.push(subscription)
+    this.consumer.ensureActiveConnection()
+    this.notify(subscription, 'initialized')
+    this.sendCommand(subscription, 'subscribe')
+    return subscription
+  }
+
+  remove = subscription => {
+    this.forget(subscription)
+    if (!this.findAll(subscription.identifier).length) {
+      this.sendCommand(subscription, 'unsubscribe')
+    }
+    return subscription
+  }
+
+  reject = identifier => {
+    const subscriptions = this.findAll(identifier)
+    const results = []
+    subscriptions.forEach(subscription => {
+      this.forget(subscription)
+      this.notify(subscription, 'rejected')
+      results.push(subscription)
+    })
+    return results
+  }
+
+  forget = subscription => {
+    this.subscriptions = this.subscriptions.filter(s => s !== subscription)
+    return subscription
+  }
+
+  findAll = identifier => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      if (subscription.identifier === identifier) {
+        results.push(subscription)
+      }
+    })
+    return results
+  }
+
+  reload = () => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      results.push(this.sendCommand(subscription, 'subscribe'))
+    })
+    return results
+  }
+
+  notifyAll = (callbackName, ...args) => {
+    const results = []
+    this.subscriptions.forEach(subscription => {
+      results.push(this.notify.apply(this, [subscription, callbackName, ...args]))
+    })
+    return results
+  }
+
+  notify = (subscription, callbackName, ...args) => {
+    let subscriptions
+    if (typeof subscription === 'string') {
+      subscriptions = this.findAll(subscription)
+    } else {
+      subscriptions = [subscription]
+    }
+    const results = []
+    subscriptions.forEach(s => {
+      // eslint-disable-next-line prefer-spread
+      results.push(typeof s[callbackName] === 'function' ? s[callbackName].apply(s, args) : void 0)
+    })
+    return results
+  }
+
+  sendCommand = (subscription, command) => {
+    const { identifier } = subscription
+    return this.consumer.send({
+      command,
+      identifier
+    })
   }
 }
 
@@ -378,170 +472,6 @@ class ActionCableConsumer {
   }.call(context))
 
   const { ActionCable } = context
-  ;(function() {
-    ;(function() {}.call(this))
-    ;(function() {
-      const { slice } = []
-
-      ActionCable.Subscriptions = (function() {
-        function Subscriptions(consumer) {
-          this.consumer = consumer
-          this.subscriptions = []
-        }
-
-        Subscriptions.prototype.create = function(channelName, mixin) {
-          let channel
-          let params
-          let subscription
-          channel = channelName
-          params =
-            typeof channel === 'object'
-              ? channel
-              : {
-                  channel
-                }
-          subscription = new ActionCableSubscription(this.consumer, params, mixin)
-          return this.add(subscription)
-        }
-
-        Subscriptions.prototype.add = function(subscription) {
-          this.subscriptions.push(subscription)
-          this.consumer.ensureActiveConnection()
-          this.notify(subscription, 'initialized')
-          this.sendCommand(subscription, 'subscribe')
-          return subscription
-        }
-
-        Subscriptions.prototype.remove = function(subscription) {
-          this.forget(subscription)
-          if (!this.findAll(subscription.identifier).length) {
-            this.sendCommand(subscription, 'unsubscribe')
-          }
-          return subscription
-        }
-
-        Subscriptions.prototype.reject = function(identifier) {
-          let i
-          let len
-          let ref
-          let results
-          let subscription
-          ref = this.findAll(identifier)
-          results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            subscription = ref[i]
-            this.forget(subscription)
-            this.notify(subscription, 'rejected')
-            results.push(subscription)
-          }
-          return results
-        }
-
-        Subscriptions.prototype.forget = function(subscription) {
-          let s
-          this.subscriptions = function() {
-            let i
-            let len
-            let ref
-            let results
-            ref = this.subscriptions
-            results = []
-            for (i = 0, len = ref.length; i < len; i++) {
-              s = ref[i]
-              if (s !== subscription) {
-                results.push(s)
-              }
-            }
-            return results
-          }.call(this)
-          return subscription
-        }
-
-        Subscriptions.prototype.findAll = function(identifier) {
-          let i
-          let len
-          let ref
-          let results
-          let s
-          ref = this.subscriptions
-          results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            s = ref[i]
-            if (s.identifier === identifier) {
-              results.push(s)
-            }
-          }
-          return results
-        }
-
-        Subscriptions.prototype.reload = function() {
-          let i
-          let len
-          let ref
-          let results
-          let subscription
-          ref = this.subscriptions
-          results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            subscription = ref[i]
-            results.push(this.sendCommand(subscription, 'subscribe'))
-          }
-          return results
-        }
-
-        Subscriptions.prototype.notifyAll = function() {
-          let args
-          let callbackName
-          let i
-          let len
-          let ref
-          let results
-          let subscription
-          ;(callbackName = arguments[0]), (args = arguments.length >= 2 ? slice.call(arguments, 1) : [])
-          ref = this.subscriptions
-          results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            subscription = ref[i]
-            results.push(this.notify.apply(this, [subscription, callbackName].concat(slice.call(args))))
-          }
-          return results
-        }
-
-        Subscriptions.prototype.notify = function() {
-          let args
-          let callbackName
-          let i
-          let len
-          let results
-          let subscription
-          let subscriptions
-          ;(subscription = arguments[0]), (callbackName = arguments[1]), (args = arguments.length >= 3 ? slice.call(arguments, 2) : [])
-          if (typeof subscription === 'string') {
-            subscriptions = this.findAll(subscription)
-          } else {
-            subscriptions = [subscription]
-          }
-          results = []
-          for (i = 0, len = subscriptions.length; i < len; i++) {
-            subscription = subscriptions[i]
-            results.push(typeof subscription[callbackName] === 'function' ? subscription[callbackName].apply(subscription, args) : void 0)
-          }
-          return results
-        }
-
-        Subscriptions.prototype.sendCommand = function(subscription, command) {
-          let identifier
-          identifier = subscription.identifier
-          return this.consumer.send({
-            command,
-            identifier
-          })
-        }
-
-        return Subscriptions
-      })()
-    }.call(this))
-  }.call(this))
 
   if (typeof module === 'object' && module.exports) {
     module.exports = ActionCable
