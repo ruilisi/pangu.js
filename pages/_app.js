@@ -14,6 +14,8 @@ import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
 import DevTools from '../containers/DevTools'
 
+require('../static/action_cable')
+
 const localeData = { zh, en }
 
 class MyApp extends App {

@@ -1,3 +1,189 @@
+/* eslint-disable max-classes-per-file */
+
+const INTERNAL = {
+  message_types: {
+    welcome: 'welcome',
+    ping: 'ping',
+    confirmation: 'confirm_subscription',
+    rejection: 'reject_subscription'
+  },
+  default_mount_path: '/cable',
+  protocols: ['actioncable-v1-json', 'actioncable-unsupported']
+}
+class ActionCableConnection {
+  static reopenDelay = 500
+
+  constructor(consumer) {
+    this.consumer = consumer
+    this.subscriptions = this.consumer.subscriptions
+    this.monitor = new ActionCable.ConnectionMonitor(this)
+    this.disconnected = true
+    const { protocols } = INTERNAL
+    this.supportedProtocols = protocols.length >= 2 ? protocols.slice(0, -1) : []
+    this.unsupportedProtocol = protocols[protocols.length - 1]
+  }
+
+  send = data => {
+    if (this.isOpen()) {
+      this.webSocket.send(JSON.stringify(data))
+      return true
+    }
+    return false
+  }
+
+  open = () => {
+    if (this.isActive()) {
+      ActionCable.log(`Attempted to open WebSocket, but existing socket is ${this.getState()}`)
+      return false
+    }
+    ActionCable.log(`Opening WebSocket, current state is ${this.getState()}, subprotocols: ${INTERNAL.protocols}`)
+    if (this.webSocket != null) {
+      this.uninstallEventHandlers()
+    }
+    this.webSocket = new WebSocket(this.consumer.url, INTERNAL.protocols)
+    this.installEventHandlers()
+    this.monitor.start()
+    return true
+  }
+
+  close = arg => {
+    const allowReconnect = arg != null ? arg.allowReconnect : true
+    if (!allowReconnect) {
+      this.monitor.stop()
+    }
+    if (this.isActive() && this.webSocket) {
+      this.websocket.close()
+    }
+  }
+
+  reopen = () => {
+    let error
+    ActionCable.log(`Reopening WebSocket, current state is ${this.getState()}`)
+    if (this.isActive()) {
+      try {
+        return this.close()
+      } catch (error1) {
+        error = error1
+        return ActionCable.log('Failed to reopen WebSocket', error)
+      } finally {
+        ActionCable.log(`Reopening WebSocket in ${this.constructor.reopenDelay}ms`)
+        setTimeout(this.open, this.constructor.reopenDelay)
+      }
+    } else {
+      return this.open()
+    }
+  }
+
+  getProtocol = () => (this.webSocket != null ? this.webSocket.protocol : void 0)
+
+  isOpen = () => this.isState('open')
+
+  isActive = () => this.isState('open', 'connecting')
+
+  isProtocolSupported = () => this.supportedProtocols.includes(this.getProtocol())
+
+  isState = (...args) => args.indexOf(this.getState()) >= 0
+
+  getState = () => {
+    let ref1
+    let state
+    let value
+    for (state in WebSocket) {
+      value = WebSocket[state]
+      if (value === ((ref1 = this.webSocket) != null ? ref1.readyState : void 0)) {
+        return state.toLowerCase()
+      }
+    }
+    return null
+  }
+
+  installEventHandlers = () => {
+    let eventName
+    let handler
+    for (eventName in this.events) {
+      handler = this.events[eventName].bind(this)
+      this.webSocket[`on${eventName}`] = handler
+    }
+  }
+
+  uninstallEventHandlers = () => {
+    let eventName
+    console.info(this.events)
+    for (eventName in this.events) {
+      this.webSocket[`on${eventName}`] = function() {}
+    }
+  }
+
+  events = {
+    message(event) {
+      if (!this.isProtocolSupported()) {
+        return null
+      }
+      const { identifier, message, type } = JSON.parse(event.data)
+
+      const { message_types } = INTERNAL
+      switch (type) {
+        case message_types.welcome:
+          this.monitor.recordConnect()
+          return this.subscriptions.reload()
+        case message_types.ping:
+          return this.monitor.recordPing()
+        case message_types.confirmation:
+          return this.subscriptions.notify(identifier, 'connected')
+        case message_types.rejection:
+          return this.subscriptions.reject(identifier)
+        default:
+          return this.subscriptions.notify(identifier, 'received', message)
+      }
+    },
+    open() {
+      ActionCable.log(`WebSocket onopen event, using '${this.getProtocol()}' subprotocol`)
+      this.disconnected = false
+      if (!this.isProtocolSupported()) {
+        ActionCable.log('Protocol is unsupported. Stopping monitor and disconnecting.')
+        return this.close({
+          allowReconnect: false
+        })
+      }
+      return null
+    },
+    close() {
+      ActionCable.log('WebSocket onclose event')
+      if (this.disconnected) {
+        return null
+      }
+      this.disconnected = true
+      this.monitor.recordDisconnect()
+      return this.subscriptions.notifyAll('disconnected', {
+        willAttemptReconnect: this.monitor.isRunning()
+      })
+    },
+    error() {
+      return ActionCable.log('WebSocket onerror event')
+    }
+  }
+}
+
+class ActionCableConsumer {
+  constructor(url) {
+    this.url = url
+    this.subscriptions = new ActionCable.Subscriptions(this)
+    this.connection = new ActionCableConnection(this)
+  }
+
+  send = data => this.connection.send(data)
+
+  connect = () => this.connection.open()
+
+  disconnect = () => this.connection.close({ allowReconnect: false })
+
+  ensureActiveConnection = () => {
+    if (!this.connection.isActive()) {
+      this.connection.open()
+    }
+  }
+}
+
 ;(function() {
   const context = this
 
@@ -6,18 +192,7 @@
       const { slice } = []
 
       this.ActionCable = {
-        INTERNAL: {
-          message_types: {
-            welcome: 'welcome',
-            ping: 'ping',
-            confirmation: 'confirm_subscription',
-            rejection: 'reject_subscription'
-          },
-          default_mount_path: '/cable',
-          protocols: ['actioncable-v1-json', 'actioncable-unsupported']
-        },
-        WebSocket: window.WebSocket,
-        logger: window.console,
+        INTERNAL,
         createConsumer(url, jwt_token = null) {
           let ref
           if (url == null) {
@@ -26,11 +201,10 @@
           if (jwt_token) {
             this.INTERNAL.protocols.push(jwt_token)
           }
-          return new ActionCable.Consumer(this.createWebSocketURL(url))
+          return new ActionCableConsumer(this.createWebSocketURL(url))
         },
         getConfig(name) {
-          let element
-          element = document.head.querySelector(`meta[name='action-cable-${name}']`)
+          const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
           return element != null ? element.getAttribute('content') : void 0
         },
         createWebSocketURL(url) {
@@ -56,14 +230,14 @@
           messages = arguments.length >= 1 ? slice.call(arguments, 0) : []
           if (this.debugging) {
             messages.push(Date.now())
-            return (ref = this.logger).log.apply(ref, ['[ActionCable]'].concat(slice.call(messages)))
+            return (ref = console).log.apply(ref, ['[ActionCable]'].concat(slice.call(messages)))
           }
         }
       }
     }.call(this))
   }.call(context))
 
-  var { ActionCable } = context
+  const { ActionCable } = context
 
   ;(function() {
     ;(function() {
@@ -217,208 +391,6 @@
         }
 
         return ConnectionMonitor
-      })()
-    }.call(this))
-    ;(function() {
-      let i
-      let message_types
-      let protocols
-      let ref
-      let supportedProtocols
-      let unsupportedProtocol
-      const { slice } = []
-      const bind = function(fn, me) {
-        return function() {
-          return fn.apply(me, arguments)
-        }
-      }
-      const indexOf =
-        [].indexOf ||
-        function(item) {
-          for (let i = 0, l = this.length; i < l; i++) {
-            if (i in this && this[i] === item) return i
-          }
-          return -1
-        }
-
-      ;(ref = ActionCable.INTERNAL), (message_types = ref.message_types), (protocols = ref.protocols)
-      ;(supportedProtocols = protocols.length >= 2 ? slice.call(protocols, 0, (i = protocols.length - 1)) : ((i = 0), [])),
-        (unsupportedProtocol = protocols[i++])
-
-      ActionCable.Connection = (function() {
-        Connection.reopenDelay = 500
-
-        function Connection(consumer) {
-          this.consumer = consumer
-          this.open = bind(this.open, this)
-          this.subscriptions = this.consumer.subscriptions
-          this.monitor = new ActionCable.ConnectionMonitor(this)
-          this.disconnected = true
-        }
-
-        Connection.prototype.send = function(data) {
-          if (this.isOpen()) {
-            this.webSocket.send(JSON.stringify(data))
-            return true
-          }
-          return false
-        }
-
-        Connection.prototype.open = function() {
-          if (this.isActive()) {
-            ActionCable.log(`Attempted to open WebSocket, but existing socket is ${this.getState()}`)
-            return false
-          }
-          ActionCable.log(`Opening WebSocket, current state is ${this.getState()}, subprotocols: ${protocols}`)
-          if (this.webSocket != null) {
-            this.uninstallEventHandlers()
-          }
-          this.webSocket = new ActionCable.WebSocket(this.consumer.url, protocols)
-          this.installEventHandlers()
-          this.monitor.start()
-          return true
-        }
-
-        Connection.prototype.close = function(arg) {
-          let allowReconnect
-          let ref1
-          allowReconnect = (arg != null
-            ? arg
-            : {
-                allowReconnect: true
-              }
-          ).allowReconnect
-          if (!allowReconnect) {
-            this.monitor.stop()
-          }
-          if (this.isActive()) {
-            return (ref1 = this.webSocket) != null ? ref1.close() : void 0
-          }
-        }
-
-        Connection.prototype.reopen = function() {
-          let error
-          ActionCable.log(`Reopening WebSocket, current state is ${this.getState()}`)
-          if (this.isActive()) {
-            try {
-              return this.close()
-            } catch (error1) {
-              error = error1
-              return ActionCable.log('Failed to reopen WebSocket', error)
-            } finally {
-              ActionCable.log(`Reopening WebSocket in ${this.constructor.reopenDelay}ms`)
-              setTimeout(this.open, this.constructor.reopenDelay)
-            }
-          } else {
-            return this.open()
-          }
-        }
-
-        Connection.prototype.getProtocol = function() {
-          let ref1
-          return (ref1 = this.webSocket) != null ? ref1.protocol : void 0
-        }
-
-        Connection.prototype.isOpen = function() {
-          return this.isState('open')
-        }
-
-        Connection.prototype.isActive = function() {
-          return this.isState('open', 'connecting')
-        }
-
-        Connection.prototype.isProtocolSupported = function() {
-          let ref1
-          return (ref1 = this.getProtocol()), indexOf.call(supportedProtocols, ref1) >= 0
-        }
-
-        Connection.prototype.isState = function() {
-          let ref1
-          let states
-          states = arguments.length >= 1 ? slice.call(arguments, 0) : []
-          return (ref1 = this.getState()), indexOf.call(states, ref1) >= 0
-        }
-
-        Connection.prototype.getState = function() {
-          let ref1
-          let state
-          let value
-          for (state in WebSocket) {
-            value = WebSocket[state]
-            if (value === ((ref1 = this.webSocket) != null ? ref1.readyState : void 0)) {
-              return state.toLowerCase()
-            }
-          }
-          return null
-        }
-
-        Connection.prototype.installEventHandlers = function() {
-          let eventName
-          let handler
-          for (eventName in this.events) {
-            handler = this.events[eventName].bind(this)
-            this.webSocket[`on${eventName}`] = handler
-          }
-        }
-
-        Connection.prototype.uninstallEventHandlers = function() {
-          let eventName
-          for (eventName in this.events) {
-            this.webSocket[`on${eventName}`] = function() {}
-          }
-        }
-
-        Connection.prototype.events = {
-          message(event) {
-            let identifier
-            let message
-            let ref1
-            let type
-            if (!this.isProtocolSupported()) {
-              return
-            }
-            ;(ref1 = JSON.parse(event.data)), (identifier = ref1.identifier), (message = ref1.message), (type = ref1.type)
-            switch (type) {
-              case message_types.welcome:
-                this.monitor.recordConnect()
-                return this.subscriptions.reload()
-              case message_types.ping:
-                return this.monitor.recordPing()
-              case message_types.confirmation:
-                return this.subscriptions.notify(identifier, 'connected')
-              case message_types.rejection:
-                return this.subscriptions.reject(identifier)
-              default:
-                return this.subscriptions.notify(identifier, 'received', message)
-            }
-          },
-          open() {
-            ActionCable.log(`WebSocket onopen event, using '${this.getProtocol()}' subprotocol`)
-            this.disconnected = false
-            if (!this.isProtocolSupported()) {
-              ActionCable.log('Protocol is unsupported. Stopping monitor and disconnecting.')
-              return this.close({
-                allowReconnect: false
-              })
-            }
-          },
-          close(event) {
-            ActionCable.log('WebSocket onclose event')
-            if (this.disconnected) {
-              return
-            }
-            this.disconnected = true
-            this.monitor.recordDisconnect()
-            return this.subscriptions.notifyAll('disconnected', {
-              willAttemptReconnect: this.monitor.isRunning()
-            })
-          },
-          error() {
-            return ActionCable.log('WebSocket onerror event')
-          }
-        }
-
-        return Connection
       })()
     }.call(this))
     ;(function() {
@@ -628,37 +600,6 @@
         }
 
         return Subscription
-      })()
-    }.call(this))
-    ;(function() {
-      ActionCable.Consumer = (function() {
-        function Consumer(url) {
-          this.url = url
-          this.subscriptions = new ActionCable.Subscriptions(this)
-          this.connection = new ActionCable.Connection(this)
-        }
-
-        Consumer.prototype.send = function(data) {
-          return this.connection.send(data)
-        }
-
-        Consumer.prototype.connect = function() {
-          return this.connection.open()
-        }
-
-        Consumer.prototype.disconnect = function() {
-          return this.connection.close({
-            allowReconnect: false
-          })
-        }
-
-        Consumer.prototype.ensureActiveConnection = function() {
-          if (!this.connection.isActive()) {
-            return this.connection.open()
-          }
-        }
-
-        return Consumer
       })()
     }.call(this))
   }.call(this))
