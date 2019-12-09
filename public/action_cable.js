@@ -1,5 +1,134 @@
 /* eslint-disable max-classes-per-file */
 
+const bind = (fn, me) => {
+  return (...args) => {
+    return fn.apply(me, args)
+  }
+}
+
+class ActionCableConnectionMonitor {
+  static pollInterval = {
+    min: 3,
+    max: 30
+  }
+
+  static staleThreshold = 6
+
+  constructor(connection) {
+    this.connection = connection
+    this.visibilityDidChange = bind(this.visibilityDidChange, this)
+    this.reconnectAttempts = 0
+  }
+
+  start = () => {
+    if (!this.isRunning()) {
+      this.startedAt = this.now()
+      delete this.stoppedAt
+      this.startPolling()
+      document.addEventListener('visibilitychange', this.visibilityDidChange)
+      return ActionCable.log(`ConnectionMonitor started. pollInterval = ${this.getPollInterval()} ms`)
+    }
+    return null
+  }
+
+  stop = () => {
+    if (this.isRunning()) {
+      this.stoppedAt = this.now()
+      this.stopPolling()
+      document.removeEventListener('visibilitychange', this.visibilityDidChange)
+      return ActionCable.log('ConnectionMonitor stopped')
+    }
+    return null
+  }
+
+  isRunning = () => this.startedAt != null && this.stoppedAt == null
+
+  recordPing = () => {
+    this.pingedAt = this.now()
+  }
+
+  recordConnect = () => {
+    this.reconnectAttempts = 0
+    this.recordPing()
+    delete this.disconnectedAt
+    return ActionCable.log('ConnectionMonitor recorded connect')
+  }
+
+  recordDisconnect = () => {
+    this.disconnectedAt = this.now()
+    return ActionCable.log('ConnectionMonitor recorded disconnect')
+  }
+
+  startPolling = () => {
+    this.stopPolling()
+    return this.poll()
+  }
+
+  stopPolling = () => clearTimeout(this.pollTimeout)
+
+  poll = () => {
+    this.pollTimeout = setTimeout(
+      (_this => () => {
+        _this.reconnectIfStale()
+        return _this.poll()
+      })(this),
+      this.getPollInterval()
+    )
+    return this.pollTimeout
+  }
+
+  getPollInterval = () => {
+    const { min, max } = ActionCableConnectionMonitor.pollInterval
+    const interval = 5 * Math.log(this.reconnectAttempts + 1)
+    return Math.round(this.clamp(interval, min, max) * 1000)
+  }
+
+  reconnectIfStale = () => {
+    if (this.connectionIsStale()) {
+      ActionCable.log(
+        `ConnectionMonitor detected stale connection. reconnectAttempts = ${
+          this.reconnectAttempts
+        }, pollInterval = ${this.getPollInterval()} ms, time disconnected = ${this.secondsSince(this.disconnectedAt)} s, stale threshold = ${
+          ActionCableConnectionMonitor.staleThreshold
+        } s`
+      )
+      this.reconnectAttempts += 1
+      if (this.disconnectedRecently()) {
+        return ActionCable.log('ConnectionMonitor skipping reopening recent disconnect')
+      }
+      ActionCable.log('ConnectionMonitor reopening')
+      return this.connection.reopen()
+    }
+    return null
+  }
+
+  connectionIsStale = () => this.secondsSince(this.pingedAt != null ? this.pingedAt : this.startedAt) > ActionCableConnectionMonitor.staleThreshold
+
+  disconnectedRecently = () => this.disconnectedAt && this.secondsSince(this.disconnectedAt) < ActionCableConnectionMonitor.staleThreshold
+
+  visibilityDidChange = () => {
+    if (document.visibilityState === 'visible') {
+      return setTimeout(
+        (_this => () => {
+          if (_this.connectionIsStale() || !_this.connection.isOpen()) {
+            ActionCable.log(`ConnectionMonitor reopening stale connection on visibilitychange. visbilityState = ${document.visibilityState}`)
+            return _this.connection.reopen()
+          }
+          return null
+        })(this),
+        200
+      )
+    }
+    return null
+  }
+
+  now = () => new Date().getTime()
+
+  secondsSince = time => (this.now() - time) / 1000
+
+  clamp = (number, min, max) => Math.max(min, Math.min(max, number))
+}
+
 const INTERNAL = {
   message_types: {
     welcome: 'welcome',
@@ -15,8 +144,9 @@ class ActionCableConnection {
 
   constructor(consumer) {
     this.consumer = consumer
+    this.open = bind(this.open, this)
     this.subscriptions = this.consumer.subscriptions
-    this.monitor = new ActionCable.ConnectionMonitor(this)
+    this.monitor = new ActionCableConnectionMonitor(this)
     this.disconnected = true
     const { protocols } = INTERNAL
     this.supportedProtocols = protocols.length >= 2 ? protocols.slice(0, -1) : []
@@ -66,8 +196,8 @@ class ActionCableConnection {
         error = error1
         return ActionCable.log('Failed to reopen WebSocket', error)
       } finally {
-        ActionCable.log(`Reopening WebSocket in ${this.constructor.reopenDelay}ms`)
-        setTimeout(this.open, this.constructor.reopenDelay)
+        ActionCable.log(`Reopening WebSocket in ${ActionCableConnection.reopenDelay}ms`)
+        setTimeout(this.open, ActionCableConnection.reopenDelay)
       }
     } else {
       return this.open()
@@ -249,159 +379,7 @@ class ActionCableConsumer {
 
   const { ActionCable } = context
   ;(function() {
-    ;(function() {
-      const bind = function(fn, me) {
-        return function() {
-          return fn.apply(me, arguments)
-        }
-      }
-
-      ActionCable.ConnectionMonitor = (function() {
-        let clamp
-        let now
-        let secondsSince
-
-        ConnectionMonitor.pollInterval = {
-          min: 3,
-          max: 30
-        }
-
-        ConnectionMonitor.staleThreshold = 6
-
-        function ConnectionMonitor(connection) {
-          this.connection = connection
-          this.visibilityDidChange = bind(this.visibilityDidChange, this)
-          this.reconnectAttempts = 0
-        }
-
-        ConnectionMonitor.prototype.start = function() {
-          if (!this.isRunning()) {
-            this.startedAt = now()
-            delete this.stoppedAt
-            this.startPolling()
-            document.addEventListener('visibilitychange', this.visibilityDidChange)
-            return ActionCable.log(`ConnectionMonitor started. pollInterval = ${this.getPollInterval()} ms`)
-          }
-        }
-
-        ConnectionMonitor.prototype.stop = function() {
-          if (this.isRunning()) {
-            this.stoppedAt = now()
-            this.stopPolling()
-            document.removeEventListener('visibilitychange', this.visibilityDidChange)
-            return ActionCable.log('ConnectionMonitor stopped')
-          }
-        }
-
-        ConnectionMonitor.prototype.isRunning = function() {
-          return this.startedAt != null && this.stoppedAt == null
-        }
-
-        ConnectionMonitor.prototype.recordPing = function() {
-          return (this.pingedAt = now())
-        }
-
-        ConnectionMonitor.prototype.recordConnect = function() {
-          this.reconnectAttempts = 0
-          this.recordPing()
-          delete this.disconnectedAt
-          return ActionCable.log('ConnectionMonitor recorded connect')
-        }
-
-        ConnectionMonitor.prototype.recordDisconnect = function() {
-          this.disconnectedAt = now()
-          return ActionCable.log('ConnectionMonitor recorded disconnect')
-        }
-
-        ConnectionMonitor.prototype.startPolling = function() {
-          this.stopPolling()
-          return this.poll()
-        }
-
-        ConnectionMonitor.prototype.stopPolling = function() {
-          return clearTimeout(this.pollTimeout)
-        }
-
-        ConnectionMonitor.prototype.poll = function() {
-          return (this.pollTimeout = setTimeout(
-            (function(_this) {
-              return function() {
-                _this.reconnectIfStale()
-                return _this.poll()
-              }
-            })(this),
-            this.getPollInterval()
-          ))
-        }
-
-        ConnectionMonitor.prototype.getPollInterval = function() {
-          let interval
-          let max
-          let min
-          let ref
-          ;(ref = this.constructor.pollInterval), (min = ref.min), (max = ref.max)
-          interval = 5 * Math.log(this.reconnectAttempts + 1)
-          return Math.round(clamp(interval, min, max) * 1000)
-        }
-
-        ConnectionMonitor.prototype.reconnectIfStale = function() {
-          if (this.connectionIsStale()) {
-            ActionCable.log(
-              `ConnectionMonitor detected stale connection. reconnectAttempts = ${
-                this.reconnectAttempts
-              }, pollInterval = ${this.getPollInterval()} ms, time disconnected = ${secondsSince(this.disconnectedAt)} s, stale threshold = ${
-                this.constructor.staleThreshold
-              } s`
-            )
-            this.reconnectAttempts++
-            if (this.disconnectedRecently()) {
-              return ActionCable.log('ConnectionMonitor skipping reopening recent disconnect')
-            }
-            ActionCable.log('ConnectionMonitor reopening')
-            return this.connection.reopen()
-          }
-        }
-
-        ConnectionMonitor.prototype.connectionIsStale = function() {
-          let ref
-          return secondsSince((ref = this.pingedAt) != null ? ref : this.startedAt) > this.constructor.staleThreshold
-        }
-
-        ConnectionMonitor.prototype.disconnectedRecently = function() {
-          return this.disconnectedAt && secondsSince(this.disconnectedAt) < this.constructor.staleThreshold
-        }
-
-        ConnectionMonitor.prototype.visibilityDidChange = function() {
-          if (document.visibilityState === 'visible') {
-            return setTimeout(
-              (function(_this) {
-                return function() {
-                  if (_this.connectionIsStale() || !_this.connection.isOpen()) {
-                    ActionCable.log(`ConnectionMonitor reopening stale connection on visibilitychange. visbilityState = ${document.visibilityState}`)
-                    return _this.connection.reopen()
-                  }
-                }
-              })(this),
-              200
-            )
-          }
-        }
-
-        now = function() {
-          return new Date().getTime()
-        }
-
-        secondsSince = function(time) {
-          return (now() - time) / 1000
-        }
-
-        clamp = function(number, min, max) {
-          return Math.max(min, Math.min(max, number))
-        }
-
-        return ConnectionMonitor
-      })()
-    }.call(this))
+    ;(function() {}.call(this))
     ;(function() {
       const { slice } = []
 
