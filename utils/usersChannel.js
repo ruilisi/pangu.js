@@ -1,10 +1,10 @@
 import { viewSetIn, authorizedPath } from '%view'
 import { HttpState } from '../consts'
 import { selfSet } from '../redux/modules/self'
-import actionCable from './actionCable'
+import authedActionCable from './authedActionCable'
 
 export default function() {
-  const cable = actionCable()
+  const cable = authedActionCable()
   if (!cable) return null
   const channel = cable.subscriptions.create(
     { channel: 'UsersChannel' },

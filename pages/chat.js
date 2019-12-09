@@ -3,92 +3,46 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
-import { get, httpDelete, getAuthorization, removeAuthorization } from '../utils/request'
-import { roomsSet, roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
-import { viewSetIn, viewMergeIn } from '../redux/modules/view'
-import { selfSet, selfSetIn } from '../redux/modules/self'
+import { get, httpDelete, removeAuthorization } from '../utils/request'
+import { roomsSet } from '../redux/modules/rooms'
+import { selfSet } from '../redux/modules/self'
 import { userInfo } from '../utils/http'
-import dns from '../utils/dns'
-import ActionCable from '../public/action_cable'
+import roomsChannel from '../utils/roomsChannel'
 
 const getRooms = async () => {
   const res = await get('rooms')
   return res
 }
 
-const roomChannels = {}
-const messageSocket = roomId => {
-  // const scrollToBottom = () => {
-  //   sendMessageButtonRef.current.scrollIntoView({ behavior: 'smooth' })
-  // }
-  if (!window.cable) {
-    window.cable = ActionCable.createConsumer(`${dns.API_ROOT}/cable`)
-  }
-  if (!roomChannels[roomId]) {
-    const channel = window.cable.subscriptions.create(
-      { channel: 'RoomsChannel', authorization: getAuthorization(), room_id: roomId },
-      {
-        connected: () => {
-          channel.load('messages', { room_id: roomId })
-        },
-        subscribed: () => console.info('subscripted'),
-        received: data => {
-          console.info('received', data)
-          const a = {}
-          switch (data.path) {
-            case 'messages':
-              DISPATCH(roomsMessagesSet(data.room_id, data.messages))
-              DISPATCH(viewSetIn(['avatars'], data.avatars))
-              // scrollToBottom()
-              break
-            case 'add_message':
-              DISPATCH(roomsMessagesAdd(data.room_id, data.message))
-              // scrollToBottom()
-              break
-            case 'set_avatar':
-              a[data.user_id] = data.avatar
-              DISPATCH(viewMergeIn(['avatars'], I.fromJS(a)))
-              DISPATCH(selfSetIn(['data', 'avatar'], data.avatar))
-              break
-            default:
-          }
-        },
-        load(path, data) {
-          console.info(path, data)
-          return this.perform('load', {
-            path,
-            data
-          })
-        }
-      }
-    )
-    roomChannels[roomId] = channel
-  }
-}
-
 const Chat = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
+  const [channel, setChannel] = useState()
   const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
-  const channel = roomChannels[roomId]
+  console.info(room.toJS())
 
   useEffect(() => {
     userInfo().then(user => dispatch(selfSet(I.fromJS(user))))
   }, [])
+
+  const switchRoom = id => {
+    console.info(id)
+    setRoomId(id)
+    setChannel(roomsChannel(id))
+  }
 
   const sendMessageButtonRef = useRef(null)
   useEffect(() => {
     getRooms().then(body => {
       dispatch(roomsSet(I.fromJS(body)))
       const id = Object.keys(body)[0]
-      setRoomId(id)
-      messageSocket(id, sendMessageButtonRef)
+      switchRoom(id)
     })
   }, [])
 
@@ -110,14 +64,9 @@ const Chat = () => {
             {rooms
               .map(v => {
                 const { id, title } = v.toJS()
+                console.info(id)
                 return (
-                  <Menu.Item
-                    key={id}
-                    onClick={() => {
-                      setRoomId(id)
-                      messageSocket(id)
-                    }}
-                  >
+                  <Menu.Item key={id} onClick={() => switchRoom(id)}>
                     {title}
                   </Menu.Item>
                 )
@@ -194,8 +143,7 @@ const Chat = () => {
               className="PLR-15"
               onClick={() => {
                 if (text === '' || roomId === '') return
-                const _channel = roomChannels[roomId]
-                _channel.load('add_message', { room_id: roomId, text })
+                channel.load('add_message', { room_id: roomId, text })
                 setText('')
               }}
             >
