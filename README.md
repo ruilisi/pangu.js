@@ -59,9 +59,11 @@ The reasons why projects built with `Next.js` does not support `IE 9-11` are mai
     }
 ```
 
-#### Quick switch between local/remote API server
-* By enter key strokes `esc l`, page gets reloaded and the frontend will use `API_ROOT_LOCAL` of [dns.js](utils/dns.js) as local api host.
-* By enter key strokes `esc r`, page gets reloaded and the frontend will figure out and use the best remote api host in `REMOTE_HOSTS` of [dns.js](utils/dns.js) by `ping` each remote hosts.
+#### Convenient shortcut keys that makes development easier in [shortcuts.js](./utils/shortcuts.js)
+* Switch between local/remote API server
+   * By pressing `esc l`, page gets reloaded and the frontend will use `API_ROOT_LOCAL` of as local api host.
+   * By pressing `esc r`, page gets reloaded and the frontend will figure out and use the best remote api host in `REMOTE_HOSTS` by `ping` each remote hosts.
+* Switch redux state view dump by pressing `esc s`
 
 ## Quick start
 * While this project is developed with Nodejs `v12.1.0`, you can try any version of Nodejs that works.

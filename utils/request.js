@@ -1,20 +1,8 @@
 import fetch from 'isomorphic-unfetch'
-import Mousetrap from 'mousetrap'
 import dns from './dns'
 
 const DEVICE_TYPE = 'WEB'
 const authorizationKey = 'AUTHORIZATION'
-
-export const bindShortcutsToSwitchApiHost = () => {
-  Mousetrap.bind('esc l', () => {
-    localStorage.setItem('resolveByLocal', true)
-    window.location.reload()
-  })
-  Mousetrap.bind('esc r', () => {
-    localStorage.setItem('resolveByLocal', false)
-    window.location.reload()
-  })
-}
 
 export const testApiRoot = async rootUrl => {
   const response = await fetch(`${rootUrl}/ping`)

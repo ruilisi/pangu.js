@@ -9,8 +9,9 @@ import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
-import { getApiRoot, bindShortcutsToSwitchApiHost } from '~/utils/request'
+import { getApiRoot } from '~/utils/request'
 import usersChannel from '../utils/usersChannel'
+import shortcuts from '../utils/shortcuts'
 
 const localeData = { zh, en }
 
@@ -38,7 +39,7 @@ class MyApp extends App {
     const { store } = props
     window.DISPATCH = store.dispatch
     window.STATE = store.getState
-    bindShortcutsToSwitchApiHost()
+    shortcuts()
     getApiRoot().then(usersChannel)
     const language = localStorage.getItem('LANGUAGE')
     if (!language) {
