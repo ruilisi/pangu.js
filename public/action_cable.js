@@ -85,33 +85,20 @@ class ActionCableConnection {
   isState = (...args) => args.indexOf(this.getState()) >= 0
 
   getState = () => {
-    let ref1
-    let state
-    let value
-    for (state in WebSocket) {
-      value = WebSocket[state]
-      if (value === ((ref1 = this.webSocket) != null ? ref1.readyState : void 0)) {
-        return state.toLowerCase()
-      }
-    }
-    return null
+    const curState = Object.keys(WebSocket).find(state => this.webSocket != null && this.webSocket.readyState === WebSocket[state])
+    return curState && curState.toLowerCase()
   }
 
   installEventHandlers = () => {
-    let eventName
-    let handler
-    for (eventName in this.events) {
-      handler = this.events[eventName].bind(this)
-      this.webSocket[`on${eventName}`] = handler
-    }
+    Object.keys(this.events).forEach(eventName => {
+      this.webSocket[`on${eventName}`] = this.events[eventName].bind(this)
+    })
   }
 
   uninstallEventHandlers = () => {
-    let eventName
-    console.info(this.events)
-    for (eventName in this.events) {
-      this.webSocket[`on${eventName}`] = function() {}
-    }
+    Object.keys(this.events).forEach(eventName => {
+      this.webSocket[`on${eventName}`] = () => {}
+    })
   }
 
   events = {
@@ -162,6 +149,29 @@ class ActionCableConnection {
       return ActionCable.log('WebSocket onerror event')
     }
   }
+}
+
+class ActionCableSubscription {
+  constructor(consumer, params, mixin) {
+    this.consumer = consumer
+    this.identifier = JSON.stringify(params || {})
+    Object.assign(this, mixin)
+  }
+
+  perform = (action, data = {}) => {
+    const _data = data || {}
+    _data.action = action
+    return this.send(_data)
+  }
+
+  send = data =>
+    this.consumer.send({
+      command: 'message',
+      identifier: this.identifier,
+      data: JSON.stringify(data)
+    })
+
+  unsubscribe = () => this.consumer.subscriptions.remove(this)
 }
 
 class ActionCableConsumer {
@@ -238,7 +248,6 @@ class ActionCableConsumer {
   }.call(context))
 
   const { ActionCable } = context
-
   ;(function() {
     ;(function() {
       const bind = function(fn, me) {
@@ -413,7 +422,7 @@ class ActionCableConsumer {
               : {
                   channel
                 }
-          subscription = new ActionCable.Subscription(this.consumer, params, mixin)
+          subscription = new ActionCableSubscription(this.consumer, params, mixin)
           return this.add(subscription)
         }
 
@@ -552,54 +561,6 @@ class ActionCableConsumer {
         }
 
         return Subscriptions
-      })()
-    }.call(this))
-    ;(function() {
-      ActionCable.Subscription = (function() {
-        let extend
-
-        function Subscription(consumer, params, mixin) {
-          this.consumer = consumer
-          if (params == null) {
-            params = {}
-          }
-          this.identifier = JSON.stringify(params)
-          extend(this, mixin)
-        }
-
-        Subscription.prototype.perform = function(action, data) {
-          if (data == null) {
-            data = {}
-          }
-          data.action = action
-          return this.send(data)
-        }
-
-        Subscription.prototype.send = function(data) {
-          return this.consumer.send({
-            command: 'message',
-            identifier: this.identifier,
-            data: JSON.stringify(data)
-          })
-        }
-
-        Subscription.prototype.unsubscribe = function() {
-          return this.consumer.subscriptions.remove(this)
-        }
-
-        extend = function(object, properties) {
-          let key
-          let value
-          if (properties != null) {
-            for (key in properties) {
-              value = properties[key]
-              object[key] = value
-            }
-          }
-          return object
-        }
-
-        return Subscription
       })()
     }.call(this))
   }.call(this))

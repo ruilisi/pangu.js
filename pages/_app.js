@@ -14,8 +14,6 @@ import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
 import DevTools from '../containers/DevTools'
 
-require('../static/action_cable')
-
 const localeData = { zh, en }
 
 class MyApp extends App {
@@ -38,6 +36,7 @@ class MyApp extends App {
   }
 
   componentDidMount() {
+    window.ActionCable = require('../public/action_cable')
     const { props } = this
     const { store } = props
     window.DISPATCH = store.dispatch
