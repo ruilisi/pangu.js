@@ -4,7 +4,7 @@ import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
 import Head from '../components/head'
-import createStore from '../redux/createStore'
+import configureStore from '../redux/configureStore'
 import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
@@ -12,6 +12,7 @@ import '../styles/main.scss'
 import { getApiRoot } from '~/utils/request'
 import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
+import DevTools from '../containers/DevTools'
 
 const localeData = { zh, en }
 
@@ -70,10 +71,11 @@ class MyApp extends App {
           <div style={{ minHeight: '100vh' }}>
             <Component {...pageProps} />
           </div>
+          <DevTools />
         </Provider>
       </IntlProvider>
     )
   }
 }
 
-export default withRedux(createStore)(MyApp)
+export default withRedux(configureStore)(MyApp)

@@ -58,12 +58,18 @@ The reasons why projects built with `Next.js` does not support `IE 9-11` are mai
       }
     }
 ```
+#### [Redux DevTools](https://github.com/reduxjs/redux-devtools)
+`Redux DevTools` is a developer tool to power-up Redux development workflow or any other architecture which handles the state change.
+We added support for `Redux DevTools` by following tutorial [here](https://github.com/reduxjs/redux-devtools/blob/master/docs/Walkthrough.md#manual-integration).
+The shortcut keys for operating dock monitor of `Redux DevTools` are:
+* `ctrl-h`: toggle visibility
+* `ctrl-q`: change position
 
-#### Convenient shortcut keys that makes development easier in [shortcuts.js](./utils/shortcuts.js)
+
+#### Convenient shortcut keys in [shortcuts.js](./utils/shortcuts.js)
 * Switch between local/remote API server
    * By pressing `esc l`, page gets reloaded and the frontend will use `API_ROOT_LOCAL` of as local api host.
    * By pressing `esc r`, page gets reloaded and the frontend will figure out and use the best remote api host in `REMOTE_HOSTS` by `ping` each remote hosts.
-* Switch redux state view dump by pressing `esc s`
 
 ## Quick start
 * While this project is developed with Nodejs `v12.1.0`, you can try any version of Nodejs that works.
