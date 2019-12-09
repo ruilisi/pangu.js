@@ -10,7 +10,6 @@ const Head = () => (
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="keywords" content="Nextjs-Pangu" />
     <meta name="description" content="Nextjs-Pangu" />
-    <link rel="icon" href="/static/favicon.ico" />
   </NextHead>
 )
 

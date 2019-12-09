@@ -6,7 +6,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <script src="/static/action_cable.js" />
+          <script src="/action_cable.js" />
           <link href="//at.alicdn.com/t/font_626982_5qgrfba1b09.css" rel="stylesheet" />
         </Head>
         <body>
