@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+import Subscriptions from './Subscriptions'
 
 const bind = (fn, me) => {
   return (...args) => {
@@ -9,129 +10,18 @@ const bind = (fn, me) => {
 const INTERNAL = {
   message_types: {
     welcome: 'welcome',
+    disconnect: 'disconnect',
     ping: 'ping',
     confirmation: 'confirm_subscription',
     rejection: 'reject_subscription'
   },
+  disconnect_reasons: {
+    unauthorized: 'unauthorized',
+    invalid_request: 'invalid_request',
+    server_restart: 'server_restart'
+  },
   default_mount_path: '/cable',
   protocols: ['actioncable-v1-json', 'actioncable-unsupported']
-}
-
-class ActionCableSubscription {
-  constructor(consumer, params, mixin) {
-    this.consumer = consumer
-    this.identifier = JSON.stringify(params || {})
-    Object.assign(this, mixin)
-  }
-
-  perform = (action, data = {}) => {
-    const _data = data || {}
-    _data.action = action
-    return this.send(_data)
-  }
-
-  send = data =>
-    this.consumer.send({
-      command: 'message',
-      identifier: this.identifier,
-      data: JSON.stringify(data)
-    })
-
-  unsubscribe = () => this.consumer.subscriptions.remove(this)
-}
-
-class ActionCableSubscriptions {
-  constructor(consumer) {
-    this.consumer = consumer
-    this.subscriptions = []
-  }
-
-  create = (channel, mixin) => {
-    const params = typeof channel === 'object' ? channel : { channel }
-    const subscription = new ActionCableSubscription(this.consumer, params, mixin)
-    return this.add(subscription)
-  }
-
-  add = subscription => {
-    this.subscriptions.push(subscription)
-    this.consumer.ensureActiveConnection()
-    this.notify(subscription, 'initialized')
-    this.sendCommand(subscription, 'subscribe')
-    return subscription
-  }
-
-  remove = subscription => {
-    this.forget(subscription)
-    if (!this.findAll(subscription.identifier).length) {
-      this.sendCommand(subscription, 'unsubscribe')
-    }
-    return subscription
-  }
-
-  reject = identifier => {
-    const subscriptions = this.findAll(identifier)
-    const results = []
-    subscriptions.forEach(subscription => {
-      this.forget(subscription)
-      this.notify(subscription, 'rejected')
-      results.push(subscription)
-    })
-    return results
-  }
-
-  forget = subscription => {
-    this.subscriptions = this.subscriptions.filter(s => s !== subscription)
-    return subscription
-  }
-
-  findAll = identifier => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      if (subscription.identifier === identifier) {
-        results.push(subscription)
-      }
-    })
-    return results
-  }
-
-  reload = () => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      results.push(this.sendCommand(subscription, 'subscribe'))
-    })
-    return results
-  }
-
-  notifyAll = (callbackName, ...args) => {
-    const results = []
-    this.subscriptions.forEach(subscription => {
-      results.push(this.notify.apply(this, [subscription, callbackName, ...args]))
-    })
-    return results
-  }
-
-  notify = (subscription, callbackName, ...args) => {
-    let subscriptions
-    if (typeof subscription === 'string') {
-      subscriptions = this.findAll(subscription)
-    } else {
-      subscriptions = [subscription]
-    }
-    const results = []
-    subscriptions.forEach(s => {
-      // eslint-disable-next-line prefer-spread
-      results.push(typeof s[callbackName] === 'function' ? s[callbackName].apply(s, args) : void 0)
-    })
-    return results
-  }
-
-  sendCommand = (subscription, command) => {
-    const { identifier } = subscription
-    return this.consumer.send({
-      command,
-      identifier
-    })
-  }
 }
 
 const ActionCable = {
@@ -456,7 +346,7 @@ class ActionCableConnection {
 class ActionCableConsumer {
   constructor(url) {
     this.url = url
-    this.subscriptions = new ActionCableSubscriptions(this)
+    this.subscriptions = new Subscriptions(this)
     this.connection = new ActionCableConnection(this)
   }
 
