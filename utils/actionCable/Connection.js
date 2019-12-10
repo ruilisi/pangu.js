@@ -67,7 +67,7 @@ export default class Connection {
     }
   }
 
-  getProtocol = () => (this.webSocket ? this.webSocket.protocol : void 0)
+  getProtocol = () => (this.webSocket ? this.webSocket.protocol : undefined)
 
   isOpen = () => this.isState('open')
 

@@ -23,7 +23,7 @@ const ActionCable = {
 
   getConfig: name => {
     const element = document.head.querySelector(`meta[name='action-cable-${name}']`)
-    return element != null ? element.getAttribute('content') : void 0
+    return element != null ? element.getAttribute('content') : undefined
   },
 
   createWebSocketURL: url => {
