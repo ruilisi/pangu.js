@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
 import { get, httpDelete, removeAuthorization } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
-import { selfSet } from '../redux/modules/self'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 
@@ -28,7 +27,6 @@ const Chat = () => {
   const room = rooms.get(roomId, Map())
 
   const switchRoom = id => {
-    console.info(id)
     setRoomId(id)
     setChannel(roomsChannel(id))
   }
@@ -60,7 +58,6 @@ const Chat = () => {
             {rooms
               .map(v => {
                 const { id, title } = v.toJS()
-                console.info(id)
                 return (
                   <Menu.Item key={id} onClick={() => switchRoom(id)}>
                     {title}

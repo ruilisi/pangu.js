@@ -14,7 +14,7 @@ export default function() {
         if (STATE().view.getIn(authorizedPath) !== true) {
           DISPATCH(viewSetIn(authorizedPath, true))
         }
-        channel.load('self', {})
+        channel.load('self')
       },
       disconnected: () => {
         if (STATE().view.getIn(authorizedPath) === HttpState.UNKNOWN) {
