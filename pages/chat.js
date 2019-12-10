@@ -8,6 +8,7 @@ import { roomsSet } from '../redux/modules/rooms'
 import { selfSet } from '../redux/modules/self'
 import { userInfo } from '../utils/http'
 import roomsChannel from '../utils/roomsChannel'
+import { redirectIfAuthorized } from '../redux/modules/view'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -15,6 +16,7 @@ const getRooms = async () => {
 }
 
 const Chat = () => {
+  redirectIfAuthorized('/login', false)
   const router = useRouter()
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
@@ -25,7 +27,6 @@ const Chat = () => {
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
-  console.info(room.toJS())
 
   useEffect(() => {
     userInfo().then(user => dispatch(selfSet(I.fromJS(user))))

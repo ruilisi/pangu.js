@@ -68,10 +68,10 @@ class MyApp extends App {
       <IntlProvider locale={locale} messages={localeData[locale]}>
         <Provider store={store}>
           <Head />
+          <DevTools />
           <div style={{ minHeight: '100vh' }}>
             <Component {...pageProps} />
           </div>
-          <DevTools />
         </Provider>
       </IntlProvider>
     )
