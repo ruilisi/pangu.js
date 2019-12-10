@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-cycle
-import ActionCable from '.'
+import logger from './logger'
 
 const now = () => new Date().getTime()
 
@@ -24,7 +23,7 @@ export default class ConnectionMonitor {
       delete this.stoppedAt
       this.startPolling()
       document.addEventListener('visibilitychange', this.visibilityDidChange)
-      ActionCable.log(`ConnectionMonitor started. pollInterval = ${this.getPollInterval()} ms`)
+      logger.log(`ConnectionMonitor started. pollInterval = ${this.getPollInterval()} ms`)
     }
   }
 
@@ -33,7 +32,7 @@ export default class ConnectionMonitor {
       this.stoppedAt = now()
       this.stopPolling()
       document.removeEventListener('visibilitychange', this.visibilityDidChange)
-      ActionCable.log('ConnectionMonitor stopped')
+      logger.log('ConnectionMonitor stopped')
     }
   }
 
@@ -47,12 +46,12 @@ export default class ConnectionMonitor {
     this.reconnectAttempts = 0
     this.recordPing()
     delete this.disconnectedAt
-    return ActionCable.log('ConnectionMonitor recorded connect')
+    return logger.log('ConnectionMonitor recorded connect')
   }
 
   recordDisconnect = () => {
     this.disconnectedAt = now()
-    return ActionCable.log('ConnectionMonitor recorded disconnect')
+    return logger.log('ConnectionMonitor recorded disconnect')
   }
 
   startPolling = () => {
@@ -77,7 +76,7 @@ export default class ConnectionMonitor {
 
   reconnectIfStale = () => {
     if (this.connectionIsStale()) {
-      ActionCable.log(
+      logger.log(
         `ConnectionMonitor detected stale connection. reconnectAttempts = ${
           this.reconnectAttempts
         }, pollInterval = ${this.getPollInterval()} ms, time disconnected = ${this.secondsSince(this.disconnectedAt)} s, stale threshold = ${
@@ -86,12 +85,11 @@ export default class ConnectionMonitor {
       )
       this.reconnectAttempts += 1
       if (this.disconnectedRecently()) {
-        return ActionCable.log('ConnectionMonitor skipping reopening recent disconnect')
+        logger.log('ConnectionMonitor skipping reopening recent disconnect')
       }
-      ActionCable.log('ConnectionMonitor reopening')
-      return this.connection.reopen()
+      logger.log('ConnectionMonitor reopening')
+      this.connection.reopen()
     }
-    return null
   }
 
   connectionIsStale = () => this.secondsSince(this.pingedAt ? this.pingedAt : this.startedAt) > ConnectionMonitor.staleThreshold
@@ -102,7 +100,7 @@ export default class ConnectionMonitor {
     if (document.visibilityState === 'visible') {
       setTimeout(() => {
         if (this.connectionIsStale() || !this.connection.isOpen()) {
-          ActionCable.log(`ConnectionMonitor reopening stale connection on visibilitychange. visbilityState = ${document.visibilityState}`)
+          logger.log(`ConnectionMonitor reopening stale connection on visibilitychange. visbilityState = ${document.visibilityState}`)
           this.connection.reopen()
         }
       }, 200)

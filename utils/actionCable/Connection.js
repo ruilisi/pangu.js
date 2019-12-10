@@ -1,8 +1,6 @@
-// eslint-disable-next-line import/no-cycle
-import ActionCable from './index'
 import internal from './internal'
-// eslint-disable-next-line import/no-cycle
 import ConnectionMonitor from './ConnectionMonitor'
+import logger from './logger'
 
 export default class Connection {
   static reopenDelay = 500
@@ -28,10 +26,10 @@ export default class Connection {
 
   open = () => {
     if (this.isActive()) {
-      ActionCable.log(`Attempted to open WebSocket, but existing socket is ${this.getState()}`)
+      logger.log(`Attempted to open WebSocket, but existing socket is ${this.getState()}`)
       return false
     }
-    ActionCable.log(`Opening WebSocket, current state is ${this.getState()}, subprotocols: ${internal.protocols}`)
+    logger.log(`Opening WebSocket, current state is ${this.getState()}, subprotocols: ${internal.protocols}`)
     if (this.webSocket) {
       this.uninstallEventHandlers()
     }
@@ -53,15 +51,15 @@ export default class Connection {
 
   reopen = () => {
     let error
-    ActionCable.log(`Reopening WebSocket, current state is ${this.getState()}`)
+    logger.log(`Reopening WebSocket, current state is ${this.getState()}`)
     if (this.isActive()) {
       try {
         return this.close()
       } catch (error1) {
         error = error1
-        return ActionCable.log('Failed to reopen WebSocket', error)
+        return logger.log('Failed to reopen WebSocket', error)
       } finally {
-        ActionCable.log(`Reopening WebSocket in ${Connection.reopenDelay}ms`)
+        logger.log(`Reopening WebSocket in ${Connection.reopenDelay}ms`)
         setTimeout(this.open, Connection.reopenDelay)
       }
     } else {
@@ -109,7 +107,7 @@ export default class Connection {
           this.monitor.recordConnect()
           return this.subscriptions.reload()
         case message_types.disconnect:
-          ActionCable.log(`Disconnecting. Reason: ${reason}`)
+          logger.log(`Disconnecting. Reason: ${reason}`)
           return this.close({
             allowReconnect: reconnect
           })
@@ -124,10 +122,10 @@ export default class Connection {
       }
     },
     open() {
-      ActionCable.log(`WebSocket onopen event, using '${this.getProtocol()}' subprotocol`)
+      logger.log(`WebSocket onopen event, using '${this.getProtocol()}' subprotocol`)
       this.disconnected = false
       if (!this.isProtocolSupported()) {
-        ActionCable.log('Protocol is unsupported. Stopping monitor and disconnecting.')
+        logger.log('Protocol is unsupported. Stopping monitor and disconnecting.')
         return this.close({
           allowReconnect: false
         })
@@ -135,7 +133,7 @@ export default class Connection {
       return null
     },
     close() {
-      ActionCable.log('WebSocket onclose event')
+      logger.log('WebSocket onclose event')
       if (this.disconnected) {
         return null
       }
@@ -146,7 +144,7 @@ export default class Connection {
       })
     },
     error() {
-      ActionCable.log('WebSocket onerror event')
+      logger.log('WebSocket onerror event')
     }
   }
 }

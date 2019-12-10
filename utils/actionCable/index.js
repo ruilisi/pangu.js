@@ -48,14 +48,6 @@ const ActionCable = {
   stopDebugging: () => {
     ActionCable.debugging = null
     return ActionCable.debugging
-  },
-  log: (...args) => {
-    if (ActionCable.debugging) {
-      const ref = console
-      args.push(Date.now())
-      return ref.log.apply(ref, ['[ActionCable]', ...args])
-    }
-    return null
   }
 }
 

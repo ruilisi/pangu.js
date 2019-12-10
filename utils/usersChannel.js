@@ -9,7 +9,7 @@ export default function() {
   const channel = cable.subscriptions.create(
     { channel: 'UsersChannel' },
     {
-      connected: data => {
+      connected: () => {
         if (STATE().view.getIn(authorizedPath) !== true) {
           DISPATCH(viewSetIn(authorizedPath, true))
         }
