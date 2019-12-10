@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { message, Input, Button } from 'antd'
 import { FormattedMessage } from 'react-intl'
-import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import { T } from '../utils/translation'
-import { viewSetIn, redirectIfAuthorized } from '../redux/modules/view'
+import { redirectIfAuthorized } from '../redux/modules/view'
 import { post } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Signup = () => {
   redirectIfAuthorized('/')
-  const dispatch = useDispatch()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -18,10 +18,10 @@ const Signup = () => {
   const signup = async params => {
     const res = await post('users', { user: params })
     if (res.id) {
-      message.success('注册成功')
-      dispatch(viewSetIn(['signupDialogOpen'], false))
+      message.success('registration success')
+      router.push('/login')
     } else {
-      message.error(res.message)
+      message.error('registration failed, The account already exists')
     }
     setLoading(false)
   }
