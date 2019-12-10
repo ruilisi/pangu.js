@@ -5,11 +5,7 @@ export default class Subscription {
     Object.assign(this, mixin)
   }
 
-  perform = (action, data = {}) => {
-    const _data = data || {}
-    _data.action = action
-    return this.send(_data)
-  }
+  perform = (action, data = {}) => this.send({ action, ...data })
 
   send = data =>
     this.consumer.send({
