@@ -10,7 +10,6 @@ export default function() {
     { channel: 'UsersChannel' },
     {
       connected: data => {
-        console.info('connected users', data)
         if (STATE().view.getIn(authorizedPath) !== true) {
           DISPATCH(viewSetIn(authorizedPath, true))
         }
@@ -23,7 +22,6 @@ export default function() {
       },
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
-        console.info('receivedData users', receivedData)
         const { data, path } = receivedData
         switch (path) {
           case 'self':

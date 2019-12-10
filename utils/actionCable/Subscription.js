@@ -14,9 +14,5 @@ export default class Subscription {
       data: JSON.stringify(data)
     })
 
-  initialized = () => console.info(`initialized: ${this.identifier}`)
-
-  rejected = () => console.info(`rejected: ${this.identifier}`)
-
   unsubscribe = () => this.consumer.subscriptions.remove(this)
 }

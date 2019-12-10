@@ -1,7 +1,7 @@
 import Subscription from './Subscription'
 import _typeof from './_typeof'
 
-export default class ActionCableSubscriptions {
+export default class Subscriptions {
   constructor(consumer) {
     this.consumer = consumer
     this.subscriptions = []

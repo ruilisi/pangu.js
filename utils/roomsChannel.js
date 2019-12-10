@@ -20,7 +20,6 @@ export default roomId => {
       },
       subscribed: () => console.info('subscripted'),
       received: data => {
-        console.info('received', data)
         switch (data.path) {
           case 'messages':
             DISPATCH(roomsMessagesSet(data.room_id, data.messages))
