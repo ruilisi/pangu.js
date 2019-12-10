@@ -11,11 +11,6 @@ export const getSystemData = async () => {
   return res
 }
 
-export const userInfo = async token => {
-  const res = await get('user_info', {}, token)
-  return res
-}
-
 export const authPing = async token => {
   const res = await fetch(`${dns.API_ROOT}/auth_ping`, {
     method: 'POST',

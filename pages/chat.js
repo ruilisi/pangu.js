@@ -6,7 +6,6 @@ import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
 import { get, httpDelete, removeAuthorization } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import { selfSet } from '../redux/modules/self'
-import { userInfo } from '../utils/http'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 
@@ -27,10 +26,6 @@ const Chat = () => {
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
-
-  useEffect(() => {
-    userInfo().then(user => dispatch(selfSet(I.fromJS(user))))
-  }, [])
 
   const switchRoom = id => {
     console.info(id)
