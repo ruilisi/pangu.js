@@ -12,7 +12,7 @@ export default class Connection {
     this.monitor = new ConnectionMonitor(this)
     this.disconnected = true
     const { protocols } = internal
-    this.supportedProtocols = protocols.length >= 2 ? protocols.slice(0, -1) : []
+    this.supportedProtocols = protocols.slice(0, -1)
     this.unsupportedProtocol = protocols[protocols.length - 1]
   }
 
@@ -40,7 +40,7 @@ export default class Connection {
   }
 
   close = arg => {
-    const allowReconnect = arg != null ? arg.allowReconnect : true
+    const allowReconnect = arg ? arg.allowReconnect : true
     if (!allowReconnect) {
       this.monitor.stop()
     }
@@ -50,13 +50,11 @@ export default class Connection {
   }
 
   reopen = () => {
-    let error
     logger.log(`Reopening WebSocket, current state is ${this.getState()}`)
     if (this.isActive()) {
       try {
         return this.close()
-      } catch (error1) {
-        error = error1
+      } catch (error) {
         return logger.log('Failed to reopen WebSocket', error)
       } finally {
         logger.log(`Reopening WebSocket in ${Connection.reopenDelay}ms`)
