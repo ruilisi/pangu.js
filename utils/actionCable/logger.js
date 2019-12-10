@@ -5,7 +5,7 @@ const logger = {
     }
     return null
   },
-  enabled: false
+  enabled: true
 }
 
 export default logger

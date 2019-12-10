@@ -67,7 +67,7 @@ export default class Connection {
     }
   }
 
-  getProtocol = () => (this.webSocket != null ? this.webSocket.protocol : void 0)
+  getProtocol = () => (this.webSocket ? this.webSocket.protocol : void 0)
 
   isOpen = () => this.isState('open')
 
@@ -75,11 +75,14 @@ export default class Connection {
 
   isProtocolSupported = () => this.supportedProtocols.includes(this.getProtocol())
 
-  isState = (...args) => args.indexOf(this.getState()) >= 0
+  isState = (...args) => args.includes(this.getState())
 
   getState = () => {
-    const curState = Object.keys(WebSocket).find(state => this.webSocket != null && this.webSocket.readyState === WebSocket[state])
-    return curState && curState.toLowerCase()
+    if (this.webSocket) {
+      const curState = Object.keys(WebSocket).find(state => this.webSocket.readyState === WebSocket[state])
+      return curState && curState.toLowerCase()
+    }
+    return null
   }
 
   installEventHandlers = () => {
