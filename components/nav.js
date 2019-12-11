@@ -42,7 +42,7 @@ const Nav = ({ children }) => {
     return (
       <li className="dropdown mega-menu">
         <Link href={`/${path}`}>
-          <a data-toggle="dropdown" style={{ color: 'white' }}>
+          <a data-toggle="dropdown">
             <Icon type="global" className="MR-2" />
             {LANGUAGE_NAME[localStorage.getItem('LANGUAGE') || navigatorLanguage()]}
             <Icon type="down" />
@@ -53,7 +53,7 @@ const Nav = ({ children }) => {
             <ul className="no-bullet">
               {SUPPORTED_LANGUAGES.map(v => (
                 <li key={v} className="MTB-8">
-                  <span style={{ color: 'white' }} id="language" role="presentation" className="C-P ML-2" onClick={() => setLanguage(v)}>
+                  <span role="presentation" className="C-P ML-2" onClick={() => setLanguage(v)}>
                     {LANGUAGE_NAME[v]}
                   </span>
                 </li>
@@ -79,8 +79,8 @@ const Nav = ({ children }) => {
     )
     return (
       <Dropdown overlay={menu} trigger={['click']}>
-        <a style={{ textDecoration: 'none', color: 'white' }}>
-          <Icon className="dropdown" type="global" style={{ fontSize: 20, color: 'white' }} />
+        <a style={{ textDecoration: 'none' }}>
+          <Icon className="dropdown" type="global" style={{ fontSize: 20 }} />
         </a>
       </Dropdown>
     )
@@ -104,7 +104,7 @@ const Nav = ({ children }) => {
     return (
       <Dropdown overlay={menu} trigger={['click']}>
         <a style={{ textDecoration: 'none' }}>
-          <Icon type="menu" style={{ fontSize: 20, color: 'white' }} />
+          <Icon type="menu" style={{ fontSize: 20 }} />
         </a>
       </Dropdown>
     )
@@ -161,7 +161,7 @@ const Nav = ({ children }) => {
     return (
       <Dropdown overlay={menu} trigger={['click']}>
         <a style={{ textDecoration: 'none' }}>
-          <Icon type="menu" style={{ fontSize: 20, color: 'white' }} />
+          <Icon type="menu" style={{ fontSize: 20 }} />
         </a>
       </Dropdown>
     )
@@ -172,14 +172,12 @@ const Nav = ({ children }) => {
       <nav className="main-nav menu-light menu-sticky">
         <div className="container">
           <div className="navbar">
-            <div key="1" className="ML-10">
-              <div className="brand-logo C-P MT-10">
-                <span role="presentation" className="navbar-brand C-P" style={{ textDecoration: 'none' }} onClick={() => Router.push('/')}>
-                  <div className="logo" />
-                  <span className="navbar-brandname ML-5" style={{ color: 'white', fontWeight: 'bold', verticalAlign: 'middle' }}>
-                    Nextjs Pangu
-                  </span>
-                </span>
+            <div className="brand-logo C-P">
+              <div role="presentation" className="MT-15 navbar-brand C-P" style={{ textDecoration: 'none' }} onClick={() => Router.push('/')}>
+                <div className="logo" />
+                <div className="ML-5" style={{ fontWeight: 'bold' }}>
+                  NextJs Pangu
+                </div>
               </div>
             </div>
             <div className="navbar-header">
