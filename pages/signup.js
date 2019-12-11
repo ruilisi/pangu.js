@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { message, Input, Button } from 'antd'
 import { FormattedMessage } from 'react-intl'
-import { useRouter } from 'next/router'
-import { T } from '../utils/translation'
+import Router from 'next/router'
+import { T, TR } from '../utils/translation'
 import { redirectIfAuthorized } from '../redux/modules/view'
 import { post } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Signup = () => {
   redirectIfAuthorized('/')
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -19,7 +18,7 @@ const Signup = () => {
     const res = await post('users', { user: params })
     if (res.id) {
       message.success('registration success')
-      router.push('/login')
+      Router.push('/login')
     } else {
       message.error('registration failed, The account already exists')
     }
@@ -27,21 +26,26 @@ const Signup = () => {
   }
 
   return (
-    <FormUnderNavLayout title="Signup">
+    <FormUnderNavLayout title={TR('Signup')}>
+      <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
+        <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => Router.push('/login')}>
+          {TR('Already have an account?')}
+        </span>
+      </div>
       <FormattedMessage id="Email">
         {placeholder => (
-          <Input autoFocus placeholder={placeholder} size="large" className="H-21" value={username} onChange={e => setUsername(e.target.value)} />
+          <Input autoFocus placeholder={placeholder} size="large" className="H-24" value={username} onChange={e => setUsername(e.target.value)} />
         )}
       </FormattedMessage>
       <FormattedMessage id="Password">
         {placeholder => (
-          <Input className="H-21 MT-12" placeholder={placeholder} type="password" size="large" value={password} onChange={e => setPassword(e.target.value)} />
+          <Input className="H-24 MT-12" placeholder={placeholder} type="password" size="large" value={password} onChange={e => setPassword(e.target.value)} />
         )}
       </FormattedMessage>
       <FormattedMessage id="Confirm Password">
         {placeholder => (
           <Input
-            className="H-21 MT-12"
+            className="H-24 MT-12"
             placeholder={placeholder}
             type="password"
             size="large"
@@ -50,11 +54,11 @@ const Signup = () => {
           />
         )}
       </FormattedMessage>
-      <div className="align-center MT-12">
+      <div className="MT-22">
         <Button
           type="primary"
           size="large"
-          style={{ minWidth: '100%', height: 42 }}
+          style={{ width: '100%', height: 48 }}
           loading={loading}
           onClick={e => {
             setLoading(true)

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import I from 'immutable'
@@ -13,7 +13,6 @@ import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 const Login = () => {
   redirectIfAuthorized('/')
   const dispatch = useDispatch()
-  const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -30,7 +29,7 @@ const Login = () => {
       message.success('登录成功')
       dispatch(selfSet(I.fromJS(res)))
       dispatch(viewSetIn(['loginDialogOpen'], false))
-      router.push('/chat')
+      Router.push('/chat')
     } else {
       message.error(res.error)
     }
@@ -43,52 +42,56 @@ const Login = () => {
     }
   }
   return (
-    <FormUnderNavLayout title="Login">
-      <div>
-        <FormattedMessage id="Email or Mobile">
-          {placeholder => (
-            <Input
-              key="1"
-              size="large"
-              type="text"
-              placeholder={placeholder}
-              autoFocus
-              className="H-21"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
-          )}
-        </FormattedMessage>
-        <FormattedMessage id="Password">
-          {placeholder => (
-            <Input
-              key="2"
-              size="large"
-              type="password"
-              placeholder={placeholder}
-              className="MT-12 H-21"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              onKeyPress={onKeyPress}
-            />
-          )}
-        </FormattedMessage>
-        <div key="3" className="MT-22">
-          <Button
-            className="H-21"
-            type="primary"
+    <FormUnderNavLayout title={TR('Login')}>
+      <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
+        {TR('Not a member yet?')}
+        <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => Router.push('/signup')}>
+          {TR('Sign Up here')}
+        </span>
+      </div>
+      <FormattedMessage id="Email">
+        {placeholder => (
+          <Input
+            key="1"
             size="large"
-            loading={submitting}
-            onClick={e => {
-              setSubmitting(true)
-              e.preventDefault()
-              login(username, password)
-            }}
-            style={{ width: '100%' }}
-          >
-            {TR('Login')}
-          </Button>
-        </div>
+            type="text"
+            placeholder={placeholder}
+            autoFocus
+            className="H-24"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
+        )}
+      </FormattedMessage>
+      <FormattedMessage id="Password">
+        {placeholder => (
+          <Input
+            key="2"
+            size="large"
+            type="password"
+            placeholder={placeholder}
+            className="MT-12 H-24"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyPress={onKeyPress}
+          />
+        )}
+      </FormattedMessage>
+      <div key="3" className="MT-22">
+        <Button
+          className="H-24"
+          type="primary"
+          size="large"
+          loading={submitting}
+          onClick={e => {
+            setSubmitting(true)
+            e.preventDefault()
+            login(username, password)
+          }}
+          style={{ width: '100%' }}
+        >
+          {TR('Login')}
+        </Button>
       </div>
     </FormUnderNavLayout>
   )

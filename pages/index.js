@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Row, Col } from 'antd'
+import { Button, Carousel, Row, Col } from 'antd'
 import Router from 'next/router'
 import Nav from '../components/nav'
 
@@ -12,9 +12,9 @@ const IndexPage = () => {
     <Nav>
       <div style={{ background: '#282D3C' }}>
         <div className="index-bg">
-          <div>
-            <p>NextJS Pangu</p>
-            <p>This is really an amazing website , Come and join us !</p>
+          <div className="container">
+            <p className="FS-20">NextJS Pangu</p>
+            <p className="FS-15 MB-30">This is really an amazing website , Come and join us !</p>
             <Button className="W-12 MLR-5" onClick={() => Router.push('/signup')}>
               Get Started
             </Button>
@@ -25,34 +25,60 @@ const IndexPage = () => {
         </div>
       </div>
       <Row className="index-content container">
-        <div className="TA-C MTB-20 FS-20 bold">Unique core advantages</div>
+        <div className="TA-C MTB-20 FS-12 bold">Unique core advantages</div>
         {[
-          [w, 'switching between local and remote', 'Free switching'],
-          [s, 'One click deployment of the client', 'One-click deployment'],
-          [d, 'react-intl allows to switch language', 'Globalization']
+          [w, 'switching between local and remote', 'Switching'],
+          [s, 'One click deployment of the client', 'Deployment'],
+          [d, 'react-intl allows to switch language', 'Translation']
         ].map(v => (
-          <Col md={8} style={{ padding: 10 }}>
+          <Col sm={8} xs={24} style={{ padding: 10 }}>
             <div>
-              <div style={{ padding: 40, background: '#5F6DB0', border: '1px solid #000' }} className="TA-C">
-                <img src={v[0]} style={{ width: '80%' }} alt="" />
-              </div>
-              <div style={{ border: '1px solid #000', padding: 20 }}>
-                <p className="FS-10 bold">{v[2]}</p>
-                <p>{v[1]}</p>
+              <div style={{ borderRadius: 8, boxShadow: '0px 3px 14px 1px rgba(0, 0, 0, 0.1)' }} className="TA-C">
+                <div style={{ padding: 40, background: '#5F6DB0', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+                  <img src={v[0]} style={{ width: '80%' }} alt="" />
+                </div>
+                <div style={{ padding: 10 }}>
+                  <p className="FS-10 bold">{v[2]}</p>
+                  <p>{v[1]}</p>
+                </div>
               </div>
             </div>
           </Col>
         ))}
       </Row>
       <Row className="index-content container TA-C">
-        <div className="TA-C MTB-20 FS-20 bold">They comment like this</div>
-        {/* }<Carousel autoplay style={{ marginBottom: 40 }} dots={false}>
-          <div style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>This is really convenient for me, I love it so much!</div>
-          <div style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>This is I love it so much!</div>
-          <div style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>me, I love it so much!</div>
-          <div style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>I love it so much!</div>
+        <div className="TA-C MTB-20 FS-12 bold">They comment like this</div>
+        <Carousel
+          autoplay
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 200,
+            fontSize: 30
+          }}
+          dots={false}
+        >
+          <div>This is really convenient for me, I love it so much!</div>
+          <div>I have never used so good tool!</div>
+          <div>If you want to be an excellent developer, please fork it!</div>
+          <div>This is amazing project, damn it!</div>
         </Carousel>
-        */}
+      </Row>
+      <Row className="index-content container TA-C">
+        <div className="TA-C MTB-20 FS-12 bold">Projects Using NextJS Pangu</div>
+        {[
+          ['/static/imgs/1.png', 'https://data.lingti.io'],
+          ['/static/imgs/2.png', 'https://devops.lingti.io'],
+          ['/static/imgs/3.png', 'https://lingti.io'],
+          ['/static/imgs/4.png', 'https://esheep.xyz']
+        ].map(v => (
+          <Col span={6} className="MTB-20">
+            <div className="C-P" role="presentation" onClick={() => window.open(v[1])}>
+              <img alt="" style={{ width: 80 }} src={v[0]} />
+            </div>
+          </Col>
+        ))}
       </Row>
       <style jsx>
         {`
@@ -62,7 +88,6 @@ const IndexPage = () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
             color: white;
             background-size: cover;
             background: url(/static/imgs/index-bg.png) no-repeat;
