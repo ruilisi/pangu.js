@@ -87,9 +87,11 @@ const Chat = () => {
               .map(v => {
                 const { id, title } = v.toJS()
                 return (
-                  <Menu.Item key={id} onClick={() => switchRoom(id)}>
+                  <Menu.Item key={id}>
                     <Dropdown overlay={menu(id)} trigger={['contextMenu']}>
-                      <p>{title}</p>
+                      <p role="presentation" onClick={() => switchRoom(id)}>
+                        {title}
+                      </p>
                     </Dropdown>
                   </Menu.Item>
                 )

@@ -3,10 +3,13 @@ import { roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import { viewSetIn } from '../redux/modules/view'
 
 let prevRoomChannel
+let prevRoomId
 
 export default roomId => {
   const cable = authedActionCable()
   if (!cable) return null
+
+  if (prevRoomId === roomId) return null
 
   if (prevRoomChannel) {
     prevRoomChannel.unsubscribe()
@@ -43,6 +46,7 @@ export default roomId => {
       }
     }
   )
+  prevRoomId = roomId
   prevRoomChannel = channel
   return prevRoomChannel
 }
