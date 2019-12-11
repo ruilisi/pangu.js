@@ -2,15 +2,20 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
+import { Dropdown, Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
 import { get, httpDelete, removeAuthorization } from '../utils/request'
-import { roomsSet } from '../redux/modules/rooms'
+import { roomsSet, roomsRemove } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 import Setting from '../components/Setting'
 
 const getRooms = async () => {
   const res = await get('rooms')
+  return res
+}
+
+const deleteRooms = async id => {
+  const res = await httpDelete(`rooms/${id}`)
   return res
 }
 
@@ -41,6 +46,21 @@ const Chat = () => {
     })
   }, [])
 
+  const menu = id => (
+    <Menu>
+      <Menu.Item
+        key="1"
+        onClick={() =>
+          deleteRooms(id).then(body => {
+            dispatch(roomsRemove(I.fromJS(body.id)))
+          })
+        }
+      >
+        删除房间
+      </Menu.Item>
+    </Menu>
+  )
+
   const onKeyPress = e => {
     if (e.key === 'Enter') {
       if (text === '') return
@@ -68,7 +88,9 @@ const Chat = () => {
                 const { id, title } = v.toJS()
                 return (
                   <Menu.Item key={id} onClick={() => switchRoom(id)}>
-                    {title}
+                    <Dropdown overlay={menu(id)} trigger={['contextMenu']}>
+                      <p>{title}</p>
+                    </Dropdown>
                   </Menu.Item>
                 )
               })

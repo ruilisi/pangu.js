@@ -5,7 +5,7 @@ import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import I from 'immutable'
 import { TR } from '../utils/translation'
-import { viewSetIn, redirectIfAuthorized } from '../redux/modules/view'
+import { redirectIfAuthorized } from '../redux/modules/view'
 import { selfSet } from '../redux/modules/self'
 import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
@@ -28,7 +28,6 @@ const Login = () => {
       localStorage.setItem('Id', res.id)
       message.success('登录成功')
       dispatch(selfSet(I.fromJS(res)))
-      dispatch(viewSetIn(['loginDialogOpen'], false))
       Router.push('/chat')
     } else {
       message.error(res.error)

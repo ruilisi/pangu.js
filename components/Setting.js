@@ -34,6 +34,7 @@ const Setting = () => {
       <Menu.Item onClick={() => setShow(true)}>新建房间</Menu.Item>
     </Menu>
   )
+
   return (
     <div>
       <Dropdown overlay={menu}>
