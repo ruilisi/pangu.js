@@ -1,7 +1,7 @@
+import ActionCable from 'actioncable-rails'
 import dns from './dns'
 import { getAuthorization } from './request'
 import { viewSetIn, authorizedPath } from '%view'
-import ActionCable from './ActionCable/index'
 
 export const authorization2ActionCable = {}
 export default () => {
