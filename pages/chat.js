@@ -7,6 +7,7 @@ import { get, httpDelete, removeAuthorization } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
+import Setting from '../components/Setting'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -51,7 +52,14 @@ const Chat = () => {
     <div>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
         <div className="FS-10 TA-C PT-20">
-          <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
+          <Row style={{ display: 'flex', alignItems: 'center' }}>
+            <Col span={12}>
+              <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
+            </Col>
+            <Col span={12}>
+              <Setting />
+            </Col>
+          </Row>
         </div>
         <Card style={{ height: '65vh', overflowY: 'scroll' }} bordered={false}>
           <Menu className="TA-C" selectedKeys={[roomId]}>

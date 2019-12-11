@@ -10,6 +10,7 @@ export default roomId => {
 
   if (prevRoomChannel) {
     prevRoomChannel.unsubscribe()
+    prevRoomChannel = null
   }
 
   const channel = cable.subscriptions.create(

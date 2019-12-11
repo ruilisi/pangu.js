@@ -1,6 +1,7 @@
 import I, { isImmutable, List, Map } from 'immutable'
 
 export const ROOMS_SET = 'ROOMS_SET'
+export const ROOMS_ADD = 'ROOMS_ADD'
 export const ROOMS_MESSAGES_ADD = 'ROOMS_MESSAGES_ADD'
 export const ROOMS_MESSAGES_SET = 'ROOMS_MESSAGES_SET'
 
@@ -10,6 +11,8 @@ export default (rooms = initialState, action) => {
   switch (action.type) {
     case ROOMS_SET:
       return I.fromJS(action.rooms)
+    case ROOMS_ADD:
+      return rooms.merge(I.fromJS(action.rooms))
     case ROOMS_MESSAGES_SET:
       return rooms.setIn([id, 'messages'], I.fromJS(action.messages))
     case ROOMS_MESSAGES_ADD:
@@ -23,5 +26,6 @@ export default (rooms = initialState, action) => {
 }
 
 export const roomsSet = rooms => ({ type: ROOMS_SET, rooms })
+export const roomsAdd = rooms => ({ type: ROOMS_ADD, rooms })
 export const roomsMessagesAdd = (id, message) => ({ type: ROOMS_MESSAGES_ADD, id, message })
 export const roomsMessagesSet = (id, messages) => ({ type: ROOMS_MESSAGES_SET, id, messages })
