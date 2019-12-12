@@ -1,13 +1,13 @@
 import I, { Map, List } from 'immutable'
-import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Dropdown, Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
-import { get, post, httpDelete, removeAuthorization } from '../utils/request'
+import { message, Dropdown, Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
+import { get, post, httpDelete } from '../utils/request'
 import { roomsSet, roomsRemove } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 import Setting from '../components/Setting'
+import { logout } from '../api/sessions'
 import UserList from '../components/UserList'
 
 const getRooms = async () => {
@@ -27,7 +27,6 @@ const deleteRooms = async id => {
 
 const Chat = () => {
   redirectIfAuthorized('/login', false)
-  const router = useRouter()
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
@@ -43,12 +42,10 @@ const Chat = () => {
     setChannel(roomsChannel(id))
   }
 
-  const sendMessageButtonRef = useRef(null)
   useEffect(() => {
     getRooms().then(body => {
+      if (body.status === 401) return
       dispatch(roomsSet(I.fromJS(body)))
-      const id = Object.keys(body)[0]
-      switchRoom(id)
     })
   }, [])
 
@@ -58,7 +55,11 @@ const Chat = () => {
         key="1"
         onClick={() =>
           deleteRooms(id).then(body => {
-            dispatch(roomsRemove(I.fromJS(body.id)))
+            if (body.ok === false) {
+              message.info('you are not the room owner')
+            } else {
+              dispatch(roomsRemove(I.fromJS(body.id)))
+            }
           })
         }
       >
@@ -117,17 +118,7 @@ const Chat = () => {
         </Card>
 
         <div className="MT-5 TA-C MB-50">
-          <Button
-            type="primary"
-            size="large"
-            style={{ paddingLeft: 30, paddingRight: 30 }}
-            onClick={() => {
-              httpDelete('users/sign_out').then(() => {
-                removeAuthorization()
-                router.replace('/')
-              })
-            }}
-          >
+          <Button type="primary" size="large" style={{ paddingLeft: 30, paddingRight: 30 }} onClick={() => dispatch(logout())}>
             Logout
           </Button>
         </div>

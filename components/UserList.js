@@ -8,10 +8,10 @@ const userList = async id => {
 }
 
 const UserList = ({ id }) => {
-  console.info(id)
   const [users, setUsers] = useState([])
 
   useEffect(() => {
+    if (!id) return
     userList(id).then(body => {
       setUsers(body)
     })

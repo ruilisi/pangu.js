@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
-import Router from 'next/router'
 import { Input, Button, message } from 'antd'
 import { FormattedMessage } from 'react-intl'
-import I from 'immutable'
 import { TR } from '../utils/translation'
-import { redirectIfAuthorized } from '../redux/modules/view'
-import { selfSet } from '../redux/modules/self'
+import { redirectIfAuthorized, setAuthorized } from '../redux/modules/view'
 import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Login = () => {
   redirectIfAuthorized('/')
+  const router = useRouter()
   const dispatch = useDispatch()
   const [submitting, setSubmitting] = useState(false)
   const [username, setUsername] = useState('')
@@ -27,8 +26,7 @@ const Login = () => {
     if (res.id) {
       localStorage.setItem('Id', res.id)
       message.success('登录成功')
-      dispatch(selfSet(I.fromJS(res)))
-      Router.push('/chat')
+      dispatch(setAuthorized(true))
     } else {
       message.error(res.error)
     }
@@ -44,7 +42,7 @@ const Login = () => {
     <FormUnderNavLayout title={TR('Login')}>
       <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
         {TR('Not a member yet?')}
-        <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => Router.push('/signup')}>
+        <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => router.push('/signup')}>
           {TR('Sign Up here')}
         </span>
       </div>
