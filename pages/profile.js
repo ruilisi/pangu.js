@@ -32,16 +32,18 @@ const Profile = () => {
         <div className="MB-2">
           <Avatar className="align-center D-B" src={self.getIn(['data', 'avatar'])} shape="circle" size={128} />
         </div>
-        <FileUploader
-          token={qiniuToken}
-          keyPrefix="avatar"
-          onSuccess={avatar => {
-            console.info(avatar)
-            if (channel) {
-              channel.load('set_avatar', { avatar })
-            }
-          }}
-        />
+        {qiniuToken ? (
+          <FileUploader
+            token={qiniuToken}
+            keyPrefix="avatar"
+            onSuccess={avatar => {
+              console.info(avatar)
+              if (channel) {
+                channel.load('set_avatar', { avatar })
+              }
+            }}
+          />
+        ) : null}
       </div>
     </FormUnderNavLayout>
   )
