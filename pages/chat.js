@@ -8,6 +8,7 @@ import { roomsSet, roomsRemove } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 import Setting from '../components/Setting'
+import UserList from '../components/UserList'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -135,34 +136,41 @@ const Chat = () => {
         <div className="FS-10 ML-5" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
           {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
         </div>
-        <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
-          {room.get('messages', List()).map(v => {
-            return v.get('user_id') === self.get('id') ? (
-              <Row key={v.get('id')}>
-                <Col span={10} push={13}>
-                  <div>{v.getIn(['data', 'email'])}</div>
-                  <div>{v.get('created_at')}</div>
-                  <p className="my-text">{v.get('text')}</p>
-                </Col>
-                <Col span={1} push={13}>
-                  <Avatar src={avatars[v.get('user_id')]} />
-                </Col>
-              </Row>
-            ) : (
-              <Row key={v.get('id')}>
-                <Col span={1}>
-                  <Avatar src={avatars[v.get('user_id')]} />
-                </Col>
-                <Col span={10}>
-                  <div>{v.getIn(['data', 'email'])}</div>
-                  <div>{v.get('created_at')}</div>
-                  <p className="other-text">{v.get('text')}</p>
-                </Col>
-              </Row>
-            )
-          })}
-          <div ref={sendMessageButtonRef} />
-        </Card>
+        <Row>
+          <Col span={20}>
+            <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
+              {room.get('messages', List()).map(v => {
+                return v.get('user_id') === self.get('id') ? (
+                  <Row key={v.get('id')}>
+                    <Col span={10} push={13}>
+                      <div>{v.getIn(['data', 'email'])}</div>
+                      <div>{v.get('created_at')}</div>
+                      <p className="my-text">{v.get('text')}</p>
+                    </Col>
+                    <Col span={1} push={13}>
+                      <Avatar src={avatars[v.get('user_id')]} />
+                    </Col>
+                  </Row>
+                ) : (
+                  <Row key={v.get('id')}>
+                    <Col span={1}>
+                      <Avatar src={avatars[v.get('user_id')]} />
+                    </Col>
+                    <Col span={10}>
+                      <div>{v.getIn(['data', 'email'])}</div>
+                      <div>{v.get('created_at')}</div>
+                      <p className="other-text">{v.get('text')}</p>
+                    </Col>
+                  </Row>
+                )
+              })}
+            </Card>
+          </Col>
+          <Col span={4} style={{ paddingLeft: '10px' }}>
+            <p>成员列表</p>
+            <UserList id={roomId} />
+          </Col>
+        </Row>
         <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
           <Col className="display-center" span={18} push={2}>
             <Input
