@@ -80,7 +80,7 @@ const Chat = () => {
 
   const onKeyPress = e => {
     if (e.key === 'Enter') {
-      if (text === '') return
+      if (text.trim() === '') return
       channel.load('add_message', { room_id: roomId, text })
       setText('')
     }
@@ -161,40 +161,40 @@ const Chat = () => {
                   )
                 })}
               </Card>
+              <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
+                <Col className="display-center" span={18} push={2}>
+                  <Input
+                    value={text}
+                    size="large"
+                    placeholder="随便吐槽一下吧"
+                    style={{ background: '#e1e1e1', width: '100%' }}
+                    onChange={e => {
+                      setText(e.target.value)
+                    }}
+                    onKeyPress={onKeyPress}
+                  />
+                </Col>
+                <Col className="display-center" span={4} push={2}>
+                  <Button
+                    size="large"
+                    type="primary"
+                    className="PLR-15"
+                    onClick={() => {
+                      if (text.trim() === '' || roomId === '') return
+                      channel.load('add_message', { room_id: roomId, text })
+                      setText('')
+                    }}
+                  >
+                    发送
+                  </Button>
+                </Col>
+              </div>
             </Col>
-            <Col span={4} style={{ paddingLeft: '10px' }}>
+            <Col span={4} style={{ paddingLeft: '10px', height: '80vh', overflow: 'scroll' }}>
               <p>成员列表</p>
               <UserList id={roomId} />
             </Col>
           </Row>
-          <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
-            <Col className="display-center" span={18} push={2}>
-              <Input
-                value={text}
-                size="large"
-                placeholder="随便吐槽一下吧"
-                style={{ background: '#e1e1e1', width: '100%' }}
-                onChange={e => {
-                  setText(e.target.value)
-                }}
-                onKeyPress={onKeyPress}
-              />
-            </Col>
-            <Col className="display-center" span={4} push={2}>
-              <Button
-                size="large"
-                type="primary"
-                className="PLR-15"
-                onClick={() => {
-                  if (text === '' || roomId === '') return
-                  channel.load('add_message', { room_id: roomId, text })
-                  setText('')
-                }}
-              >
-                发送
-              </Button>
-            </Col>
-          </div>
         </Col>
       )}
       <style jsx global>
