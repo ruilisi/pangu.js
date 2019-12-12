@@ -124,6 +124,8 @@ The shortcut keys for operating dock monitor of `Redux DevTools` are:
 
 This library provides React components and an API to format dates, numbers, and strings, including pluralization and handling translations.
 
+Note: some new API were called by new version of formatjs source code, but X5 core broswer crash when everytime these two method executed. If you want to use X5 core browser, please downgrade react-intl to below 3.0.
+
 ```
 <IntlProvider locale={locale} messages={localeData[locale]}>
   <Provider store={store}>
