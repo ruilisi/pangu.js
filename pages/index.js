@@ -31,7 +31,7 @@ const IndexPage = () => {
           [s, 'One click deployment of the client', 'Deployment'],
           [d, 'react-intl allows to switch language', 'Translation']
         ].map(v => (
-          <Col sm={8} xs={24} style={{ padding: 10 }}>
+          <Col sm={8} xs={24} style={{ padding: 10 }} key={v[1]}>
             <div>
               <div style={{ borderRadius: 8, boxShadow: '0px 3px 14px 1px rgba(0, 0, 0, 0.1)' }} className="TA-C">
                 <div style={{ padding: 40, background: '#5F6DB0', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
@@ -73,7 +73,7 @@ const IndexPage = () => {
           ['/static/imgs/3.png', 'https://lingti.io'],
           ['/static/imgs/4.png', 'https://esheep.xyz']
         ].map(v => (
-          <Col span={6} className="MTB-20">
+          <Col span={6} className="MTB-20" key={v[1]}>
             <div className="C-P" role="presentation" onClick={() => window.open(v[1])}>
               <img alt="" style={{ width: 80 }} src={v[0]} />
             </div>

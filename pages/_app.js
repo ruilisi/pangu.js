@@ -2,7 +2,9 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
-import { IntlProvider } from 'react-intl'
+import { IntlProvider, addLocaleData } from 'react-intl'
+import zhCN from 'react-intl/locale-data/zh'
+import enUS from 'react-intl/locale-data/en'
 import Head from '../components/head'
 import configureStore from '../redux/configureStore'
 import zh from '../locale/zh.yml'
@@ -15,6 +17,7 @@ import shortcuts from '../utils/shortcuts'
 import DevTools from '../containers/DevTools'
 
 const localeData = { zh, en }
+addLocaleData([...zhCN, ...enUS])
 
 class MyApp extends App {
   state = {
@@ -47,16 +50,6 @@ class MyApp extends App {
       this.setLocale('zh')
     } else if (language !== this.state.locale) {
       this.setLocale(language)
-    }
-
-    if (navigator.userAgent.indexOf('MicroMessenger') >= 0 && navigator.userAgent.indexOf('Android') >= 0) {
-      delete global.Intl
-    }
-    if (!global.Intl) {
-      require.ensure(['intl', 'intl/locale-data/jsonp/en.js'], require => {
-        require('intl')
-        require('intl/locale-data/jsonp/en.js')
-      })
     }
   }
 
