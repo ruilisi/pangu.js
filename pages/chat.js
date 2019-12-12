@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Dropdown, Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
-import { get, httpDelete, removeAuthorization } from '../utils/request'
+import { get, post, httpDelete, removeAuthorization } from '../utils/request'
 import { roomsSet, roomsRemove } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
@@ -11,6 +11,11 @@ import Setting from '../components/Setting'
 
 const getRooms = async () => {
   const res = await get('rooms')
+  return res
+}
+
+const quitRooms = async id => {
+  const res = await post('rooms/quit_room', { id })
   return res
 }
 
@@ -57,6 +62,16 @@ const Chat = () => {
         }
       >
         删除房间
+      </Menu.Item>
+      <Menu.Item
+        key="2"
+        onClick={() =>
+          quitRooms(id).then(body => {
+            dispatch(roomsRemove(I.fromJS(body.id)))
+          })
+        }
+      >
+        退出房间
       </Menu.Item>
     </Menu>
   )

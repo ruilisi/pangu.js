@@ -1,37 +1,69 @@
 import React, { useState } from 'react'
 import I from 'immutable'
-import { Row, Col, Switch, Icon, Dropdown, Menu, Modal, Input } from 'antd'
+import { message, Row, Col, Icon, Dropdown, Menu, Modal, Input } from 'antd'
 import { useDispatch } from 'react-redux'
 import { post } from '../utils/request'
 import { roomsAdd } from '../redux/modules/rooms'
 
-const createRooms = async (title, visibility) => {
-  const res = await post('rooms', { title, visibility })
+const createRooms = async title => {
+  const res = await post('rooms', { title })
+  return res
+}
+
+const joinRooms = async title => {
+  const res = await post('rooms/join_room', { title })
   return res
 }
 
 const Setting = () => {
   const dispatch = useDispatch()
   const [show, setShow] = useState(false)
-  const [visibility, setVisibility] = useState(false)
   const [title, setTitle] = useState('')
+  const [menuItem, setMenuItem] = useState('')
 
   const handleOk = () => {
-    createRooms(title, visibility).then(body => {
-      dispatch(roomsAdd(I.fromJS(body)))
-      setTitle('')
-      setShow(false)
-    })
+    if (menuItem === '新建房间') {
+      createRooms(title).then(body => {
+        if (body.ok === 'false') {
+          message.info('Failed to create room')
+        } else {
+          dispatch(roomsAdd(I.fromJS(body)))
+        }
+        setTitle('')
+        setShow(false)
+      })
+    } else {
+      joinRooms(title).then(body => {
+        if (body.ok === false) {
+          message.info('Room does not exit')
+        } else {
+          dispatch(roomsAdd(I.fromJS(body)))
+        }
+        setTitle('')
+        setShow(false)
+      })
+    }
   }
 
   const handleCancel = () => {
     setShow(false)
-    setVisibility(false)
   }
+
+  const menuList = ['新建房间', '加入房间']
 
   const menu = (
     <Menu>
-      <Menu.Item onClick={() => setShow(true)}>新建房间</Menu.Item>
+      {menuList.map(v => (
+        <Menu.Item
+          key={v}
+          onClick={() => {
+            setMenuItem(v)
+            setShow(true)
+          }}
+        >
+          {v}
+        </Menu.Item>
+      ))}
     </Menu>
   )
 
@@ -40,17 +72,11 @@ const Setting = () => {
       <Dropdown overlay={menu}>
         <Icon type="more" />
       </Dropdown>
-      <Modal title="新建房间" visible={show} onOk={handleOk} onCancel={handleCancel}>
-        <Row style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 30, marginBottom: '20px' }}>
+      <Modal title={menuItem} visible={show} onOk={handleOk} onCancel={handleCancel}>
+        <Row style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 30 }}>
           <Col span={4}>title</Col>
           <Col span={20}>
             <Input value={title} onChange={e => setTitle(e.target.value)} />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={4}>visibilty</Col>
-          <Col span={20}>
-            <Switch checkedChildren="public" unCheckedChildren="private" checked={visibility} onChange={checked => setVisibility(checked)} />
           </Col>
         </Row>
       </Modal>
