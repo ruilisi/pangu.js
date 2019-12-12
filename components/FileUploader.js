@@ -6,9 +6,9 @@ const uploadProps = {
   name: 'file'
 }
 
-export default ({ token, onSuccess, keyPrefix = 'file' }) => {
+export default ({ token, onSuccess, keyPrefix, keyFunc = (_keyPrefix, filename) => `${_keyPrefix}-${new Date().getTime()}-${filename}` }) => {
   const [uploading, setUploading] = useState(false)
-  const [name, setName] = useState('')
+  const [filename, setFilename] = useState('')
 
   const handleAvatarChange = ({ file }) => {
     if (file.status === 'uploading') {
@@ -20,7 +20,7 @@ export default ({ token, onSuccess, keyPrefix = 'file' }) => {
       const {
         response: { key }
       } = file
-      onSuccess(`http://res.paiyou.co/${key}`)
+      onSuccess(key)
     }
   }
 
@@ -29,8 +29,8 @@ export default ({ token, onSuccess, keyPrefix = 'file' }) => {
       {...uploadProps}
       accept="image/*"
       showUploadList={false}
-      beforeUpload={file => setName(file.name)}
-      data={{ token, key: `${keyPrefix}_${new Date().getTime()}_${name}` }}
+      beforeUpload={file => setFilename(file.name)}
+      data={{ token, key: keyFunc(keyPrefix, filename) }}
       onChange={handleAvatarChange}
     >
       <Button>

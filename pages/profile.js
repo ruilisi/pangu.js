@@ -13,9 +13,9 @@ const Profile = () => {
 
   const D = useDispatch()
   const view = useSelector(state => state.view)
-  const qiniuToken = view.get('qiniuToken')
+  const token = view.get('qiniuToken')
   useEffect(() => {
-    if (!qiniuToken) {
+    if (!token) {
       get('qiniu_token').then(data => {
         D(viewSetIn(['qiniuToken'], data && data.qiniuToken))
       })
@@ -32,14 +32,13 @@ const Profile = () => {
         <div className="MB-2">
           <Avatar className="align-center D-B" src={self.getIn(['data', 'avatar'])} shape="circle" size={128} />
         </div>
-        {qiniuToken ? (
+        {token ? (
           <FileUploader
-            token={qiniuToken}
+            token={token}
             keyPrefix="avatar"
-            onSuccess={avatar => {
-              console.info(avatar)
+            onSuccess={key => {
               if (channel) {
-                channel.load('set_avatar', { avatar })
+                channel.load('set_avatar', { avatar: `http://res.paiyou.co/${key}` })
               }
             }}
           />
