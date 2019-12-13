@@ -6904,6 +6904,11 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   resolved "https://registry.npm.taobao.org/react-lifecycles-compat/download/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha1-TxonOv38jzSIqMUWv9p4+HI1I2I=
 
+react-pangu@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/react-pangu/-/react-pangu-1.2.0.tgz#8353c2c12455ba1ea9b9cd8944e9a0d195c1e208"
+  integrity sha512-yJo0acm1pE3Bl6G54zoPqZOOXKnxssh0yeFgkc6iBCYVglTFO+vjBCKGePp/gy0cNQ7W8oqhGEHlDEyTZ4Lvew==
+
 react-pure-render@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/react-pure-render/download/react-pure-render-1.0.2.tgz#9d8a928c7f2c37513c2d064e57b3e3c356e9fabb"

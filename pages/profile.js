@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Avatar } from 'antd'
 
+import { QiniuAntd } from 'react-pangu'
 import { get } from '../utils/request'
 import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
-import FileUploader from '../components/FileUploader'
 import usersChannel from '../utils/usersChannel'
 
 const Profile = () => {
@@ -33,7 +33,7 @@ const Profile = () => {
           <Avatar className="align-center D-B" src={self.getIn(['data', 'avatar'])} shape="circle" size={128} />
         </div>
         {token ? (
-          <FileUploader
+          <QiniuAntd
             token={token}
             keyPrefix="avatar"
             onSuccess={key => {
