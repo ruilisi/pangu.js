@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Upload, Button, Icon, Spin } from 'antd'
 
 const uploadProps = {
-  action: 'http://upload.qiniup.com/',
+  action: 'https://upload.qiniup.com/',
   name: 'file'
 }
 
