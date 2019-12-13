@@ -7,7 +7,8 @@ const userList = async id => {
   return res
 }
 
-const UserList = ({ id }) => {
+const UserList = props => {
+  const { id, style, className } = props
   const [users, setUsers] = useState([])
 
   useEffect(() => {
@@ -19,6 +20,8 @@ const UserList = ({ id }) => {
 
   return (
     <List
+      style={style}
+      className={className}
       itemLayout="horizontal"
       split={false}
       dataSource={users}
