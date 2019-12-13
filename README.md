@@ -139,18 +139,9 @@ Note: some new API were called by new version of formatjs source code, but X5 co
 
 ```
 
-#### Redux
+#### `Redux`
 
-```
-import { applyMiddleware, createStore } from 'redux'
-import thunk from 'redux-thunk'
-import makeRootReducer from './state'
-
-export default (initialState = {}) => {
-  return createStore(makeRootReducer(), initialState, applyMiddleware(thunk))
-}
-
-```
+React is great, and it’s entirely possible to write a complete application using nothing but React. However, as an application gets more complex, sometimes it’s not as straightforward to use plain old React. Using a state management library like `Redux` can alleviate some of the issues that crop up in more complex applications.
 
 #### Http connection (jwt authentication) with rails-pangu
 
@@ -202,3 +193,21 @@ This module together with `eslint-import-resolver-babel-plugin-root-import` make
   }
   // .eslintrc.js
 ```
+
+## A deployment method
+
+**[ZEIT Now](https://zeit.co/docs)** (https://zeit.co/docs) is a cloud platform for static sites and Serverless Functions. It enables developers to host websites and web services that deploy instantly, scale automatically, and requires no supervision, all with no configuration.
+
+Getting started with `ZEIT Now` takes just a few steps and lets you get up and running with your new project in less than a minute.
+
+## Example using nextjs-pangu
+
+**[Example](https://nextjs-pangu.now.sh)** (https://nextjs-pangu.now.sh)
+
+In this example, the front-end is implemented using [nextjs-pangu](https://github.com/paiyou-network/nextjs-pangu), and the back-end is implemented using [rails-pangu](https://github.com/paiyou-network/rails-pangu/). This example implements the following functions:
+
+> - register, login, sign out your custom account;
+> - create or delete your chat room, join or quit someone's chat room;
+> - visible to all users in this chat room；
+> - upload your custom avatar;
+> - chat live with your friends in the chat room;
