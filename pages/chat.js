@@ -1,27 +1,18 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { message, Dropdown, Col, Input, Button, Avatar, Row, Menu, Card } from 'antd'
-import { get, post, httpDelete } from '../utils/request'
-import { roomsSet, roomsRemove } from '../redux/modules/rooms'
+import { Col, Input, Button, Avatar, Row, Card } from 'antd'
+import { get } from '../utils/request'
+import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized } from '../redux/modules/view'
 import Setting from '../components/Setting'
 import { logout } from '../api/sessions'
 import UserList from '../components/UserList'
+import Rooms from '../components/Rooms'
 
 const getRooms = async () => {
   const res = await get('rooms')
-  return res
-}
-
-const quitRooms = async id => {
-  const res = await post('rooms/quit_room', { id })
-  return res
-}
-
-const deleteRooms = async id => {
-  const res = await httpDelete(`rooms/${id}`)
   return res
 }
 
@@ -49,35 +40,6 @@ const Chat = () => {
     })
   }, [])
 
-  const menu = id => (
-    <Menu>
-      <Menu.Item
-        key="1"
-        onClick={() =>
-          deleteRooms(id).then(body => {
-            if (body.ok === false) {
-              message.info('you are not the room owner')
-            } else {
-              dispatch(roomsRemove(I.fromJS(body.id)))
-            }
-          })
-        }
-      >
-        删除房间
-      </Menu.Item>
-      <Menu.Item
-        key="2"
-        onClick={() =>
-          quitRooms(id).then(body => {
-            dispatch(roomsRemove(I.fromJS(body.id)))
-          })
-        }
-      >
-        退出房间
-      </Menu.Item>
-    </Menu>
-  )
-
   const onKeyPress = e => {
     if (e.key === 'Enter') {
       if (text.trim() === '') return
@@ -99,22 +61,7 @@ const Chat = () => {
           </Row>
         </div>
         <Card style={{ height: '65vh', overflowY: 'scroll' }} bordered={false}>
-          <Menu className="TA-C" selectedKeys={[roomId]}>
-            {rooms
-              .map(v => {
-                const { id, title } = v.toJS()
-                return (
-                  <Menu.Item key={id}>
-                    <Dropdown overlay={menu(id)} trigger={['contextMenu']}>
-                      <p role="presentation" onClick={() => switchRoom(id)}>
-                        {title}
-                      </p>
-                    </Dropdown>
-                  </Menu.Item>
-                )
-              })
-              .toList()}
-          </Menu>
+          <Rooms rooms={rooms} switchRoom={switchRoom} />
         </Card>
 
         <div className="MT-5 TA-C MB-50">
@@ -190,9 +137,9 @@ const Chat = () => {
                 </Col>
               </div>
             </Col>
-            <Col span={4} style={{ paddingLeft: '10px', height: '80vh', overflow: 'scroll' }}>
+            <Col span={4} style={{ paddingLeft: '10px', height: '80vh' }}>
               <p>成员列表</p>
-              <UserList id={roomId} />
+              <UserList id={roomId} style={{ height: '70vh', overflowY: 'scroll' }} />
             </Col>
           </Row>
         </Col>
