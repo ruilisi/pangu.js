@@ -2,37 +2,43 @@
 
 [中文文档 Chinese document](/README.CN.md)
 
-`Next.js-Pangu` is a frontend javascript starter kit which inherits from [Next.js](https://github.com/zeit/next.js/) and is heavily depended on [Rails-pangu](https://github.com/paiyou-network/rails-pangu). It focus on being an lean example of using `Next.js` while solving left issues which `Next.js` haven't solved or `Next.js` does not intend to solve(for example, support `IE9`). Since it is heavily connected with `rails` backend, this project also offers examples or solutions for doing backend work, ex., connecting [action cable](https://github.com/rails/rails/tree/master/actioncable) and authenticating that connection through `jwt`.
+`Next.js-Pangu` is a frontend starter kit inherited from [Next.js](https://github.com/zeit/next.js/) and is heavily depended on [Rails-pangu](https://github.com/paiyou-network/rails-pangu) for backend. It focus on being an lean example of using `Next.js` while solving left issues which `Next.js` haven't solved or `Next.js` does not intend to solve(for example, support `IE9`). 
+
+
+## Features offered by `Next.js`
+
+* Server Rendering
+* Static Exporting: Exporting a static site with Next.js is as easy as a single command.
+* CSS-in-JS: Next.js comes with styled-jsx included, but it also works with every CSS-in-JS solution you know and love.
+* Zero Setup: Automatic code splitting, filesystem based routing, hot code reloading and universal rendering.
+* Fully Extensible: Complete control over Babel and Webpack. Customizable server, routing and next-plugins.
+* Ready for Production: Optimized for a smaller build size, faster dev compilation and dozens of other improvements.
+
 
 ## Features
+#### Websocket by [ActionCable](https://edgeguides.rubyonrails.org/action_cable_overview.html)
+This project heavily uses websocket for transmitting data.
+For those of you who aren't very familiar with `websocket`, I recommend you to watch this vedio [here](https://www.youtube.com/watch?v=PjiXkJ6P9pQ).
+As many of you would probably know, [meteorjs](https://www.meteor.com/) uses `websocket` universally for connections between frontend and backend. 
+This project mimics what [meteorjs] did with a rails backend, and the reasons for doing that are below(largely quoted [here](https://blogs.windows.com/windowsdeveloper/2016/03/14/when-to-use-a-http-call-instead-of-a-websocket-or-http-2-0/)):
+* Fast Reaction Time
+  When a client needs to react quickly to a change (especially one it cannot predict), a WebSocket may be best. Consider a chat application that allows multiple users to chat in real-time. If WebSockets are used, each user can both send and receive messages in real-time. WebSockets allow for a higher amount of efficiency compared to REST because they do not require the HTTP request/response overhead for each message sent and received.
+* Ongoing Updates
+  When a client wants ongoing updates about the state of the resource, WebSockets are generally a good fit. WebSockets are a particularly good fit when the client cannot anticipate when a change will occur and changes are likely to happen in the short term.HTTP, on the other hand, may be a better fit if the client can predict when changes occur or if they occur infrequently—for example, a resource that changes hourly or changes only after it knows that a related resource is modified. If the client doesn’t know that the related resource is modified (e.g. because some other client modified it, or the service modified it), then WebSockets are better.
+* Ad-hoc Messaging
+  The WebSocket protocol is not designed around request-response. Messages may be sent from either end of the connection at any time, and there is no native support for one message to indicate it is related to another. This makes the protocol well suited to “fire and forget” messaging scenarios and poorly suited for transactional requirements. The messaging layer must address your transactional needs if that’s needed in your application.
+* High-Frequency Messaging with Small Payloads
+  The WebSocket protocol offers a persistent connection to exchange messages. This means that individual messages don’t incur any additional tax to establish the transport. Taxes such as establishing SSL, content negotiation, and exchange of bulky headers are imposed only once when the connection is established. There is virtually no tax per message. On the other hand, while HTTP v1.1 may allow multiple requests to reuse a single connection, there will generally be small timeout periods intended to control resource consumption. Since WebSockets were designed specifically for long-lived connection scenarios, they avoid the overhead of establishing connections and sending HTTP request/response headers, resulting in a significant performance boost.However, this should not be taken to extremes. Avoid using WebSockets if only a small number of messages will be sent or if the messaging is very infrequent. Unless the client must quickly receive or act upon updates, maintaining the open connection may be an unnecessary waste of resources.
+* Avoids painful implementing and testing of realtime functionality
+  Software functionalities which require realtime interactions, ex., payments, are always hard to implement and test, mainly because:
+    * Most developers do not have enough experience of implementing and tesing websocket.
+    * Realtime functionalities are very rare for most of the projects.
+  However, if websocket is used almost universally across the project, then it becomes an obvious thing, and you will handle it easily.
 
-#### Server Rendering
-
-With `Next.js`, server rendering React applications has never been easier, no matter where your data is coming from.
-
-#### Static Exporting
-
-No need to learn a new framework. Exporting a static site with Next.js is as easy as a single command.
-
-#### CSS-in-JS
-
-Next.js comes with styled-jsx included, but it also works with every CSS-in-JS solution you know and love.
-
-#### Zero Setup
-
-Automatic code splitting, filesystem based routing, hot code reloading and universal rendering.
-
-#### Fully Extensible
-
-Complete control over Babel and Webpack. Customizable server, routing and next-plugins.
-
-#### Ready for Production
-
-Optimized for a smaller build size, faster dev compilation and dozens of other improvements.
-
-#### ActionCable
-
-An altered version of [action_cable.js](./action_cable.js) is provided which supports `jwt` authentication. The magic is merely by appending `jwt` token to `Sec-WebSocket-Protocol` in request headers of websocket.
+#### `Jwt` authentication for both http and websocket
+We believe that http authentication trough `jwt` is the best choice for most of the projects. 
+Jwt authentication for http is done at [request.js](utils/request.js).
+Jwt authentication for websocket is done by the package [ActionCable-jwt](https://www.npmjs.com/package/actioncable-jwt) implemented by us.
 
 #### CSS shortcuts
 
