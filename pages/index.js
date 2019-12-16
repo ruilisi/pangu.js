@@ -1,6 +1,7 @@
-import React from 'react'
-import { Button, Carousel, Row, Col } from 'antd'
+import React, { useState } from 'react'
+import { Button, Modal, Carousel, Row, Col } from 'antd'
 import Router from 'next/router'
+import Lottery from '../components/lottery'
 import Nav from '../components/nav'
 
 const w = 'static/imgs/world.png'
@@ -8,6 +9,7 @@ const d = 'static/imgs/deploy.png'
 const s = 'static/imgs/switch.png'
 
 const IndexPage = () => {
+  const [visible, setVisible] = useState(true)
   return (
     <Nav>
       <div style={{ background: '#282D3C' }}>
@@ -80,6 +82,9 @@ const IndexPage = () => {
           </Col>
         ))}
       </Row>
+      <Modal footer={null} visible={visible} onCancel={() => setVisible(false)}>
+        <Lottery />
+      </Modal>
       <style jsx>
         {`
           .index-bg {
