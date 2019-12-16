@@ -1,15 +1,17 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Col, Input, Button, Avatar, Row, Card } from 'antd'
+import { Modal, Col, Input, Button, Avatar, Row, Card } from 'antd'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
-import { redirectIfAuthorized } from '../redux/modules/view'
+import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
 import Setting from '../components/Setting'
 import { logout } from '../api/sessions'
 import UserList from '../components/UserList'
 import Rooms from '../components/Rooms'
+import Lottery from '../components/lottery'
+import Viewers from '../components/viewers'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -19,6 +21,7 @@ const getRooms = async () => {
 const Chat = () => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
+  const [visible, setVisible] = useState(false)
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
   const [text, setText] = useState('')
@@ -27,6 +30,7 @@ const Chat = () => {
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
+  const show = view.getIn(['showLottery'])
 
   const switchRoom = id => {
     setRoomId(id)
@@ -47,8 +51,25 @@ const Chat = () => {
       setText('')
     }
   }
+
   return (
     <div>
+      <Modal footer={null} visible={visible} onCancel={() => setVisible(false)}>
+        <Lottery
+          submit={(a, b, c) => {
+            channel.load('lottery', { room_id: roomId, gold: a, silver: b, bronze: c })
+            setVisible(false)
+          }}
+        />
+      </Modal>
+      <Modal footer={null} visible={show} onCancel={() => dispatch(viewSetIn(['showLottery'], true))}>
+        <Viewers
+          prizes={view.getIn(['lottery']).toJS()}
+          submit={() => {
+            dispatch(viewSetIn(['showLottery'], false))
+          }}
+        />
+      </Modal>
       <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
         <div className="FS-10 TA-C PT-20">
           <Row style={{ display: 'flex', alignItems: 'center' }}>
@@ -122,6 +143,16 @@ const Chat = () => {
                   />
                 </Col>
                 <Col className="display-center" span={4} push={2}>
+                  <Button
+                    size="large"
+                    type="primary"
+                    className="PLR-15"
+                    onClick={() => {
+                      setVisible(true)
+                    }}
+                  >
+                    抽奖
+                  </Button>
                   <Button
                     size="large"
                     type="primary"

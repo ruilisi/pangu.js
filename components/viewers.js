@@ -1,41 +1,58 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, Row, Col } from 'antd'
 
-const Lottery = () => {
-  const [gold, setGold] = useState('一等奖')
+const Lottery = ({ prizes }) => {
+  let gold = {}
+  let silver = {}
+  let bronze = {}
+  prizes.map(v => {
+    switch (v.level) {
+      case 'gold':
+        gold = v
+        break
+      case 'silver':
+        silver = v
+        break
+      case 'bronze':
+        bronze = v
+        break
+      default:
+    }
+    return undefined
+  })
   return (
     <Row className="MT-10">
       <Row>
-        <div style={{ width: gold.length * 25 }} className="MTB-5">
-          {gold}
+        <div style={{ width: gold.name.length * 25 }} className="MTB-5">
+          {gold.name}
         </div>
         <Col span={15} style={{ color: 'grey', fontSize: 12 }}>
-          奖项
+          {gold.content}
         </Col>
         <Col span={6} push={3}>
-          3
+          {gold.count}
         </Col>
       </Row>
       <Row>
-        <div style={{ width: gold.length * 25 }} className="MTB-5">
-          {gold}
+        <div style={{ width: silver.name.length * 25 }} className="MTB-5">
+          {silver.name}
         </div>
         <Col span={15} style={{ color: 'grey', fontSize: 12 }}>
-          奖项
+          {silver.content}
         </Col>
         <Col span={6} push={3}>
-          3
+          {silver.count}
         </Col>
       </Row>
       <Row>
-        <div style={{ width: gold.length * 25 }} className="MTB-5">
-          {gold}
+        <div style={{ width: bronze.name.length * 25 }} className="MTB-5">
+          {bronze.name}
         </div>
         <Col span={15} style={{ color: 'grey', fontSize: 12 }}>
-          奖项
+          {bronze.content}
         </Col>
         <Col span={6} push={3}>
-          3
+          {bronze.count}
         </Col>
       </Row>
       <Row className="TA-C MT-20">

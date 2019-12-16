@@ -16,6 +16,8 @@ const initialState = I.fromJS({
   },
   qiniuToken: null,
   avatars: {},
+  showLottery: false,
+  lottery: [],
   tables: {}
 }).update('tables', tables =>
   tables.map(table =>

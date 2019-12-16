@@ -34,6 +34,10 @@ export default roomId => {
             DISPATCH(roomsMessagesAdd(data.room_id, data.message))
             // scrollToBottom()
             break
+          case 'lottery':
+            DISPATCH(viewSetIn(['lottery'], data.lottery))
+            DISPATCH(viewSetIn(['showLottery'], true))
+            break
           default:
         }
       },
