@@ -27,7 +27,14 @@ const UserList = props => {
       dataSource={users}
       renderItem={item => (
         <List.Item>
-          <List.Item.Meta avatar={<Avatar src={item.avatar} />} title={item.email} />
+          <List.Item.Meta
+            title={
+              <span style={{ color: 'white' }} className="ML-5">
+                <Avatar src={item.avatar} />
+                <span className="ML-5">{item.email}</span>
+              </span>
+            }
+          />
         </List.Item>
       )}
     />

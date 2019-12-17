@@ -48,7 +48,7 @@ const Rooms = props => {
   )
 
   return (
-    <Menu className="TA-C">
+    <Menu className="TA-L PL-10" style={{ background: '#3f0e40', color: 'white' }}>
       {rooms
         .map(v => {
           const { id, title } = v.toJS()

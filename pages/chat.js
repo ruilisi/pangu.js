@@ -1,14 +1,13 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Modal, Col, Input, Button, Avatar, Row, Card } from 'antd'
+import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
 import Setting from '../components/Setting'
-import { logout } from '../api/sessions'
 import UserList from '../components/UserList'
 import Rooms from '../components/Rooms'
 import Lottery from '../components/lottery'
@@ -73,7 +72,7 @@ const Chat = () => {
           }}
         />
       </Modal>
-      <Col span={4} className="border-card" style={{ overflow: 'hidden' }}>
+      <Col span={4} className="border-card" style={{ background: '#3f0e40', overflow: 'hidden' }}>
         <div className="FS-10 TA-C PT-20">
           <Row style={{ display: 'flex', alignItems: 'center' }}>
             <Col span={12}>
@@ -84,15 +83,12 @@ const Chat = () => {
             </Col>
           </Row>
         </div>
-        <Card style={{ height: '65vh', overflowY: 'scroll' }} bordered={false}>
+        <Card style={{ background: '#3f0e40', height: '20vh', overflowY: 'scroll' }} bordered={false}>
           <Rooms rooms={rooms} switchRoom={switchRoom} />
         </Card>
-
-        <div className="MT-5 TA-C MB-50">
-          <Button type="primary" size="large" style={{ paddingLeft: 30, paddingRight: 30 }} onClick={() => dispatch(logout())}>
-            Logout
-          </Button>
-        </div>
+        <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
+          <UserList id={roomId} style={{ height: '70vh' }} />
+        </Card>
       </Col>
       {!roomId ? (
         <Col span={20} style={{ textAlign: 'center', height: '100vh', lineHeight: '100vh' }}>
@@ -100,44 +96,38 @@ const Chat = () => {
         </Col>
       ) : (
         <Col span={20} style={{ overflow: 'hidden' }}>
-          <div className="FS-10 ML-5" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
+          <div className="FS-10 ML-5" style={{ height: '10vh' }}>
             {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
           </div>
           <Row>
-            <Col span={20}>
-              <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
-                {room.get('messages', List()).map(v => (
-                  <Row key={v.get('id')}>
-                    <Col span={1}>
-                      <Avatar src={avatars[v.get('user_id')]} />
-                    </Col>
-                    <Col span={10}>
-                      <div>{v.getIn(['data', 'email'])}</div>
-                      <div>{v.get('created_at')}</div>
-                      <p dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                    </Col>
-                  </Row>
-                ))}
-              </Card>
-              <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
-                <Col className="display-center" span={18} push={2}>
-                  <Input.TextArea
-                    value={text}
-                    size="large"
-                    placeholder="随便吐槽一下吧"
-                    style={{ background: '#e1e1e1', width: '100%' }}
-                    onChange={e => {
-                      setText(e.target.value)
-                    }}
-                    onKeyPress={onKeyPress}
-                  />
-                </Col>
-              </div>
-            </Col>
-            <Col span={4} style={{ paddingLeft: '10px', height: '80vh' }}>
-              <p>成员列表</p>
-              <UserList id={roomId} style={{ height: '70vh', overflowY: 'scroll' }} />
-            </Col>
+            <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
+              {room.get('messages', List()).map(v => (
+                <Row key={v.get('id')}>
+                  <Col span={1} className="ML-5">
+                    <Avatar src={avatars[v.get('user_id')]} />
+                  </Col>
+                  <Col span={10}>
+                    <div>{v.getIn(['data', 'email'])}</div>
+                    <div>{new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <p dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                  </Col>
+                </Row>
+              ))}
+            </Card>
+            <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
+              <Col className="display-center" span={18} push={2}>
+                <Input.TextArea
+                  value={text}
+                  size="large"
+                  placeholder="随便吐槽一下吧"
+                  style={{ background: '#e1e1e1', width: '100%' }}
+                  onChange={e => {
+                    setText(e.target.value)
+                  }}
+                  onKeyPress={onKeyPress}
+                />
+              </Col>
+            </div>
           </Row>
         </Col>
       )}
