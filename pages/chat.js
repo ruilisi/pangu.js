@@ -18,7 +18,7 @@ const getRooms = async () => {
   return res
 }
 
-const md = new Remarkable()
+const md = new Remarkable({ breaks: true })
 
 const Chat = () => {
   redirectIfAuthorized('/login', false)
@@ -47,10 +47,11 @@ const Chat = () => {
   }, [])
 
   const onKeyPress = e => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
       channel.load('add_message', { room_id: roomId, text })
       setText('')
+      e.preventDefault()
     }
   }
 
@@ -109,7 +110,7 @@ const Chat = () => {
                   <Col span={10}>
                     <div>{v.getIn(['data', 'email'])}</div>
                     <div>{new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
-                    <p dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                    <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
                   </Col>
                 </Row>
               ))}
