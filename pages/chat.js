@@ -2,6 +2,7 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Modal, Col, Input, Button, Avatar, Row, Card } from 'antd'
+import { Remarkable } from 'remarkable'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
@@ -17,6 +18,8 @@ const getRooms = async () => {
   const res = await get('rooms')
   return res
 }
+
+const md = new Remarkable()
 
 const Chat = () => {
   redirectIfAuthorized('/login', false)
@@ -103,35 +106,22 @@ const Chat = () => {
           <Row>
             <Col span={20}>
               <Card style={{ background: '#e1e1e1', height: '80vh', overflowY: 'scroll' }} bordered={false}>
-                {room.get('messages', List()).map(v => {
-                  return v.get('user_id') === self.get('id') ? (
-                    <Row key={v.get('id')}>
-                      <Col span={10} push={13}>
-                        <div>{v.getIn(['data', 'email'])}</div>
-                        <div>{v.get('created_at')}</div>
-                        <p className="my-text">{v.get('text')}</p>
-                      </Col>
-                      <Col span={1} push={13}>
-                        <Avatar src={avatars[v.get('user_id')]} />
-                      </Col>
-                    </Row>
-                  ) : (
-                    <Row key={v.get('id')}>
-                      <Col span={1}>
-                        <Avatar src={avatars[v.get('user_id')]} />
-                      </Col>
-                      <Col span={10}>
-                        <div>{v.getIn(['data', 'email'])}</div>
-                        <div>{v.get('created_at')}</div>
-                        <p className="other-text">{v.get('text')}</p>
-                      </Col>
-                    </Row>
-                  )
-                })}
+                {room.get('messages', List()).map(v => (
+                  <Row key={v.get('id')}>
+                    <Col span={1}>
+                      <Avatar src={avatars[v.get('user_id')]} />
+                    </Col>
+                    <Col span={10}>
+                      <div>{v.getIn(['data', 'email'])}</div>
+                      <div>{v.get('created_at')}</div>
+                      <p dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                    </Col>
+                  </Row>
+                ))}
               </Card>
               <div className="TA-C" style={{ height: '10vh', display: 'flex', alignItems: 'center' }}>
                 <Col className="display-center" span={18} push={2}>
-                  <Input
+                  <Input.TextArea
                     value={text}
                     size="large"
                     placeholder="随便吐槽一下吧"
@@ -141,30 +131,6 @@ const Chat = () => {
                     }}
                     onKeyPress={onKeyPress}
                   />
-                </Col>
-                <Col className="display-center" span={4} push={2}>
-                  <Button
-                    size="large"
-                    type="primary"
-                    className="PLR-15"
-                    onClick={() => {
-                      setVisible(true)
-                    }}
-                  >
-                    抽奖
-                  </Button>
-                  <Button
-                    size="large"
-                    type="primary"
-                    className="PLR-15"
-                    onClick={() => {
-                      if (text.trim() === '' || roomId === '') return
-                      channel.load('add_message', { room_id: roomId, text })
-                      setText('')
-                    }}
-                  >
-                    发送
-                  </Button>
                 </Col>
               </div>
             </Col>
@@ -183,23 +149,6 @@ const Chat = () => {
           .border-card {
             height: 100vh;
             border-right: 1px solid #000;
-          }
-          .my-text {
-            background: #2a2a2a;
-            color: white;
-            padding: 10px;
-            margin-right: 10px;
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-          }
-          .other-text {
-            background: white;
-            color: black;
-            padding: 10px;
-            border-top-right-radius: 8px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
           }
         `}
       </style>
