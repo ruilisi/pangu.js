@@ -2,7 +2,7 @@
 
 [中文文档 Chinese document](/README.CN.md)
 
-`Next.js-Pangu` is a frontend starter kit inherited from [Next.js](https://github.com/zeit/next.js/) and is heavily depended on [Rails-pangu](https://github.com/paiyou-network/rails-pangu) for backend. It focus on being an lean example of using `Next.js` while solving left issues which `Next.js` haven't solved or `Next.js` does not intend to solve(for example, support `IE9`). 
+`Next.js-Pangu` is a frontend starter kit inherited from [Next.js](https://github.com/zeit/next.js/) and is heavily depended on [Rails-pangu](https://github.com/ruilisi/rails-pangu) for backend. It focus on being an lean example of using `Next.js` while solving left issues which `Next.js` haven't solved or `Next.js` does not intend to solve(for example, support `IE9`). 
 
 
 ## Features offered by `Next.js`
@@ -210,7 +210,7 @@ Getting started with `ZEIT Now` takes just a few steps and lets you get up and r
 
 **[Example](https://nextjs-pangu.now.sh)** (https://nextjs-pangu.now.sh)
 
-In this example, the front-end is implemented using [nextjs-pangu](https://github.com/paiyou-network/nextjs-pangu), and the back-end is implemented using [rails-pangu](https://github.com/paiyou-network/rails-pangu/). This example implements the following functions:
+In this example, the front-end is implemented using [nextjs-pangu](https://github.com/ruilisi/nextjs-pangu), and the back-end is implemented using [rails-pangu](https://github.com/ruilisi/rails-pangu/). This example implements the following functions:
 
 > - register, login, sign out your custom account;
 > - create or delete your chat room, join or quit someone's chat room;

@@ -18,7 +18,7 @@ const IndexPage = () => {
             <Button className="W-12 MLR-5" onClick={() => Router.push('/signup')}>
               Get Started
             </Button>
-            <Button className="W-12 MLR-5" onClick={() => window.open('https://github.com/paiyou-network/nextjs-pangu')}>
+            <Button className="W-12 MLR-5" onClick={() => window.open('https://github.com/ruilisi/nextjs-pangu')}>
               GitHub
             </Button>
           </div>
