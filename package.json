@@ -24,6 +24,7 @@
     "actioncable-jwt": "^1.0.0",
     "antd": "^3.25.0",
     "fs": "^0.0.1-security",
+    "highlight.js": "^9.17.1",
     "immutable": "^4.0.0-rc.12",
     "intl": "^1.2.5",
     "isomorphic-unfetch": "^3.0.0",

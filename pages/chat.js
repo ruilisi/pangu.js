@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
@@ -18,7 +20,27 @@ const getRooms = async () => {
   return res
 }
 
-const md = new Remarkable({ breaks: true })
+const md = new Remarkable({
+  breaks: true,
+  langPrefix: 'language-',
+  highlight: (str, lang) => {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value
+      } catch (err) {
+        console.info(err)
+      }
+    }
+
+    try {
+      return hljs.highlightAuto(str).value
+    } catch (err) {
+      console.info(err)
+    }
+
+    return '' // use external default escaping
+  }
+})
 
 const Chat = () => {
   redirectIfAuthorized('/login', false)

@@ -9,7 +9,7 @@ export default roomId => {
   const cable = authedActionCable()
   if (!cable) return null
 
-  if (prevRoomId === roomId) return null
+  if (prevRoomId === roomId) return prevRoomChannel
 
   if (prevRoomChannel) {
     prevRoomChannel.unsubscribe()
