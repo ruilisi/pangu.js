@@ -5,6 +5,7 @@ import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
+import { animateScroll } from 'react-scroll'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
@@ -68,6 +69,13 @@ const Chat = () => {
     })
   }, [])
 
+  useEffect(() => {
+    animateScroll.scrollToBottom({
+      containerId: 'messages',
+      duration: 0
+    })
+  }, [room.get('messages')])
+
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
@@ -103,12 +111,12 @@ const Chat = () => {
                 <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
               </Col>
               <Col span={12}>
-                <Setting />
+                <Setting switchRoom={switchRoom} />
               </Col>
             </Row>
           </div>
           <Card style={{ background: '#3f0e40', height: '20vh', overflowY: 'scroll' }} bordered={false}>
-            <Rooms rooms={rooms} switchRoom={switchRoom} />
+            <Rooms rooms={rooms} roomId={roomId} switchRoom={switchRoom} />
           </Card>
           <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
             <UserList id={roomId} style={{ height: '70vh' }} />
@@ -124,24 +132,26 @@ const Chat = () => {
               {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
             </div>
             <Row>
-              <Card style={{ height: '80vh', overflowY: 'scroll' }} bordered={false}>
-                {room.get('messages', List()).map(v => (
-                  <Row key={v.get('id')}>
-                    <Col span={1} className="ML-5">
-                      <Avatar src={avatars[v.get('user_id')]} />
-                    </Col>
-                    <Col span={10}>
-                      <div className="bold FS-7">
-                        {v.getIn(['data', 'email'])}
-                        <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
-                          {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                    </Col>
-                  </Row>
-                ))}
-              </Card>
+              <div style={{ height: '80vh' }}>
+                <Card id="messages" style={{ maxHeight: '80vh', overflowY: 'scroll' }} bordered={false}>
+                  {room.get('messages', List()).map(v => (
+                    <Row key={v.get('id')}>
+                      <Col span={1} className="ML-5">
+                        <Avatar src={avatars[v.get('user_id')]} />
+                      </Col>
+                      <Col span={10}>
+                        <div className="bold FS-7">
+                          {v.getIn(['data', 'email'])}
+                          <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                            {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                      </Col>
+                    </Row>
+                  ))}
+                </Card>
+              </div>
             </Row>
             <div className="TA-C bottom-input">
               <Input.TextArea
