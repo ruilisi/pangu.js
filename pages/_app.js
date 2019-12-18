@@ -11,9 +11,10 @@ import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
-import { getApiRoot } from '~/utils/request'
+import { getApiRoot, get } from '~/utils/request'
 import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
+import { viewSetIn } from '%view'
 
 const localeData = { zh, en }
 addLocaleData([...zhCN, ...enUS])
@@ -43,7 +44,10 @@ class MyApp extends App {
     window.DISPATCH = store.dispatch
     window.STATE = store.getState
     shortcuts()
-    getApiRoot().then(usersChannel)
+    getApiRoot().then(() => {
+      get('data').then(data => store.dispatch(viewSetIn('data', data)))
+      usersChannel()
+    })
     const language = localStorage.getItem('LANGUAGE')
     if (!language) {
       this.setLocale('zh')

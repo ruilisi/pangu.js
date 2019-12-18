@@ -6297,6 +6297,20 @@ pure-color@^1.2.0:
   resolved "https://registry.npm.taobao.org/pure-color/download/pure-color-1.3.0.tgz#1fe064fb0ac851f0de61320a8bf796836422f33e"
   integrity sha1-H+Bk+wrIUfDeYTIKi/eWg2Qi8z4=
 
+qr.js@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.npmjs.org/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
+  integrity sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=
+
+qrcode.react@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/qrcode.react/-/qrcode.react-1.0.0.tgz#7e8889db3b769e555e8eb463d4c6de221c36d5de"
+  integrity sha512-jBXleohRTwvGBe1ngV+62QvEZ/9IZqQivdwzo9pJM4LQMoCM2VnvNBnKdjvGnKyDZ/l0nCDgsPod19RzlPvm/Q==
+  dependencies:
+    loose-envify "^1.4.0"
+    prop-types "^15.6.0"
+    qr.js "0.0.0"
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.npm.taobao.org/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"

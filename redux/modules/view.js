@@ -18,7 +18,8 @@ const initialState = I.fromJS({
   avatars: {},
   showLottery: false,
   lottery: [],
-  tables: {}
+  tables: {},
+  data: {}
 }).update('tables', tables =>
   tables.map(table =>
     table.mergeDeep(

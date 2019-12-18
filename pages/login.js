@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
-import { Input, Button, message } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
+import { Input, Button, message, Modal } from 'antd'
 import { FormattedMessage } from 'react-intl'
+import QRCode from 'qrcode.react'
 import { TR } from '../utils/translation'
 import { redirectIfAuthorized, setAuthorized } from '../redux/modules/view'
 import { post, removeAuthorization } from '../utils/request'
@@ -12,6 +13,8 @@ const Login = () => {
   redirectIfAuthorized('/')
   const router = useRouter()
   const dispatch = useDispatch()
+  const wechatAppId = useSelector(state => state.view.getIn(['data', 'wechat_app_id']))
+  const [showWechatLoginModal, setShowWechatLoginModal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -38,6 +41,7 @@ const Login = () => {
       login(username, password)
     }
   }
+  const redirectUri = 'https://pangu.ruilisi.co/wechats/login_callback'
   return (
     <FormUnderNavLayout title={TR('Login')}>
       <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
@@ -90,6 +94,21 @@ const Login = () => {
           {TR('Login')}
         </Button>
       </div>
+      {wechatAppId ? (
+        <div key="3" className="MT-22">
+          <Button className="H-24" type="secondary" size="large" loading={submitting} onClick={() => setShowWechatLoginModal(true)} style={{ width: '100%' }}>
+            {TR('Wechat Login')}
+          </Button>
+        </div>
+      ) : null}
+      <Modal title="Wechat Login" visible={showWechatLoginModal} onCancel={() => setShowWechatLoginModal(false)}>
+        <div className="TA-C">
+          <QRCode
+            size={256}
+            value={`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wechatAppId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect`}
+          />
+        </div>
+      </Modal>
     </FormUnderNavLayout>
   )
 }
