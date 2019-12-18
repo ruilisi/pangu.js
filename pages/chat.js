@@ -108,8 +108,12 @@ const Chat = () => {
                     <Avatar src={avatars[v.get('user_id')]} />
                   </Col>
                   <Col span={10}>
-                    <div>{v.getIn(['data', 'email'])}</div>
-                    <div>{new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="bold FS-7">
+                      {v.getIn(['data', 'email'])}
+                      <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                        {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                     <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
                   </Col>
                 </Row>
