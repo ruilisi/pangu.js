@@ -102,7 +102,7 @@ const Chat = () => {
               <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
             </Col>
             <Col span={12}>
-              <Setting />
+              <Setting switchRoom={switchRoom} />
             </Col>
           </Row>
         </div>
