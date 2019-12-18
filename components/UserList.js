@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { List, Avatar } from 'antd'
+import { useSelector } from 'react-redux'
 import { get } from '../utils/request'
 
 const userList = async id => {
@@ -10,13 +11,15 @@ const userList = async id => {
 const UserList = props => {
   const { id, style, className } = props
   const [users, setUsers] = useState([])
+  const view = useSelector(state => state.view)
+  const timeStamp = view.get('timeStamp')
 
   useEffect(() => {
     if (!id) return
     userList(id).then(body => {
       setUsers(body)
     })
-  }, [id])
+  }, [id, timeStamp])
 
   return (
     <List

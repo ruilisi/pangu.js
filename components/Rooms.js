@@ -16,7 +16,7 @@ const deleteRooms = async id => {
 
 const Rooms = props => {
   const dispatch = useDispatch()
-  const { rooms, switchRoom } = props
+  const { rooms, switchRoom, roomId } = props
 
   const menu = id => (
     <Menu>
@@ -48,7 +48,7 @@ const Rooms = props => {
   )
 
   return (
-    <Menu className="TA-L PL-10" style={{ background: '#3f0e40', color: 'white' }}>
+    <Menu selectedKeys={roomId} className="TA-L PL-10" style={{ background: '#3f0e40', color: 'white' }}>
       {rooms
         .map(v => {
           const { id, title } = v.toJS()

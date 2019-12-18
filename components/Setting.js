@@ -43,7 +43,7 @@ const Setting = props => {
           dispatch(roomsAdd(I.fromJS(body)))
           const roomId = Object.keys(body)[0]
           switchRoom(roomId)
-          roomsChannel(roomId).load('add_message', { room_id: roomId, text: `joined ${Object.values(body)[0].title}` })
+          roomsChannel(roomId).load('join_room', { room_id: roomId, text: `joined ${Object.values(body)[0].title}` })
         }
         setTitle('')
         setShow(false)
