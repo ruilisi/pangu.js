@@ -224,6 +224,9 @@ const Chat = () => {
           p {
             margin-bottom: 0;
           }
+          pre {
+            margin-bottom: 0;
+          }
           .message :hover {
             background: #f8f8f8;
           }

@@ -27,12 +27,9 @@ export default roomId => {
         switch (data.path) {
           case 'messages':
             DISPATCH(roomsMessagesSet(data.room_id, data.messages))
-            DISPATCH(viewSetIn(['avatars'], data.avatars))
-            // scrollToBottom()
             break
           case 'add_message':
             DISPATCH(roomsMessagesAdd(data.room_id, data.message))
-            // scrollToBottom()
             break
           case 'join_room':
             DISPATCH(roomsMessagesAdd(data.room_id, data.message))
