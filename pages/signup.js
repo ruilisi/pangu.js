@@ -8,7 +8,7 @@ import { post } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Signup = () => {
-  redirectIfAuthorized('/')
+  redirectIfAuthorized('/chat')
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
