@@ -146,7 +146,7 @@ const Chat = () => {
                   <div className="message PTB-3" key={v.get('id')}>
                     {newMessageHeader(v, idx) ? (
                       <>
-                        <div className="inline ML-5" style={{ width: '58px' }}>
+                        <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
                           <Avatar src={avatars[v.get('user_id')]} />
                         </div>
                         <div className="inline">
@@ -161,7 +161,7 @@ const Chat = () => {
                       </>
                     ) : (
                       <>
-                        <div className="inline ML-3 MR-2" style={{ width: '58px' }}>
+                        <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
                           <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
                             {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
@@ -213,7 +213,7 @@ const Chat = () => {
           }
           .message {
             display: flex;
-            align-items: center;
+            align-items: top;
           }
           .hide-time {
             visibility: hidden;
@@ -225,7 +225,7 @@ const Chat = () => {
             margin-bottom: 0;
           }
           .message :hover {
-            background: #eee;
+            background: #f8f8f8;
           }
           .message:hover .hide-time {
             visibility: visible;
