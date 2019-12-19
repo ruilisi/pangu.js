@@ -151,6 +151,11 @@ const Nav = ({ children }) => {
   const rightIconMenuLoggedIn = () => {
     const menu = (
       <Menu>
+        <Menu.Item>
+          <Link href="/chat">
+            <a> {T('Chat')}</a>
+          </Link>
+        </Menu.Item>
         <Menu.Item className="MTB-5">
           <span role="presentation" onClick={() => logout()}>
             {T('Logout')}
