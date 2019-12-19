@@ -130,13 +130,13 @@ const Chat = () => {
           </Col>
         ) : (
           <Col span={20} style={{ height: '100vh', overflow: 'hidden' }}>
-            <div className="FS-10 ML-5" style={{ height: '10vh' }}>
+            <div className="FS-10 ML-5 top-border" style={{ height: '10vh' }}>
               {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
             </div>
             <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
                 {room.get('messages', List()).map(v => (
-                  <Row key={v.get('id')}>
+                  <Row className="content" key={v.get('id')}>
                     <Col span={1} className="ML-5">
                       <Avatar src={avatars[v.get('user_id')]} />
                     </Col>
@@ -172,6 +172,14 @@ const Chat = () => {
         {`
           .ant-menu-vertical {
             border: none;
+          }
+          .top-border {
+            border-bottom-style: solid;
+            border-width: 1px;
+            border-color: #dddddd;
+          }
+          .content :hover {
+            background-color: #f8f8f8;
           }
           .bottom-input {
             height: auto;
