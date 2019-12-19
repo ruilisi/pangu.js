@@ -58,6 +58,7 @@ const Chat = () => {
   const room = rooms.get(roomId, Map())
   const show = view.getIn(['showLottery'])
   const router = useRouter()
+  const messages = room.get('messages', List())
 
   const switchRoom = id => {
     setRoomId(id)
@@ -76,7 +77,7 @@ const Chat = () => {
       containerId: 'messages',
       duration: 0
     })
-  }, [room.get('messages'), text])
+  }, [messages, text])
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -85,6 +86,12 @@ const Chat = () => {
       setText('')
       e.preventDefault()
     }
+  }
+
+  const newMessageHeader = (current, idx) => {
+    if (idx === 0) return true
+    const last = messages.get(idx - 1)
+    return current.get('user_id') !== last.get('user_id') || new Date(current.get('created_at')).getTime() - new Date(last.get('created_at')).getTime() > 300000
   }
 
   return (
@@ -135,21 +142,36 @@ const Chat = () => {
             </div>
             <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
-                {room.get('messages', List()).map(v => (
-                  <Row className="content" key={v.get('id')}>
-                    <Col span={1} className="ML-5">
-                      <Avatar src={avatars[v.get('user_id')]} />
-                    </Col>
-                    <Col span={10}>
-                      <div className="bold FS-7">
-                        {v.getIn(['data', 'email'])}
-                        <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
-                          {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                    </Col>
-                  </Row>
+                {messages.map((v, idx) => (
+                  <div className="message PTB-3" key={v.get('id')}>
+                    {newMessageHeader(v, idx) ? (
+                      <>
+                        <div className="inline ML-5" style={{ width: '58px' }}>
+                          <Avatar src={avatars[v.get('user_id')]} />
+                        </div>
+                        <div className="inline">
+                          <div className="bold FS-7">
+                            {v.getIn(['data', 'email'])}
+                            <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                              {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="inline ML-3 MR-2" style={{ width: '58px' }}>
+                          <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
+                            {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                        <div className="inline">
+                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                        </div>
+                      </>
+                    )}
+                  </div>
                 ))}
               </Card>
               <div className="TA-C bottom-input">
@@ -178,9 +200,6 @@ const Chat = () => {
             border-width: 1px;
             border-color: #dddddd;
           }
-          .content :hover {
-            background-color: #f8f8f8;
-          }
           .bottom-input {
             height: auto;
             width: 100%;
@@ -191,6 +210,25 @@ const Chat = () => {
           .border-card {
             height: 100vh;
             border-right: 1px solid #000;
+          }
+          .message {
+            display: flex;
+            align-items: center;
+          }
+          .hide-time {
+            visibility: hidden;
+          }
+          .inline {
+            display: inline-block;
+          }
+          p {
+            margin-bottom: 0;
+          }
+          .message :hover {
+            background: #eee;
+          }
+          .message:hover .hide-time {
+            visibility: visible;
           }
         `}
       </style>
