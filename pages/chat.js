@@ -1,6 +1,7 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
@@ -56,6 +57,7 @@ const Chat = () => {
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
   const show = view.getIn(['showLottery'])
+  const router = useRouter()
 
   const switchRoom = id => {
     setRoomId(id)
@@ -108,7 +110,7 @@ const Chat = () => {
           <div className="FS-10 TA-C PT-20">
             <Row style={{ display: 'flex', alignItems: 'center' }}>
               <Col span={12}>
-                <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
+                <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" onClick={() => router.push('/profile')} />
               </Col>
               <Col span={12}>
                 <Setting switchRoom={switchRoom} />
