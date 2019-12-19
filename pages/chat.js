@@ -1,6 +1,7 @@
 import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
@@ -56,6 +57,7 @@ const Chat = () => {
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
   const show = view.getIn(['showLottery'])
+  const router = useRouter()
 
   const switchRoom = id => {
     setRoomId(id)
@@ -74,7 +76,7 @@ const Chat = () => {
       containerId: 'messages',
       duration: 0
     })
-  }, [room.get('messages')])
+  }, [room.get('messages'), text])
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -108,7 +110,7 @@ const Chat = () => {
           <div className="FS-10 TA-C PT-20">
             <Row style={{ display: 'flex', alignItems: 'center' }}>
               <Col span={12}>
-                <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" />
+                <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" onClick={() => router.push('/profile')} />
               </Col>
               <Col span={12}>
                 <Setting switchRoom={switchRoom} />
@@ -131,40 +133,38 @@ const Chat = () => {
             <div className="FS-10 ML-5" style={{ height: '10vh' }}>
               {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
             </div>
-            <Row>
-              <div style={{ height: '80vh' }}>
-                <Card id="messages" style={{ maxHeight: '80vh', overflowY: 'scroll' }} bordered={false}>
-                  {room.get('messages', List()).map(v => (
-                    <Row key={v.get('id')}>
-                      <Col span={1} className="ML-5">
-                        <Avatar src={avatars[v.get('user_id')]} />
-                      </Col>
-                      <Col span={10}>
-                        <div className="bold FS-7">
-                          {v.getIn(['data', 'email'])}
-                          <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
-                            {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                      </Col>
-                    </Row>
-                  ))}
-                </Card>
+            <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+              <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
+                {room.get('messages', List()).map(v => (
+                  <Row key={v.get('id')}>
+                    <Col span={1} className="ML-5">
+                      <Avatar src={avatars[v.get('user_id')]} />
+                    </Col>
+                    <Col span={10}>
+                      <div className="bold FS-7">
+                        {v.getIn(['data', 'email'])}
+                        <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                          {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                    </Col>
+                  </Row>
+                ))}
+              </Card>
+              <div className="TA-C bottom-input">
+                <Input.TextArea
+                  value={text}
+                  autoSize={{ minRows: 1, maxRows: 10 }}
+                  placeholder="随便吐槽一下吧"
+                  style={{ background: '#ffffff', width: '100%', margin: '30px 20px' }}
+                  onChange={e => {
+                    setText(e.target.value)
+                  }}
+                  onKeyDown={onKeyDown}
+                />
               </div>
             </Row>
-            <div className="TA-C bottom-input">
-              <Input.TextArea
-                value={text}
-                autoSize={{ minRows: 1, maxRows: 10 }}
-                placeholder="随便吐槽一下吧"
-                style={{ background: '#ffffff', width: '100%', margin: '30px 20px' }}
-                onChange={e => {
-                  setText(e.target.value)
-                }}
-                onKeyDown={onKeyDown}
-              />
-            </div>
           </Col>
         )}
       </Row>
@@ -179,8 +179,6 @@ const Chat = () => {
             display: flex;
             align-items: center;
             background: #e9f5fa;
-            position: absolute;
-            bottom: 0px;
           }
           .border-card {
             height: 100vh;
