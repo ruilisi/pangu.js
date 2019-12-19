@@ -8,6 +8,15 @@ import { TR } from '../utils/translation'
 import { redirectIfAuthorized, setAuthorized } from '../redux/modules/view'
 import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
+import guestsChannel from '../utils/guestsChannel'
+import usersChannel from '../utils/usersChannel'
+
+const guest = 'GUEST'.concat(
+  Math.random()
+    .toString(36)
+    .substring(7)
+)
+const redirectUri = `https://pangu.ruilisi.co/wechats/login_callback?guest=${guest}`
 
 const Login = () => {
   redirectIfAuthorized('/')
@@ -30,6 +39,7 @@ const Login = () => {
       localStorage.setItem('Id', res.id)
       message.success('登录成功')
       dispatch(setAuthorized(true))
+      usersChannel()
     } else {
       message.error(res.error)
     }
@@ -41,7 +51,7 @@ const Login = () => {
       login(username, password)
     }
   }
-  const redirectUri = 'https://pangu.ruilisi.co/wechats/login_callback'
+
   return (
     <FormUnderNavLayout title={TR('Login')}>
       <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
@@ -96,7 +106,17 @@ const Login = () => {
       </div>
       {wechatAppId ? (
         <div key="3" className="MT-22">
-          <Button className="H-24" type="secondary" size="large" loading={submitting} onClick={() => setShowWechatLoginModal(true)} style={{ width: '100%' }}>
+          <Button
+            className="H-24"
+            type="secondary"
+            size="large"
+            loading={submitting}
+            onClick={() => {
+              setShowWechatLoginModal(true)
+              guestsChannel(guest)
+            }}
+            style={{ width: '100%' }}
+          >
             {TR('Wechat Login')}
           </Button>
         </div>
