@@ -1087,10 +1087,10 @@ acorn@^7.0.0:
   resolved "https://registry.npm.taobao.org/acorn/download/acorn-7.0.0.tgz#26b8d1cd9a9b700350b71c0905546f64d1284e7a"
   integrity sha1-JrjRzZqbcANQtxwJBVRvZNEoTno=
 
-actioncable-jwt@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/actioncable-jwt/-/actioncable-jwt-1.0.0.tgz#1d38e0b67e250140f873568275de8883cf4bb499"
-  integrity sha512-cgD53J0kn9jshjDdsBCtJqnO74/RSd03Gfmg6UaLeYC+WT6AFqdThMJ5Yk47bahwWHnSYgYQrmQ7zT81lXo85w==
+actioncable-jwt@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/actioncable-jwt/-/actioncable-jwt-1.1.0.tgz#fbcf7d27b3ee5fa3090474b81e21ed843a1b152a"
+  integrity sha512-WPD8RQ5pYazWpesx2G5eRjAFKZrihF5PZzcuNPHLbeRimL0BVHayv7jwyEYO8QVAhgaTVgNC+hEnfqUq5EVAEA==
 
 add-dom-event-listener@^1.1.0:
   version "1.1.0"

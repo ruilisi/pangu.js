@@ -21,7 +21,7 @@
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
-    "actioncable-jwt": "^1.0.0",
+    "actioncable-jwt": "^1.1.0",
     "antd": "^3.25.0",
     "fs": "^0.0.1-security",
     "highlight.js": "^9.17.1",

@@ -1,5 +1,4 @@
 import { viewSetIn, authorizedPath } from '%view'
-import { HttpState } from '../consts'
 import { selfSet } from '../redux/modules/self'
 import authedActionCable from './authedActionCable'
 
@@ -15,11 +14,10 @@ export default function() {
         }
         channel.load('self')
       },
-      disconnected: () => {
-        if (STATE().view.getIn(authorizedPath) === HttpState.UNKNOWN) {
-          DISPATCH(viewSetIn(authorizedPath, false))
-        }
+      unauthorized: () => {
+        DISPATCH(viewSetIn(authorizedPath, false))
       },
+      disconnected: () => {},
       subscribed: () => console.info('subscripted'),
       received: receivedData => {
         const { data, path } = receivedData
