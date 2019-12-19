@@ -78,7 +78,7 @@ const Setting = props => {
   return (
     <div>
       <Dropdown overlay={menu}>
-        <Icon type="more" />
+        <Icon type="plus-circle" style={{ color: '#fff' }} />
       </Dropdown>
       <Modal title={menuItem} visible={show} onOk={handleOk} onCancel={handleCancel}>
         <Row style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 30 }}>
