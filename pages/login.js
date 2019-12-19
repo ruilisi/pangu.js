@@ -16,7 +16,7 @@ const guest = 'GUEST'.concat(
     .toString(36)
     .substring(7)
 )
-const redirectUri = `https://pangu.ruilisi.co/wechats/login_callback?guest=${guest}`
+const redirectUri = `https://pangu.ruilisi.co/wechat/login_callback?guest=${guest}`
 
 const Login = () => {
   redirectIfAuthorized('/')
