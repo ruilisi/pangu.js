@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { post } from '../utils/request'
 import { roomsAdd } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
+import { logout } from '../api/sessions'
 
 const createRooms = async title => {
   const res = await post('rooms', { title })
@@ -70,6 +71,7 @@ const Setting = props => {
           {v}
         </Menu.Item>
       ))}
+      <Menu.Item onClick={() => dispatch(logout())}>退出登录</Menu.Item>
     </Menu>
   )
 
