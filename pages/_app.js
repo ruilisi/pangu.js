@@ -15,6 +15,7 @@ import { getApiRoot, get } from '~/utils/request'
 import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
 import { viewSetIn } from '%view'
+import DevTools from '~/containers/DevTools'
 
 const localeData = { zh, en }
 addLocaleData([...zhCN, ...enUS])
@@ -64,6 +65,7 @@ class MyApp extends App {
       <IntlProvider locale={locale} messages={localeData[locale]}>
         <Provider store={store}>
           <Head />
+          <DevTools />
           <div style={{ minHeight: '100vh' }}>
             <Component {...pageProps} />
           </div>
