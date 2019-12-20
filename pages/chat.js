@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Picker } from 'emoji-mart'
-import { Button, Modal, Col, Input, Avatar, Row, Card } from 'antd'
+import { Icon, Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -84,7 +84,6 @@ const Chat = () => {
   }, [messages, text])
 
   const onKeyDown = e => {
-    setCursorStart(e.target.selectionStart)
     if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
       channel.load('add_message', { room_id: roomId, text })
@@ -121,8 +120,9 @@ const Chat = () => {
         <Picker
           sheetSize={32}
           onClick={emoji => {
-            const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
-            setText(t)
+            const newText = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
+            setText(newText)
+            setCursorStart(cursorStart + 2)
           }}
         />
       </Modal>
@@ -190,7 +190,7 @@ const Chat = () => {
                 ))}
               </Card>
               <div className="TA-C bottom-input">
-                <Button onClick={() => setShowEmoji(true)} />
+                <Icon onClick={() => setShowEmoji(true)} type="smile" theme="twoTone" />
                 <Input.TextArea
                   value={text}
                   autoSize={{ minRows: 1, maxRows: 10 }}
@@ -200,6 +200,7 @@ const Chat = () => {
                     setText(e.target.value)
                   }}
                   onKeyDown={onKeyDown}
+                  onClick={e => setCursorStart(e.target.selectionStart)}
                 />
               </div>
             </Row>
