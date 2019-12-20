@@ -1,4 +1,6 @@
 FROM node:12-alpine
+RUN echo "http://mirrors.ustc.edu.cn/alpine/v3.10/main/" > /etc/apk/repositories && \
+    echo "http://mirrors.ustc.edu.cn/alpine/v3.10/community/" >> /etc/apk/repositories
 
 ENV NODE_ENV production
 ENV PORT 80
