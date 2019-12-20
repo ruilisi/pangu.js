@@ -4,12 +4,14 @@ RUN echo "http://mirrors.ustc.edu.cn/alpine/v3.10/main/" > /etc/apk/repositories
 
 ENV NODE_ENV production
 ENV PORT 80
+ENV SASS_BINARY_SITE https://npm.taobao.org/mirrors/node-sass/
 EXPOSE 80
 
 WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
 RUN apk add --no-cache git python && \
+    yarn config set registry "https://registry.npm.taobao.org" && \
     yarn && \
     yarn cache clean && \
     apk del git
