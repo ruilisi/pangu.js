@@ -2,7 +2,8 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { Modal, Col, Input, Avatar, Row, Card } from 'antd'
+import { Picker } from 'emoji-mart'
+import { Button, Modal, Col, Input, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -16,6 +17,7 @@ import UserList from '../components/UserList'
 import Rooms from '../components/Rooms'
 import Lottery from '../components/lottery'
 import Viewers from '../components/viewers'
+import 'emoji-mart/css/emoji-mart.css'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -48,6 +50,8 @@ const Chat = () => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
+  const [showEmoji, setShowEmoji] = useState(false)
+  const [cursorStart, setCursorStart] = useState(0)
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
   const [text, setText] = useState('')
@@ -80,6 +84,7 @@ const Chat = () => {
   }, [messages, text])
 
   const onKeyDown = e => {
+    setCursorStart(e.target.selectionStart)
     if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
       channel.load('add_message', { room_id: roomId, text })
@@ -112,6 +117,15 @@ const Chat = () => {
           }}
         />
       </Modal>
+      <Modal footer={null} visible={showEmoji} onCancel={() => setShowEmoji(false)}>
+        <Picker
+          sheetSize={32}
+          onClick={emoji => {
+            const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
+            setText(t)
+          }}
+        />
+      </Modal>
       <Row>
         <Col span={4} className="border-card" style={{ height: '100vh', background: '#3f0e40', overflow: 'hidden' }}>
           <div className="FS-10 TA-C PT-20">
@@ -140,6 +154,7 @@ const Chat = () => {
             <div className="FS-10 ML-5 top-border" style={{ height: '10vh' }}>
               {rooms.toJS()[roomId] === undefined ? '' : rooms.toJS()[roomId].title}
             </div>
+
             <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
                 {messages.map((v, idx) => (
@@ -175,6 +190,7 @@ const Chat = () => {
                 ))}
               </Card>
               <div className="TA-C bottom-input">
+                <Button onClick={() => setShowEmoji(true)} />
                 <Input.TextArea
                   value={text}
                   autoSize={{ minRows: 1, maxRows: 10 }}
