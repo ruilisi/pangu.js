@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Picker } from 'emoji-mart'
-import { Icon, Modal, Col, Input, Avatar, Row, Card } from 'antd'
+import { Button, Modal, Col, Input, Avatar, Row, Card, Popover } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -50,7 +50,6 @@ const Chat = () => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
-  const [showEmoji, setShowEmoji] = useState(false)
   const [cursorStart, setCursorStart] = useState(0)
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
@@ -113,16 +112,6 @@ const Chat = () => {
           prizes={view.getIn(['lottery']).toJS()}
           submit={() => {
             dispatch(viewSetIn(['showLottery'], false))
-          }}
-        />
-      </Modal>
-      <Modal footer={null} visible={showEmoji} onCancel={() => setShowEmoji(false)}>
-        <Picker
-          sheetSize={32}
-          onClick={emoji => {
-            const newText = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
-            setText(newText)
-            setCursorStart(cursorStart + 2)
           }}
         />
       </Modal>
@@ -190,7 +179,23 @@ const Chat = () => {
                 ))}
               </Card>
               <div className="TA-C bottom-input">
-                <Icon onClick={() => setShowEmoji(true)} type="smile" theme="twoTone" />
+                <Popover content="emoji" trigger="hover" style={{ width: 100 }}>
+                  <Popover
+                    content={
+                      <Picker
+                        sheetSize={32}
+                        onClick={emoji => {
+                          const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
+                          setText(t)
+                        }}
+                      />
+                    }
+                    trigger="click"
+                    style={{ width: 100 }}
+                  >
+                    <Button icon="smile" />
+                  </Popover>
+                </Popover>
                 <Input.TextArea
                   value={text}
                   autoSize={{ minRows: 1, maxRows: 10 }}
