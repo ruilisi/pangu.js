@@ -7,7 +7,7 @@ EXPOSE 80
 WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
-RUN apk add --no-cache git && \
+RUN apk add --no-cache git python && \
     yarn && \
     yarn cache clean && \
     apk del git
