@@ -10,13 +10,14 @@ import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 import guestsChannel from '../utils/guestsChannel'
 import usersChannel from '../utils/usersChannel'
+import dns from '~/utils/dns'
 
 const guest = 'GUEST'.concat(
   Math.random()
     .toString(36)
     .substring(7)
 )
-const redirectUri = `https://pangu.ruilisi.co/wechat/login_callback?guest=${guest}`
+const redirectUri = `${dns.API_ROOT}/wechat/login_callback?guest=${guest}`
 
 const Login = () => {
   redirectIfAuthorized('/')
