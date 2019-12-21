@@ -1,5 +1,5 @@
 import I, { Map, List } from 'immutable'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Picker } from 'emoji-mart'
@@ -46,14 +46,59 @@ const md = new Remarkable({
   }
 })
 
+const MessageInput = ({ channel, roomId }) => {
+  const [text, setText] = useState('')
+  const [cursorStart, setCursorStart] = useState(0)
+
+  const onKeyDown = e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      if (text.trim() === '') return
+      channel.load('add_message', { room_id: roomId, text })
+      setText('')
+      e.preventDefault()
+    }
+  }
+
+  return (
+    <div className="TA-C bottom-input">
+      <Popover content="emoji" trigger="hover" style={{ width: 100 }}>
+        <Popover
+          content={
+            <Picker
+              sheetSize={32}
+              onClick={emoji => {
+                const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
+                setText(t)
+              }}
+            />
+          }
+          trigger="click"
+          style={{ width: 100 }}
+        >
+          <Button icon="smile" />
+        </Popover>
+      </Popover>
+      <Input.TextArea
+        value={text}
+        autoSize={{ minRows: 1, maxRows: 10 }}
+        placeholder="随便吐槽一下吧"
+        style={{ background: '#ffffff', width: '100%', margin: '30px 20px' }}
+        onChange={e => {
+          setText(e.target.value)
+        }}
+        onKeyDown={onKeyDown}
+        onClick={e => setCursorStart(e.target.selectionStart)}
+      />
+    </div>
+  )
+}
+
 const Chat = () => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
-  const [cursorStart, setCursorStart] = useState(0)
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
-  const [text, setText] = useState('')
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
@@ -80,22 +125,15 @@ const Chat = () => {
       containerId: 'messages',
       duration: 0
     })
-  }, [messages, text])
-
-  const onKeyDown = e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      if (text.trim() === '') return
-      channel.load('add_message', { room_id: roomId, text })
-      setText('')
-      e.preventDefault()
-    }
-  }
+  }, [messages])
 
   const newMessageHeader = (current, idx) => {
     if (idx === 0) return true
     const last = messages.get(idx - 1)
     return current.get('user_id') !== last.get('user_id') || new Date(current.get('created_at')).getTime() - new Date(last.get('created_at')).getTime() > 300000
   }
+
+  const messageInputRef = useRef(null)
 
   return (
     <div>
@@ -178,36 +216,7 @@ const Chat = () => {
                   </div>
                 ))}
               </Card>
-              <div className="TA-C bottom-input">
-                <Popover content="emoji" trigger="hover" style={{ width: 100 }}>
-                  <Popover
-                    content={
-                      <Picker
-                        sheetSize={32}
-                        onClick={emoji => {
-                          const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
-                          setText(t)
-                        }}
-                      />
-                    }
-                    trigger="click"
-                    style={{ width: 100 }}
-                  >
-                    <Button icon="smile" />
-                  </Popover>
-                </Popover>
-                <Input.TextArea
-                  value={text}
-                  autoSize={{ minRows: 1, maxRows: 10 }}
-                  placeholder="随便吐槽一下吧"
-                  style={{ background: '#ffffff', width: '100%', margin: '30px 20px' }}
-                  onChange={e => {
-                    setText(e.target.value)
-                  }}
-                  onKeyDown={onKeyDown}
-                  onClick={e => setCursorStart(e.target.selectionStart)}
-                />
-              </div>
+              <MessageInput ref={messageInputRef} channel={channel} roomId={roomId} />
             </Row>
           </Col>
         )}
