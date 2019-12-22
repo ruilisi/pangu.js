@@ -24,6 +24,7 @@
     "actioncable-jwt": "^1.1.0",
     "antd": "^3.25.0",
     "emoji-mart": "^2.11.1",
+    "formik": "^2.0.8",
     "fs": "^0.0.1-security",
     "highlight.js": "^9.17.1",
     "immutable": "^4.0.0-rc.12",

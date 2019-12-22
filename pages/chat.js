@@ -45,10 +45,10 @@ const md = new Remarkable({
   }
 })
 
-const gameComponent = game => {
+const gameComponent = (game, roomId, channel) => {
   switch (game.get('type')) {
     case 'PPP':
-      return <PPP />
+      return <PPP channel={channel} roomId={roomId} />
     default:
       return null
   }
@@ -98,7 +98,7 @@ const Chat = () => {
   return (
     <div>
       <Modal footer={null} visible={game.get('show')} onCancel={() => dispatch(viewSetIn(['game', 'show'], false))}>
-        {gameComponent(game)}
+        {gameComponent(game, roomId, channel)}
       </Modal>
       <Row>
         <Col span={4} className="border-card" style={{ height: '100vh', background: '#3f0e40', overflow: 'hidden' }}>
