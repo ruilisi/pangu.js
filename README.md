@@ -100,14 +100,7 @@ if (!isDev) {
 }
 ```
 
-#### [Redux DevTools](https://github.com/reduxjs/redux-devtools)
-
-`Redux DevTools` is a developer tool to power-up Redux development workflow or any other architecture which handles the state change.
-We added support for `Redux DevTools` by following tutorial [here](https://github.com/reduxjs/redux-devtools/blob/master/docs/Walkthrough.md#manual-integration).
-The shortcut keys for operating dock monitor of `Redux DevTools` are:
-
-- `ctrl-h`: toggle visibility
-- `ctrl-q`: change position
+#### [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
 
 #### Convenient shortcut keys in [shortcuts.js](./utils/shortcuts.js)
 

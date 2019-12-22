@@ -101,16 +101,8 @@ export default () => <div className="FS-10">Example</div>
   }
   ```
 
-#### [Redux DevTools](https://github.com/reduxjs/redux-devtools)
 
-`Redux DevTools`是一个用于启动Redux开发工作流程或任何其他处理状态更改架构的开发工具。
-
-通过[教程](https://github.com/reduxjs/redux-devtools/blob/master/docs/Walkthrough.md#manual-integration)，我们增加了对`Redux DevTools`的支持。
-
-用于操作`Redux DevTools`的扩展坞监视器的快捷键：
-
-- `ctrl-h`:切换可见性
-- `ctrl-q`: 改变位置
+#### [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
 
 #### [shortcuts.js](./utils/shortcuts.js)快捷键
 
