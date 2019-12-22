@@ -1,22 +1,23 @@
 ---
-Logout: 登出
-Mobile: 手机
-Email: 邮箱
-back_to_top: 回到顶部
-Password: 密码
-"Confirm Password": 确认密码
-"Already have an account?": 已经注册过账号了？
-"Not a member yet?": 还没有账号？
-"Sign Up here": 点击注册
-Login: 登录
-Signup: 注册
-Submit: 提交
-"Email or Mobile": 邮箱或手机
-"Old Password": 旧密码
-"New Password": 新密码
-Sorry, this page is not found: 页面跑丢了哎
+Already have an account?: 已经注册过账号了？
 Back Home: 返回主页
 Chat: 聊天室
+Confirm Password: 确认密码
 Create Room: 创建房间
+Email or Mobile: 邮箱或手机
+Email: 邮箱
 Join Room: 加入房间
+Login: 登录
+Logout: 登出
+Mobile: 手机
+New Password: 新密码
+Not a member yet?: 还没有账号？
+Old Password: 旧密码
+Password: 密码
 Room Name: 房间名称
+Sign Up here: 点击注册
+Signup: 注册
+Sorry, this page is not found: 页面跑丢了哎
+Submit: 提交
+Wechat Login: 微信登录
+back_to_top: 回到顶部
