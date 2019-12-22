@@ -14,10 +14,9 @@ import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
 import Setting from '../components/Setting'
 import UserList from '../components/UserList'
 import Rooms from '../components/Rooms'
-import Lottery from '../components/lottery'
-import Viewers from '../components/viewers'
 import MessageInput from '../components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
+import PPP from '../components/PPP'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -46,10 +45,18 @@ const md = new Remarkable({
   }
 })
 
+const gameComponent = game => {
+  switch (game.get('type')) {
+    case 'PPP':
+      return <PPP />
+    default:
+      return null
+  }
+}
+
 const Chat = () => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
-  const [visible, setVisible] = useState(false)
   const [roomId, setRoomId] = useState('')
   const [channel, setChannel] = useState()
   const rooms = useSelector(state => state.rooms)
@@ -57,9 +64,9 @@ const Chat = () => {
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const room = rooms.get(roomId, Map())
-  const show = view.getIn(['showLottery'])
   const router = useRouter()
   const messages = room.get('messages', List())
+  const game = view.get('game')
 
   const switchRoom = id => {
     setRoomId(id)
@@ -90,21 +97,8 @@ const Chat = () => {
 
   return (
     <div>
-      <Modal footer={null} visible={visible} onCancel={() => setVisible(false)}>
-        <Lottery
-          submit={(a, b, c) => {
-            channel.load('lottery', { room_id: roomId, gold: a, silver: b, bronze: c })
-            setVisible(false)
-          }}
-        />
-      </Modal>
-      <Modal footer={null} visible={show} onCancel={() => dispatch(viewSetIn(['showLottery'], true))}>
-        <Viewers
-          prizes={view.getIn(['lottery']).toJS()}
-          submit={() => {
-            dispatch(viewSetIn(['showLottery'], false))
-          }}
-        />
+      <Modal footer={null} visible={game.get('show')} onCancel={() => dispatch(viewSetIn(['game', 'show'], false))}>
+        {gameComponent(game)}
       </Modal>
       <Row>
         <Col span={4} className="border-card" style={{ height: '100vh', background: '#3f0e40', overflow: 'hidden' }}>

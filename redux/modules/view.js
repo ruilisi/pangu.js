@@ -16,8 +16,11 @@ const initialState = I.fromJS({
   },
   qiniuToken: null,
   avatars: {},
-  showLottery: false,
-  lottery: [],
+  game: {
+    show: false,
+    type: null,
+    data: {}
+  },
   tables: {},
   data: {}
 }).update('tables', tables =>

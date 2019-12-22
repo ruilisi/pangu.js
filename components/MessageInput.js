@@ -1,16 +1,30 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Picker } from 'emoji-mart'
 import { Button, Input, Popover } from 'antd'
+import { viewMergeIn } from '%view'
 
 export default ({ channel, roomId }) => {
+  const dp = useDispatch()
   const [text, setText] = useState('')
   const [cursorStart, setCursorStart] = useState(0)
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
-      channel.load('add_message', { room_id: roomId, text })
-      setText('')
+      switch (text) {
+        case '/PPP':
+          dp(
+            viewMergeIn('game', {
+              show: true,
+              type: 'PPP'
+            })
+          )
+          break
+        default:
+          channel.load('add_message', { room_id: roomId, text })
+          setText('')
+      }
       e.preventDefault()
     }
   }
