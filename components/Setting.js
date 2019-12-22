@@ -6,6 +6,7 @@ import { post } from '../utils/request'
 import { roomsAdd } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { logout } from '../api/sessions'
+import { TR } from '../utils/translation'
 
 const createRooms = async title => {
   const res = await post('rooms', { title })
@@ -25,7 +26,7 @@ const Setting = props => {
   const { switchRoom } = props
 
   const handleOk = () => {
-    if (menuItem === '新建房间') {
+    if (menuItem === 'Create Room') {
       createRooms(title).then(body => {
         if (body.ok === 'false') {
           message.info('Failed to create room')
@@ -56,7 +57,7 @@ const Setting = props => {
     setShow(false)
   }
 
-  const menuList = ['新建房间', '加入房间']
+  const menuList = ['Create Room', 'Join Room']
 
   const menu = (
     <Menu>
@@ -68,10 +69,10 @@ const Setting = props => {
             setShow(true)
           }}
         >
-          {v}
+          {TR(v)}
         </Menu.Item>
       ))}
-      <Menu.Item onClick={() => dispatch(logout())}>退出登录</Menu.Item>
+      <Menu.Item onClick={() => dispatch(logout())}>{TR('Logout')}</Menu.Item>
     </Menu>
   )
 
@@ -80,9 +81,9 @@ const Setting = props => {
       <Dropdown overlay={menu}>
         <Icon type="plus-circle" style={{ color: '#fff' }} />
       </Dropdown>
-      <Modal title={menuItem} visible={show} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title={TR(menuItem)} visible={show} onOk={handleOk} onCancel={handleCancel}>
         <Row style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 30 }}>
-          <Col span={4}>title</Col>
+          <Col span={4}>{TR('Room Name')}</Col>
           <Col span={20}>
             <Input value={title} onChange={e => setTitle(e.target.value)} />
           </Col>

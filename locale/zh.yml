@@ -1,5 +1,5 @@
 ---
-Logout: 退出
+Logout: 登出
 Mobile: 手机
 Email: 邮箱
 back_to_top: 回到顶部
@@ -17,5 +17,6 @@ Submit: 提交
 Sorry, this page is not found: 页面跑丢了哎
 Back Home: 返回主页
 Chat: 聊天室
-
-
+Create Room: 创建房间
+Join Room: 加入房间
+Room Name: 房间名称
