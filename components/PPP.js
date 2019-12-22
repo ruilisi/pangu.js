@@ -1,7 +1,9 @@
 import React from 'react'
 import { Button, Row, Col } from 'antd'
 import { Formik, Form, Field, FieldArray } from 'formik'
+import { useDispatch } from 'react-redux'
 import _ from 'lodash'
+import { viewSetIn } from '../redux/modules/view'
 
 const alignedRow = (left, right, key = '') => (
   <Row className="MB-4 MT-6" key={key}>
@@ -13,9 +15,10 @@ const alignedRow = (left, right, key = '') => (
 const valuesToMarkdown = values => `${_.map(values, (list, field) => `## ${_.upperFirst(field)}\n${list.map(text => `* ${text}`).join('\n')}`).join('\n')}\n---`
 
 export default ({ roomId, channel }) => {
+  const dp = useDispatch()
   return (
     <Formik
-      initialValues={{ past: ['a', 'b'], plan: [], proposal: [] }}
+      initialValues={{ past: [], plan: [], proposal: [] }}
       validate={values => {
         const errors = {}
         if (!values.past) {
@@ -32,6 +35,7 @@ export default ({ roomId, channel }) => {
       onSubmit={(values, { setSubmitting }) => {
         const text = valuesToMarkdown(values)
         channel.load('add_message', { room_id: roomId, text })
+        dp(viewSetIn(['game', 'show'], false))
         setSubmitting(false)
       }}
     >
