@@ -19,19 +19,6 @@ export default ({ roomId, channel }) => {
   return (
     <Formik
       initialValues={{ past: [], plan: [], proposal: [] }}
-      validate={values => {
-        const errors = {}
-        if (!values.past) {
-          errors.past = 'Required'
-        }
-        if (!values.plan) {
-          errors.plan = 'Required'
-        }
-        if (!values.proposal) {
-          errors.proposal = 'Required'
-        }
-        return errors
-      }}
       onSubmit={(values, { setSubmitting }) => {
         const text = valuesToMarkdown(values)
         channel.load('add_message', { room_id: roomId, text })
