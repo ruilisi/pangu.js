@@ -6,9 +6,7 @@ export const SELF_SET = 'SELF_SET'
 export const SELF_MERGE = 'SELF_MERGE'
 export const SELF_MERGE_IN = 'SELF_MERGE_IN'
 
-const initialState = I.fromJS({
-  avatars: {}
-})
+const initialState = I.fromJS({})
 
 export default immutableHandler((self = initialState, action) => {
   const { path, value } = action

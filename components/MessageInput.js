@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Picker } from 'emoji-mart'
 import { Button, Input, Popover } from 'antd'
-import { viewMergeIn } from '%view'
+import { viewMergeIn, viewSetIn } from '%view'
 
-export default ({ channel, roomId }) => {
+export default ({ channel, roomId, defaultText = '' }) => {
   const dp = useDispatch()
-  const [text, setText] = useState('')
+  const [text, setText] = useState(defaultText)
   const [cursorStart, setCursorStart] = useState(0)
+  const view = useSelector(state => state.view)
+  const messageId = view.getIn(['messageId'])
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -22,7 +24,12 @@ export default ({ channel, roomId }) => {
           )
           break
         default:
-          channel.load('add_message', { room_id: roomId, text })
+          if (defaultText) {
+            channel.load('update_message', { room_id: roomId, text, message_id: messageId })
+            dp(viewSetIn(['messageId'], null))
+          } else {
+            channel.load('add_message', { room_id: roomId, text })
+          }
           setText('')
       }
       e.preventDefault()

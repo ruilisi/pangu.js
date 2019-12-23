@@ -2,7 +2,7 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { Modal, Col, Avatar, Row, Card } from 'antd'
+import { message, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -63,6 +63,7 @@ const Chat = () => {
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
+  const messageId = view.getIn(['messageId'])
   const room = rooms.get(roomId, Map())
   const router = useRouter()
   const messages = room.get('messages', List())
@@ -71,6 +72,37 @@ const Chat = () => {
   const switchRoom = id => {
     setRoomId(id)
     setChannel(roomsChannel(id))
+  }
+
+  const content = (_messageId, _userId) => {
+    return (
+      <div>
+        <div
+          role="presentation"
+          onClick={() => {
+            if (self.getIn(['id']) !== _userId) {
+              message.info("You can not delete others's message")
+              return
+            }
+            dispatch(viewSetIn(['messageId'], _messageId))
+          }}
+        >
+          编辑消息
+        </div>
+        <div
+          role="presentation"
+          onClick={() => {
+            if (self.getIn(['id']) !== _userId) {
+              message.info("You can not delete others's message")
+              return
+            }
+            channel.load('delete_message', { room_id: roomId, message_id: _messageId })
+          }}
+        >
+          删除消息
+        </div>
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -131,37 +163,43 @@ const Chat = () => {
 
             <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
-                {messages.map((v, idx) => (
-                  <div className="message PTB-3" key={v.get('id')}>
-                    {newMessageHeader(v, idx) ? (
-                      <>
-                        <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
-                          <Avatar src={avatars[v.get('user_id')]} />
-                        </div>
-                        <div className="inline">
-                          <div className="bold FS-7">
-                            {v.getIn(['data', 'email'])}
-                            <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
-                              {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
-                          <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
-                            {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>
-                        <div className="inline">
-                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+                {messages.map((v, idx) =>
+                  messageId !== v.get('id') ? (
+                    <Popover placement="topRight" content={content(v.get('id'), v.get('user_id'))}>
+                      <div className="message PTB-3" key={v.get('id')}>
+                        {newMessageHeader(v, idx) ? (
+                          <>
+                            <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
+                              <Avatar src={avatars[v.get('user_id')]} />
+                            </div>
+                            <div className="inline">
+                              <div className="bold FS-7">
+                                {v.getIn(['data', 'email'])}
+                                <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                                  {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
+                              <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
+                                {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            </div>
+                            <div className="inline">
+                              <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </Popover>
+                  ) : (
+                    <MessageInput defaultText={v.get('text')} channel={channel} roomId={roomId} />
+                  )
+                )}
               </Card>
               <MessageInput ref={messageInputRef} channel={channel} roomId={roomId} />
             </Row>
