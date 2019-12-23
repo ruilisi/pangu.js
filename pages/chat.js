@@ -1,5 +1,5 @@
 import I, { Map, List } from 'immutable'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { Modal, Col, Avatar, Row, Card } from 'antd'
@@ -17,6 +17,7 @@ import Rooms from '../components/Rooms'
 import MessageInput from '../components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
 import PPP from '../components/PPP'
+import { Context } from '../contexts/ActionCableContext'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -54,7 +55,7 @@ const gameComponent = (game, roomId, channel) => {
   }
 }
 
-const Chat = () => {
+const Chat = ({ ...props }) => {
   redirectIfAuthorized('/login', false)
   const dispatch = useDispatch()
   const [roomId, setRoomId] = useState('')
@@ -67,10 +68,11 @@ const Chat = () => {
   const router = useRouter()
   const messages = room.get('messages', List())
   const game = view.get('game')
+  const cable = useContext(Context)
 
   const switchRoom = id => {
     setRoomId(id)
-    setChannel(roomsChannel(id))
+    setChannel(roomsChannel(cable, id))
   }
 
   useEffect(() => {

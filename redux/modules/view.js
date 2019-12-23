@@ -22,7 +22,11 @@ const initialState = I.fromJS({
     data: {}
   },
   tables: {},
-  data: {}
+  data: {},
+  system: {
+    apiRoot: '',
+    jwtToken: ''
+  }
 }).update('tables', tables =>
   tables.map(table =>
     table.mergeDeep(
@@ -70,6 +74,8 @@ export const viewMergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value 
 export const authorizedPath = ['login', 'authorized']
 export const setAuthorized = value => D => D(viewSetIn(authorizedPath, value))
 export const authorized = view => view.getIn(authorizedPath)
+export const setApiRoot = apiRoot => D => D(viewSetIn(['system', 'apiRoot'], apiRoot))
+export const setJwtToken = jwtToken => D => D(viewSetIn(['system', 'jwtToken'], jwtToken))
 
 export const redirectIfAuthorized = (nextPath, authorizedValue = true) => {
   const router = useRouter()

@@ -14,7 +14,7 @@ const IndexPage = () => {
         <div className="index-bg">
           <div className="container">
             <p className="FS-20">NextJS Pangu</p>
-            <p className="FS-15 MB-30">This is really an amazing website , Come and join us !</p>
+            <p className="FS-15 MB-30">Realtime interaction platform built with Next.js</p>
             <Button className="W-12 MLR-5" onClick={() => Router.push('/signup')}>
               Get Started
             </Button>

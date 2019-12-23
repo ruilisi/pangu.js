@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import I from 'immutable'
 import { message, Row, Col, Icon, Dropdown, Menu, Modal, Input } from 'antd'
 import { useDispatch } from 'react-redux'
@@ -7,6 +7,7 @@ import { roomsAdd } from '../redux/modules/rooms'
 import roomsChannel from '../utils/roomsChannel'
 import { logout } from '../api/sessions'
 import { TR } from '../utils/translation'
+import { Context } from '../contexts/ActionCableContext'
 
 const createRooms = async title => {
   const res = await post('rooms', { title })
@@ -19,6 +20,7 @@ const joinRooms = async title => {
 }
 
 const Setting = props => {
+  const cable = useContext(Context)
   const dispatch = useDispatch()
   const [show, setShow] = useState(false)
   const [title, setTitle] = useState('')
@@ -45,7 +47,7 @@ const Setting = props => {
           dispatch(roomsAdd(I.fromJS(body)))
           const roomId = Object.keys(body)[0]
           switchRoom(roomId)
-          roomsChannel(roomId).load('join_room', { room_id: roomId, text: `joined ${Object.values(body)[0].title}` })
+          roomsChannel(cable, roomId).load('join_room', { room_id: roomId, text: `joined ${Object.values(body)[0].title}` })
         }
         setTitle('')
         setShow(false)

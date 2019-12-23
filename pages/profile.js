@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Avatar } from 'antd'
 
@@ -6,7 +6,7 @@ import { QiniuAntd } from 'react-pangu'
 import { get } from '../utils/request'
 import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
-import usersChannel from '../utils/usersChannel'
+import { Consumer } from '../contexts/ActionCableContext'
 
 const Profile = () => {
   redirectIfAuthorized('/login', false)
@@ -22,27 +22,25 @@ const Profile = () => {
     }
   }, [])
   const self = useSelector(state => state.self)
-  const [channel, setChannel] = useState(null)
-  useEffect(() => {
-    setChannel(usersChannel())
-  }, [])
   return (
     <FormUnderNavLayout title="Profile">
       <div className="TA-C">
         <div className="MB-2">
           <Avatar className="align-center D-B" src={self.getIn(['data', 'avatar'])} shape="circle" size={128} />
         </div>
-        {token ? (
-          <QiniuAntd
-            token={token}
-            keyPrefix="avatar"
-            onSuccess={key => {
-              if (channel) {
-                channel.load('set_avatar', { avatar: `http://res.paiyou.co/${key}` })
-              }
-            }}
-          />
-        ) : null}
+        <Consumer channel="UsersChannel">
+          {({ subscription }) =>
+            token ? (
+              <QiniuAntd
+                token={token}
+                keyPrefix="avatar"
+                onSuccess={key => {
+                  subscription.perform('load', { path: 'set_avatar', data: { avatar: `http://res.paiyou.co/${key}` } })
+                }}
+              />
+            ) : null
+          }
+        </Consumer>
       </div>
     </FormUnderNavLayout>
   )

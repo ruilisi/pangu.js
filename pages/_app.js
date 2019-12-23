@@ -11,17 +11,20 @@ import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
-import { getApiRoot, get } from '~/utils/request'
+import { getApiRoot, getJwtToken, get } from '~/utils/request'
 import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
 import { viewSetIn } from '%view'
+import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 
 const localeData = { zh, en }
 addLocaleData([...zhCN, ...enUS])
 
 class MyApp extends App {
   state = {
-    locale: 'en'
+    locale: 'en',
+    actionCableUrl: '',
+    actionCableJwtToken: ''
   }
 
   static async getInitialProps({ Component, ctx }) {
@@ -39,13 +42,20 @@ class MyApp extends App {
   }
 
   componentDidMount() {
-    const { props } = this
-    const { store } = props
-    window.DISPATCH = store.dispatch
-    window.STATE = store.getState
+    const {
+      props: {
+        store: { dispatch, getState }
+      }
+    } = this
+    window.DISPATCH = dispatch
+    window.STATE = getState
     shortcuts()
-    getApiRoot().then(() => {
-      get('data').then(data => store.dispatch(viewSetIn('data', data)))
+    this.setState({ actionCableJwtToken: getJwtToken() })
+    getApiRoot().then(apiRoot => {
+      this.setState({
+        actionCableUrl: `${apiRoot}/cable`
+      })
+      get('data').then(data => dispatch(viewSetIn('data', data)))
       usersChannel()
     })
     const language = localStorage.getItem('LANGUAGE')
@@ -58,16 +68,18 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps, store } = this.props
-    const { locale } = this.state
+    const { locale, actionCableJwtToken, actionCableUrl } = this.state
 
     return (
       <IntlProvider locale={locale} messages={localeData[locale]}>
-        <Provider store={store}>
-          <Head />
-          <div style={{ minHeight: '100vh' }}>
-            <Component {...pageProps} />
-          </div>
-        </Provider>
+        <ActionCableProvider url={actionCableUrl} jwtToken={actionCableJwtToken}>
+          <Provider store={store}>
+            <Head />
+            <div style={{ minHeight: '100vh' }}>
+              <Component {...pageProps} />
+            </div>
+          </Provider>
+        </ActionCableProvider>
       </IntlProvider>
     )
   }

@@ -44,6 +44,8 @@ export const setAuthorization = s => {
   localStorage.setItem(authorizationKey, s)
 }
 
+export const getJwtToken = () => (getAuthorization() || '').split(' ')[1]
+
 export const removeAuthorization = () => {
   localStorage.removeItem(authorizationKey)
 }

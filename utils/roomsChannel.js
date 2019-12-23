@@ -1,12 +1,10 @@
-import authedActionCable from './authedActionCable'
 import { roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
 import { viewSetIn } from '../redux/modules/view'
 
 let prevRoomChannel
 let prevRoomId
 
-export default roomId => {
-  const cable = authedActionCable()
+export default (cable, roomId) => {
   if (!cable) return null
 
   if (prevRoomId === roomId) return prevRoomChannel
