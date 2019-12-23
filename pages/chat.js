@@ -113,7 +113,7 @@ const Chat = () => {
               </Col>
             </Row>
           </div>
-          <Card style={{ background: '#3f0e40', height: '20vh', overflowY: 'scroll' }} bordered={false}>
+          <Card style={{ background: '#3f0e40', height: '40vh', overflowY: 'scroll' }} bordered={false}>
             <Rooms rooms={rooms} roomId={roomId} switchRoom={switchRoom} />
           </Card>
           <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
