@@ -2,7 +2,7 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { Modal, Col, Avatar, Row, Card } from 'antd'
+import { message, Icon, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -64,6 +64,7 @@ const Chat = ({ ...props }) => {
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
+  const messageId = view.getIn(['messageId'])
   const room = rooms.get(roomId, Map())
   const router = useRouter()
   const messages = room.get('messages', List())
@@ -114,7 +115,7 @@ const Chat = ({ ...props }) => {
               </Col>
             </Row>
           </div>
-          <Card style={{ background: '#3f0e40', height: '20vh', overflowY: 'scroll' }} bordered={false}>
+          <Card style={{ background: '#3f0e40', height: '40vh', overflowY: 'scroll' }} bordered={false}>
             <Rooms rooms={rooms} roomId={roomId} switchRoom={switchRoom} />
           </Card>
           <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
@@ -133,37 +134,69 @@ const Chat = ({ ...props }) => {
 
             <Row style={{ height: '90vh', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
-                {messages.map((v, idx) => (
-                  <div className="message PTB-3" key={v.get('id')}>
-                    {newMessageHeader(v, idx) ? (
-                      <>
-                        <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
-                          <Avatar src={avatars[v.get('user_id')]} />
-                        </div>
-                        <div className="inline">
-                          <div className="bold FS-7">
-                            {v.getIn(['data', 'email'])}
-                            <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                {messages.map((v, idx) =>
+                  messageId !== v.get('id') ? (
+                    <div className="message PTB-3" key={v.get('id')}>
+                      {newMessageHeader(v, idx) ? (
+                        <>
+                          <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
+                            <Avatar src={avatars[v.get('user_id')]} />
+                          </div>
+                          <div className="inline">
+                            <div className="bold FS-7">
+                              {v.getIn(['data', 'email'])}
+                              <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
+                                {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
+                            <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
                               {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
+                            </div>
                           </div>
-                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
-                          <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
-                            {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          <div className="inline">
+                            <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
                           </div>
-                        </div>
-                        <div className="inline">
-                          <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+                        </>
+                      )}
+                      <div className="action-menu">
+                        <Popover content={<p>编辑消息</p>}>
+                          <Icon
+                            type="edit"
+                            onClick={() => {
+                              if (self.getIn(['id']) !== v.get('user_id')) {
+                                message.info("You can not delete others's message")
+                                return
+                              }
+                              dispatch(viewSetIn(['messageId'], v.get('id')))
+                            }}
+                            style={{ margin: '8px', fontSize: '20px' }}
+                          />
+                        </Popover>
+                        <Popover content={<p>删除消息</p>}>
+                          <Icon
+                            type="delete"
+                            onClick={() => {
+                              if (self.getIn(['id']) !== v.get('user_id')) {
+                                message.info("You can not delete others's message")
+                                return
+                              }
+                              channel.load('delete_message', { room_id: roomId, message_id: v.get('id') })
+                            }}
+                            style={{ margin: '8px', fontSize: '20px' }}
+                          />
+                        </Popover>
+                      </div>
+                    </div>
+                  ) : (
+                    <MessageInput defaultText={v.get('text')} channel={channel} roomId={roomId} />
+                  )
+                )}
               </Card>
               <MessageInput ref={messageInputRef} channel={channel} roomId={roomId} />
             </Row>
@@ -211,6 +244,18 @@ const Chat = ({ ...props }) => {
             background: #f8f8f8;
           }
           .message:hover .hide-time {
+            visibility: visible;
+          }
+          .action-menu {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            visibility: hidden;
+            margin-top: -20px;
+            position: absolute;
+            right: 30px;
+          }
+          .message:hover .action-menu {
             visibility: visible;
           }
         `}

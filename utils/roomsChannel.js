@@ -1,4 +1,4 @@
-import { roomsMessagesSet, roomsMessagesAdd } from '../redux/modules/rooms'
+import { roomsMessagesSet, roomsMessagesAdd, roomsMessagesUpdate, roomsMessagesDelete } from '../redux/modules/rooms'
 import { viewSetIn } from '../redux/modules/view'
 
 let prevRoomChannel
@@ -27,7 +27,21 @@ export default (cable, roomId) => {
             DISPATCH(roomsMessagesSet(data.room_id, data.messages))
             break
           case 'add_message':
+            if (data.error) {
+              console.info(data.error)
+              break
+            }
             DISPATCH(roomsMessagesAdd(data.room_id, data.message))
+            break
+          case 'update_message':
+            if (data.error) {
+              console.info(data.error)
+              break
+            }
+            DISPATCH(roomsMessagesUpdate(data.room_id, data.message))
+            break
+          case 'delete_message':
+            DISPATCH(roomsMessagesDelete(data.room_id, data.message_id))
             break
           case 'join_room':
             DISPATCH(roomsMessagesAdd(data.room_id, data.message))
