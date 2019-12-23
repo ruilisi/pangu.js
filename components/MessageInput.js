@@ -39,6 +39,7 @@ export default ({ channel, roomId }) => {
               onClick={emoji => {
                 const t = text.substring(0, cursorStart) + emoji.native + text.substring(cursorStart, text.length)
                 setText(t)
+                setCursorStart(cursorStart + 2)
               }}
             />
           }
@@ -57,6 +58,7 @@ export default ({ channel, roomId }) => {
           setText(e.target.value)
         }}
         onKeyDown={onKeyDown}
+        onKeyUp={e => setCursorStart(e.target.selectionStart)}
         onClick={e => setCursorStart(e.target.selectionStart)}
       />
     </div>
