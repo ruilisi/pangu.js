@@ -2,7 +2,7 @@ import I, { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { message, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
+import { message, Icon, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
 import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -74,37 +74,6 @@ const Chat = () => {
     setChannel(roomsChannel(id))
   }
 
-  const content = (_messageId, _userId) => {
-    return (
-      <div>
-        <div
-          role="presentation"
-          onClick={() => {
-            if (self.getIn(['id']) !== _userId) {
-              message.info("You can not delete others's message")
-              return
-            }
-            dispatch(viewSetIn(['messageId'], _messageId))
-          }}
-        >
-          编辑消息
-        </div>
-        <div
-          role="presentation"
-          onClick={() => {
-            if (self.getIn(['id']) !== _userId) {
-              message.info("You can not delete others's message")
-              return
-            }
-            channel.load('delete_message', { room_id: roomId, message_id: _messageId })
-          }}
-        >
-          删除消息
-        </div>
-      </div>
-    )
-  }
-
   useEffect(() => {
     getRooms().then(body => {
       if (body.status === 401) return
@@ -165,37 +134,63 @@ const Chat = () => {
               <Card id="messages" style={{ flexGrow: 1, overflowY: 'scroll' }} bordered={false}>
                 {messages.map((v, idx) =>
                   messageId !== v.get('id') ? (
-                    <Popover placement="topRight" content={content(v.get('id'), v.get('user_id'))}>
-                      <div className="message PTB-3" key={v.get('id')}>
-                        {newMessageHeader(v, idx) ? (
-                          <>
-                            <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
-                              <Avatar src={avatars[v.get('user_id')]} />
-                            </div>
-                            <div className="inline">
-                              <div className="bold FS-7">
-                                {v.getIn(['data', 'email'])}
-                                <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
-                                  {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </div>
-                              <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
-                              <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
+                    <div className="message PTB-3" key={v.get('id')}>
+                      {newMessageHeader(v, idx) ? (
+                        <>
+                          <div className="inline ML-5 PT-2" style={{ width: '58px' }}>
+                            <Avatar src={avatars[v.get('user_id')]} />
+                          </div>
+                          <div className="inline">
+                            <div className="bold FS-7">
+                              {v.getIn(['data', 'email'])}
+                              <span style={{ fontWeight: 'lighter', color: 'grey', fontSize: 12, marginLeft: 10 }}>
                                 {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                              </div>
+                              </span>
                             </div>
-                            <div className="inline">
-                              <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                            <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="inline ML-3 MR-2" style={{ width: '58px', display: 'flex', alignItems: 'center' }}>
+                            <div className="hide-time" style={{ fontWeight: 'lighter', color: 'grey', fontSize: 6 }}>
+                              {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                             </div>
-                          </>
-                        )}
+                          </div>
+                          <div className="inline">
+                            <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                          </div>
+                        </>
+                      )}
+                      <div className="action-menu">
+                        <Popover content={<p>编辑消息</p>}>
+                          <Icon
+                            type="edit"
+                            onClick={() => {
+                              if (self.getIn(['id']) !== v.get('user_id')) {
+                                message.info("You can not delete others's message")
+                                return
+                              }
+                              dispatch(viewSetIn(['messageId'], v.get('id')))
+                            }}
+                            style={{ margin: '8px', fontSize: '20px' }}
+                          />
+                        </Popover>
+                        <Popover content={<p>删除消息</p>}>
+                          <Icon
+                            type="delete"
+                            onClick={() => {
+                              if (self.getIn(['id']) !== v.get('user_id')) {
+                                message.info("You can not delete others's message")
+                                return
+                              }
+                              channel.load('delete_message', { room_id: roomId, message_id: v.get('id') })
+                            }}
+                            style={{ margin: '8px', fontSize: '20px' }}
+                          />
+                        </Popover>
                       </div>
-                    </Popover>
+                    </div>
                   ) : (
                     <MessageInput defaultText={v.get('text')} channel={channel} roomId={roomId} />
                   )
@@ -247,6 +242,18 @@ const Chat = () => {
             background: #f8f8f8;
           }
           .message:hover .hide-time {
+            visibility: visible;
+          }
+          .action-menu {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            visibility: hidden;
+            margin-top: -20px;
+            position: absolute;
+            right: 30px;
+          }
+          .message:hover .action-menu {
             visibility: visible;
           }
         `}
