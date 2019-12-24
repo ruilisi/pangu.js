@@ -4,7 +4,8 @@ import { Picker } from 'emoji-mart'
 import { Button, Input, Popover } from 'antd'
 import { viewMergeIn, viewSetIn } from '%view'
 
-export default ({ channel, roomId, defaultText = '' }) => {
+export default ({ subscription, roomId, defaultText = '' }) => {
+  console.info(subscription)
   const dp = useDispatch()
   const [text, setText] = useState(defaultText)
   const [cursorStart, setCursorStart] = useState(0)
@@ -25,10 +26,10 @@ export default ({ channel, roomId, defaultText = '' }) => {
           break
         default:
           if (defaultText) {
-            channel.load('update_message', { room_id: roomId, text, message_id: messageId })
+            subscription.perform('load', { path: 'update_message', data: { room_id: roomId, text, message_id: messageId } })
             dp(viewSetIn(['messageId'], null))
           } else {
-            channel.load('add_message', { room_id: roomId, text })
+            subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text } })
           }
           setText('')
       }
