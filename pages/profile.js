@@ -34,9 +34,7 @@ const Profile = () => {
               <QiniuAntd
                 token={token}
                 keyPrefix="avatar"
-                onSuccess={key => {
-                  subscription.perform('load', { path: 'set_avatar', data: { avatar: `http://res.paiyou.co/${key}` } })
-                }}
+                onSuccess={key => subscription && subscription.perform('load', { path: 'set_avatar', data: { avatar: `http://res.paiyou.co/${key}` } })}
               />
             ) : null
           }
