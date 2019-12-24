@@ -14,25 +14,25 @@ const Provider = ({ children, url, jwtToken }) => {
   return <Context.Provider value={cable}>{children}</Context.Provider>
 }
 
-const Consumer = ({ channel, children, onReceived, onInitialized, onConnected, onDisconnected, onRejected, onSubscribed }) => {
+const Consumer = ({ channel, children, onReceived, onInitialized, onConnected, onDisconnected, onRejected, onSubscribed, onUnauthorized }) => {
   const [subscription, setSubscription] = useState()
   const cable = useContext(Context)
   useEffect(() => {
     if (cable && channel) {
-      setSubscription(
-        cable.subscriptions.create(channel, {
-          received: data => onReceived && onReceived(data),
-          initialized: () => onInitialized && onInitialized(),
-          connected: () => onConnected && onConnected(),
-          disconnected: () => onDisconnected && onDisconnected(),
-          subscribed: () => onSubscribed && onSubscribed(),
-          rejected: () => onRejected && onRejected()
-        })
-      )
+      const s = cable.subscriptions.create(channel, {
+        received: data => onReceived && onReceived(s, data),
+        initialized: () => onInitialized && onInitialized(s),
+        connected: () => onConnected && onConnected(s),
+        disconnected: () => onDisconnected && onDisconnected(s),
+        subscribed: () => onSubscribed && onSubscribed(s),
+        rejected: () => onRejected && onRejected(s),
+        authorized: () => onUnauthorized && onUnauthorized(s)
+      })
+      setSubscription(s)
     }
   }, [cable, channel])
 
-  if (!subscription) {
+  if (!subscription || !children) {
     return null
   }
   return children({ subscription })

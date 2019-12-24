@@ -12,10 +12,11 @@ import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
 import { getApiRoot, getJwtToken, get } from '~/utils/request'
-import usersChannel from '../utils/usersChannel'
 import shortcuts from '../utils/shortcuts'
 import { viewSetIn } from '%view'
 import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
+import UsersConsumer from '../consumers/UsersConsumer'
+import { logger } from 'actioncable-jwt'
 
 const localeData = { zh, en }
 addLocaleData([...zhCN, ...enUS])
@@ -42,6 +43,7 @@ class MyApp extends App {
   }
 
   componentDidMount() {
+    logger.enabled = true
     const {
       props: {
         store: { dispatch, getState }
@@ -56,7 +58,6 @@ class MyApp extends App {
         actionCableUrl: `${apiRoot}/cable`
       })
       get('data').then(data => dispatch(viewSetIn('data', data)))
-      usersChannel()
     })
     const language = localStorage.getItem('LANGUAGE')
     if (!language) {
@@ -79,6 +80,7 @@ class MyApp extends App {
               <Component {...pageProps} />
             </div>
           </Provider>
+          <UsersConsumer />
         </ActionCableProvider>
       </IntlProvider>
     )

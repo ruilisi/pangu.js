@@ -51,7 +51,6 @@ export default (cable, roomId) => {
         }
       },
       load(path, data) {
-        console.info(path, data)
         return this.perform('load', {
           path,
           data

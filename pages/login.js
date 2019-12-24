@@ -9,7 +9,6 @@ import { redirectIfAuthorized, setAuthorized } from '../redux/modules/view'
 import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 import guestsChannel from '../utils/guestsChannel'
-import usersChannel from '../utils/usersChannel'
 import dns from '~/utils/dns'
 
 const guest = 'GUEST'.concat(
@@ -40,7 +39,6 @@ const Login = () => {
       localStorage.setItem('Id', res.id)
       message.success('登录成功')
       dispatch(setAuthorized(true))
-      usersChannel()
     } else {
       message.error(res.error)
     }

@@ -1,5 +1,4 @@
 import { createConsumer } from 'actioncable-jwt'
-import usersChannel from './usersChannel'
 import { viewSetIn, authorizedPath } from '%view'
 import dns from './dns'
 import { setAuthorization } from './request'
@@ -26,7 +25,6 @@ export default function(guest) {
             }
             setAuthorization(data)
             channel.unsubscribe()
-            usersChannel()
             break
           default:
             break
