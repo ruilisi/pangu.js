@@ -2,9 +2,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
-import { IntlProvider, addLocaleData } from 'react-intl'
-import zhCN from 'react-intl/locale-data/zh'
-import enUS from 'react-intl/locale-data/en'
+import { IntlProvider } from 'react-intl'
 import { logger } from 'actioncable-jwt'
 import Head from '../components/head'
 import configureStore from '../redux/configureStore'
@@ -19,7 +17,6 @@ import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 import UsersConsumer from '../consumers/UsersConsumer'
 
 const localeData = { zh, en }
-addLocaleData([...zhCN, ...enUS])
 
 class MyApp extends App {
   state = {
