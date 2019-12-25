@@ -1,10 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Picker } from 'emoji-mart'
 import { Button, Input, Popover } from 'antd'
+import fetch from 'isomorphic-unfetch'
+import { get } from '../utils/request'
 
-export default ({ defaultText, onSend }) => {
+export default ({ defaultText, onSend, roomId, subscription }) => {
   const [text, setText] = useState(defaultText)
   const [cursorStart, setCursorStart] = useState(0)
+  const [token, setToken] = useState(0)
+  useEffect(() => {
+    get('qiniu_token').then(data => {
+      setToken(data.qiniuToken)
+    })
+  }, [])
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -15,6 +23,27 @@ export default ({ defaultText, onSend }) => {
       setText('')
       e.preventDefault()
     }
+  }
+
+  const upload = file => {
+    const formData = new FormData()
+    formData.append('key', `screenshot-${new Date().getTime()}-${file.name}`)
+    formData.append('token', token)
+    formData.append('file', file)
+
+    fetch('https://upload.qiniup.com/', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(body => {
+        if (body.key) {
+          subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text: `![pic](http://res.paiyou.co/${body.key})` } })
+        } else {
+          console.info(body.error)
+        }
+      })
+      .catch(error => console.info(error))
   }
 
   return (
@@ -48,6 +77,15 @@ export default ({ defaultText, onSend }) => {
         onKeyDown={onKeyDown}
         onKeyUp={e => setCursorStart(e.target.selectionStart)}
         onClick={e => setCursorStart(e.target.selectionStart)}
+        onPaste={e => {
+          const { items } = e.clipboardData
+          items.forEach(item => {
+            if (item.kind === 'file' && item.type === 'image/png') {
+              upload(item.getAsFile())
+              e.preventDefault()
+            }
+          })
+        }}
       />
 
       <style jsx>
