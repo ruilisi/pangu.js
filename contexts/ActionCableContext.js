@@ -47,7 +47,7 @@ const Controller = ({ children, cable, channel, onReceived, onInitialized, onCon
   }, [cable, channel])
 
   if (isFunction(children)) {
-    return children({ subscription })
+    return subscription ? children({ subscription }) : null
   }
   return children || null
 }

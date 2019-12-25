@@ -1,5 +1,5 @@
 import I, { Map, List } from 'immutable'
-import React, { useEffect, useState, useRef, useContext } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { message, Icon, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
@@ -109,7 +109,7 @@ const Chat = () => {
                     <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" onClick={() => router.push('/profile')} />
                   </Col>
                   <Col span={12}>
-                    <Setting switchRoom={switchRoom} />
+                    <Setting switchRoom={switchRoom} subscription={subscription} />
                   </Col>
                 </Row>
               </div>
