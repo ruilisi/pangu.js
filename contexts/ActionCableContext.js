@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { createConsumer } from 'actioncable-jwt'
 
 const Context = React.createContext()
@@ -23,37 +23,33 @@ const Provider = ({ children, url, jwtToken }) => {
   return <Context.Provider value={{ cable }}>{children}</Context.Provider>
 }
 
-const Controller = ({ children, cable, channel, onReceived, onInitialized, onConnected, onDisconnected, onRejected, onSubscribed, onUnauthorized }) => {
+const Consumer = ({ children, channel, onReceived, onInitialized, onConnected, onDisconnected, onRejected, onSubscribed, onUnauthorized }) => {
+  const { cable } = useContext(Context)
   const [subscription, setSubscription] = useState(null)
   useEffect(() => {
-    if (cable && channel) {
-      const s = cable.subscriptions.create(channel, {
-        received: data => onReceived && onReceived(s, data),
-        initialized: () => onInitialized && onInitialized(s),
-        connected: () => onConnected && onConnected(s),
-        disconnected: () => onDisconnected && onDisconnected(s),
-        subscribed: () => onSubscribed && onSubscribed(s),
-        rejected: () => onRejected && onRejected(s),
-        authorized: () => onUnauthorized && onUnauthorized(s)
-      })
-      setSubscription(s)
-    }
-    return () => {
-      if (cable && subscription) {
-        cable.subscriptions.remove(subscription)
-        setSubscription(null)
+    if (cable) {
+      const [createdSubscription] = cable.subscriptions.findAll(JSON.stringify(channel))
+      if (createdSubscription) {
+        setSubscription(createdSubscription)
+      } else {
+        const s = cable.subscriptions.create(channel, {
+          received: data => onReceived && onReceived(s, data),
+          initialized: () => onInitialized && onInitialized(s),
+          connected: () => onConnected && onConnected(s),
+          disconnected: () => onDisconnected && onDisconnected(s),
+          subscribed: () => onSubscribed && onSubscribed(s),
+          rejected: () => onRejected && onRejected(s),
+          authorized: () => onUnauthorized && onUnauthorized(s)
+        })
+        setSubscription(s)
       }
     }
-  }, [cable, channel])
+  }, [channel, cable])
 
   if (isFunction(children)) {
-    return subscription ? children({ subscription }) : null
+    return children({ subscription })
   }
   return children || null
-}
-
-const Consumer = ({ ...props }) => {
-  return <Context.Consumer>{({ cable }) => <Controller cable={cable} {...props} />}</Context.Consumer>
 }
 
 export { Context, Provider, Consumer }

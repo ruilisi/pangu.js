@@ -5,7 +5,6 @@ import { Button, Input, Popover } from 'antd'
 import { viewMergeIn, viewSetIn } from '%view'
 
 export default ({ subscription, roomId, defaultText = '' }) => {
-  console.info(subscription)
   const dp = useDispatch()
   const [text, setText] = useState(defaultText)
   const [cursorStart, setCursorStart] = useState(0)

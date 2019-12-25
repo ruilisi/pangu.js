@@ -5,6 +5,7 @@ import withRedux from 'next-redux-wrapper'
 import { IntlProvider, addLocaleData } from 'react-intl'
 import zhCN from 'react-intl/locale-data/zh'
 import enUS from 'react-intl/locale-data/en'
+import { logger } from 'actioncable-jwt'
 import Head from '../components/head'
 import configureStore from '../redux/configureStore'
 import zh from '../locale/zh.yml'
@@ -16,7 +17,6 @@ import shortcuts from '../utils/shortcuts'
 import { viewSetIn } from '%view'
 import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 import UsersConsumer from '../consumers/UsersConsumer'
-import { logger } from 'actioncable-jwt'
 
 const localeData = { zh, en }
 addLocaleData([...zhCN, ...enUS])
