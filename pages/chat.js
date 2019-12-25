@@ -184,7 +184,7 @@ const Chat = () => {
                                     message.info("You can not delete others's message")
                                     return
                                   }
-                                  subscription.load('delete_message', { room_id: roomId, message_id: v.get('id') })
+                                  subscription.perform('load', { path: 'delete_message', data: { room_id: roomId, message_id: v.get('id') } })
                                 }}
                                 style={{ margin: '8px', fontSize: '20px' }}
                               />

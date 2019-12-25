@@ -44,7 +44,7 @@ const Consumer = ({ children, channel, onReceived, onInitialized, onConnected, o
         setSubscription(s)
       }
     }
-  }, [channel, cable])
+  }, [cable, JSON.stringify(channel)])
 
   if (isFunction(children)) {
     return children({ subscription })
