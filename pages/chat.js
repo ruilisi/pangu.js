@@ -9,7 +9,7 @@ import 'highlight.js/styles/github.css'
 import { animateScroll } from 'react-scroll'
 import { get } from '../utils/request'
 import { roomsSet } from '../redux/modules/rooms'
-import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
+import { redirectIfAuthorized, viewSetIn, viewMergeIn } from '../redux/modules/view'
 import Setting from '../components/Setting'
 import UserList from '../components/UserList'
 import Rooms from '../components/Rooms'
@@ -56,7 +56,7 @@ const gameComponent = (game, roomId, channel) => {
 
 const Chat = () => {
   redirectIfAuthorized('/login', false)
-  const dispatch = useDispatch()
+  const dp = useDispatch()
   const [roomId, setRoomId] = useState('')
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
@@ -72,10 +72,12 @@ const Chat = () => {
     setRoomId(id)
   }
 
+  const shortcuts = [[/\/PPP/, () => dp(viewMergeIn('game', { show: true, type: 'PPP' }))]]
+
   useEffect(() => {
     getRooms().then(body => {
       if (body.status === 401) return
-      dispatch(roomsSet(I.fromJS(body)))
+      dp(roomsSet(I.fromJS(body)))
     })
   }, [])
 
@@ -98,7 +100,7 @@ const Chat = () => {
     <RoomsConsumer roomId={roomId}>
       {({ subscription }) => (
         <div>
-          <Modal footer={null} visible={game.get('show')} onCancel={() => dispatch(viewSetIn(['game', 'show'], false))}>
+          <Modal footer={null} visible={game.get('show')} onCancel={() => dp(viewSetIn(['game', 'show'], false))}>
             {gameComponent(game, roomId)}
           </Modal>
           <Row>
@@ -171,7 +173,7 @@ const Chat = () => {
                                     message.info("You can not delete others's message")
                                     return
                                   }
-                                  dispatch(viewSetIn(['messageId'], v.get('id')))
+                                  dp(viewSetIn(['messageId'], v.get('id')))
                                 }}
                                 style={{ margin: '8px', fontSize: '20px' }}
                               />
@@ -192,11 +194,36 @@ const Chat = () => {
                           </div>
                         </div>
                       ) : (
-                        <MessageInput defaultText={v.get('text')} subscription={subscription} roomId={roomId} />
+                        <MessageInput
+                          defaultText={v.get('text')}
+                          subscription={subscription}
+                          roomId={roomId}
+                          onSend={text => {
+                            subscription.perform('load', { path: 'update_message', data: { room_id: roomId, text, message_id: messageId } })
+                            dp(viewSetIn(['messageId'], null))
+                          }}
+                        />
                       )
                     )}
                   </Card>
-                  <MessageInput ref={messageInputRef} subscription={subscription} roomId={roomId} />
+                  <MessageInput
+                    ref={messageInputRef}
+                    subscription={subscription}
+                    onSend={text => {
+                      const shortcut = shortcuts.find(([tester]) => {
+                        if (tester instanceof RegExp) {
+                          return tester.test(text)
+                        }
+                        return false
+                      })
+                      if (shortcut) {
+                        const [, func] = shortcut
+                        func()
+                      } else {
+                        subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text } })
+                      }
+                    }}
+                  />
                 </Row>
               </Col>
             )}
@@ -210,13 +237,6 @@ const Chat = () => {
                 border-bottom-style: solid;
                 border-width: 1px;
                 border-color: #dddddd;
-              }
-              .bottom-input {
-                height: auto;
-                width: 100%;
-                display: flex;
-                align-items: center;
-                background: #e9f5fa;
               }
               .border-card {
                 height: 100vh;

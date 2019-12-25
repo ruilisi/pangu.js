@@ -1,37 +1,18 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Picker } from 'emoji-mart'
 import { Button, Input, Popover } from 'antd'
-import { viewMergeIn, viewSetIn } from '%view'
 
-export default ({ subscription, roomId, defaultText = '' }) => {
-  const dp = useDispatch()
+export default ({ defaultText, onSend }) => {
   const [text, setText] = useState(defaultText)
   const [cursorStart, setCursorStart] = useState(0)
-  const view = useSelector(state => state.view)
-  const messageId = view.getIn(['messageId'])
 
   const onKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       if (text.trim() === '') return
-      switch (text) {
-        case '/PPP':
-          dp(
-            viewMergeIn('game', {
-              show: true,
-              type: 'PPP'
-            })
-          )
-          break
-        default:
-          if (defaultText) {
-            subscription.perform('load', { path: 'update_message', data: { room_id: roomId, text, message_id: messageId } })
-            dp(viewSetIn(['messageId'], null))
-          } else {
-            subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text } })
-          }
-          setText('')
+      if (onSend) {
+        onSend(text)
       }
+      setText('')
       e.preventDefault()
     }
   }
@@ -68,6 +49,18 @@ export default ({ subscription, roomId, defaultText = '' }) => {
         onKeyUp={e => setCursorStart(e.target.selectionStart)}
         onClick={e => setCursorStart(e.target.selectionStart)}
       />
+
+      <style jsx>
+        {`
+          .bottom-input {
+            height: auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            background: #e9f5fa;
+          }
+        `}
+      </style>
     </div>
   )
 }
