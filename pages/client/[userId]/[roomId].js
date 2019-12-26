@@ -3,9 +3,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { message, Icon, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
-import { Remarkable } from 'remarkable'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/github.css'
 import { animateScroll } from 'react-scroll'
 import { viewSetIn, viewMergeIn } from '%view'
 import LeftSidebar from '~/components/layouts/LeftSidebar'
@@ -13,28 +10,7 @@ import MessageInput from '~/components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
 import PPP from '~/components/PPP'
 import RoomsConsumer from '~/consumers/RoomsConsumer'
-
-const md = new Remarkable({
-  breaks: true,
-  langPrefix: 'language-',
-  highlight: (str, lang) => {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(lang, str).value
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    try {
-      return hljs.highlightAuto(str).value
-    } catch (err) {
-      console.error(err)
-    }
-
-    return '' // use external default escaping
-  }
-})
+import MessageContent from '../../../components/MessageContent'
 
 const gameComponent = (game, roomId, subscription) => {
   switch (game.get('type')) {
@@ -116,7 +92,7 @@ const Chat = () => {
                                     {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                                   </span>
                                 </div>
-                                <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                                <MessageContent message={v} />
                               </div>
                             </>
                           ) : (
@@ -127,7 +103,7 @@ const Chat = () => {
                                 </div>
                               </div>
                               <div className="inline">
-                                <div dangerouslySetInnerHTML={{ __html: md.render(v.get('text')) }} />
+                                <MessageContent message={v} />
                               </div>
                             </>
                           )}
