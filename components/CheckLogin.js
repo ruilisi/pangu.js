@@ -23,7 +23,7 @@ const CheckLogin = () => {
         if (requireAuthorized) {
           router.push('/login')
         } else {
-          router.push('/profile')
+          router.push('/client')
         }
       }
     }

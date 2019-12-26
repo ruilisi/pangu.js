@@ -1,8 +1,14 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 
 export default () => {
   const self = useSelector(s => s.self)
-  console.info(self.toJS())
-  return <div>hello world</div>
+  const router = useRouter()
+  useEffect(() => {
+    if (self.get('id')) {
+      router.push(`/client/${self.get('id')}`)
+    }
+  })
+  return null
 }
