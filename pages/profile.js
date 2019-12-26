@@ -4,13 +4,11 @@ import { Avatar } from 'antd'
 
 import { QiniuAntd } from 'react-pangu'
 import { get } from '../utils/request'
-import { redirectIfAuthorized, viewSetIn } from '../redux/modules/view'
+import { viewSetIn } from '../redux/modules/view'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 import { Consumer } from '../contexts/ActionCableContext'
 
 const Profile = () => {
-  redirectIfAuthorized('/login', false)
-
   const D = useDispatch()
   const view = useSelector(state => state.view)
   const token = view.get('qiniuToken')

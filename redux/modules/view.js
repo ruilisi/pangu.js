@@ -1,7 +1,4 @@
 import I, { Set, isImmutable } from 'immutable'
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
 import { HttpState } from '~/consts'
 
 export const VIEW_SET = 'VIEW_SET'
@@ -77,13 +74,22 @@ export const authorized = view => view.getIn(authorizedPath)
 export const setApiRoot = apiRoot => D => D(viewSetIn(['system', 'apiRoot'], apiRoot))
 export const setJwtToken = jwtToken => D => D(viewSetIn(['system', 'jwtToken'], jwtToken))
 
-export const redirectIfAuthorized = (nextPath, authorizedValue = true) => {
-  const router = useRouter()
-  const view = useSelector(state => state.view)
+const routeAuthorizedMap = [
+  [/^\/profile/, true],
+  [/^\/login/, false]
+]
 
-  useEffect(() => {
-    if (authorized(view) === authorizedValue) {
-      router.push(nextPath)
+export const checkAuthorization = ({ router, store: { getState } }) => {
+  const result = routeAuthorizedMap.find(([routeRegex]) => routeRegex.test(router.route))
+  if (result) {
+    const [, requireAuthorized] = result
+    const { view } = getState()
+    if (requireAuthorized === !authorized(view)) {
+      if (requireAuthorized) {
+        router.push('/login')
+      } else {
+        router.push('/profile')
+      }
     }
-  })
+  }
 }

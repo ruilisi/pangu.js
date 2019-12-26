@@ -23,10 +23,7 @@ export const setApiRoot = async newApiRoot => {
   return newApiRoot
 }
 
-export const getApiRoot = async () => {
-  if (localStorage.getItem('resolveByLocal') === 'true') {
-    return setApiRoot(dns.API_ROOT_LOCAL)
-  }
+export const getApiRootByRacing = async () => {
   try {
     const newApiRoot = await Promise.race(dns.REMOTE_HOSTS.map(testApiRoot))
     return setApiRoot(newApiRoot)
@@ -34,6 +31,14 @@ export const getApiRoot = async () => {
     const msg = `Failed to ping any remote: ${error}`
     return Promise.reject(new Error(msg))
   }
+}
+
+export const getApiRoot = async () => {
+  if (localStorage.getItem('resolveByLocal') === 'true') {
+    return setApiRoot(dns.API_ROOT_LOCAL)
+  }
+  // return getApiRootByRacing()
+  return setApiRoot(dns.API_ROOT_REMOTE)
 }
 
 export const getAuthorization = () => {

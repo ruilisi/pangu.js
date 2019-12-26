@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import App from 'next/app'
 import withRedux from 'next-redux-wrapper'
 import { IntlProvider } from 'react-intl'
-import { logger } from 'actioncable-jwt'
 import Head from '../components/head'
 import configureStore from '../redux/configureStore'
 import zh from '../locale/zh.yml'
@@ -12,9 +11,9 @@ import 'antd/dist/antd.less'
 import '../styles/main.scss'
 import { getApiRoot, getJwtToken, get } from '~/utils/request'
 import shortcuts from '../utils/shortcuts'
-import { viewSetIn } from '%view'
 import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 import UsersConsumer from '../consumers/UsersConsumer'
+import { checkAuthorization, viewSetIn } from '../redux/modules/view'
 
 const localeData = { zh, en }
 
@@ -40,12 +39,12 @@ class MyApp extends App {
   }
 
   componentDidMount() {
-    logger.enabled = true
     const {
       props: {
         store: { dispatch, getState }
       }
     } = this
+    checkAuthorization(this.props)
     window.DISPATCH = dispatch
     window.STATE = getState
     shortcuts()

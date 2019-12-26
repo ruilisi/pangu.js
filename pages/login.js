@@ -5,7 +5,7 @@ import { Input, Button, message, Modal } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import QRCode from 'qrcode.react'
 import { TR } from '../utils/translation'
-import { redirectIfAuthorized, setAuthorized } from '../redux/modules/view'
+import { setAuthorized } from '../redux/modules/view'
 import { post, removeAuthorization } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 import guestsChannel from '../utils/guestsChannel'
@@ -19,7 +19,6 @@ const guest = 'GUEST'.concat(
 const redirectUri = `${dns.API_ROOT}/wechats/login_callback?guest=${guest}`
 
 const Login = () => {
-  redirectIfAuthorized('/')
   const router = useRouter()
   const dispatch = useDispatch()
   const wechatAppId = useSelector(state => state.view.getIn(['data', 'wechat_app_id']))
@@ -36,7 +35,6 @@ const Login = () => {
     removeAuthorization()
     const res = await postLogin(u, p)
     if (res.id) {
-      localStorage.setItem('Id', res.id)
       message.success('登录成功')
       dispatch(setAuthorized(true))
     } else {
