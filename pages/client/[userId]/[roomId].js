@@ -7,7 +7,7 @@ import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import { animateScroll } from 'react-scroll'
-import { redirectIfAuthorized, viewSetIn, viewMergeIn } from '%view'
+import { viewSetIn, viewMergeIn } from '%view'
 import LeftSidebar from '~/components/layouts/LeftSidebar'
 import MessageInput from '~/components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
@@ -22,14 +22,14 @@ const md = new Remarkable({
       try {
         return hljs.highlight(lang, str).value
       } catch (err) {
-        console.info(err)
+        console.error(err)
       }
     }
 
     try {
       return hljs.highlightAuto(str).value
     } catch (err) {
-      console.info(err)
+      console.error(err)
     }
 
     return '' // use external default escaping

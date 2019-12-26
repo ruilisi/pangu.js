@@ -1,5 +1,5 @@
 import { createConsumer } from 'actioncable-jwt'
-import { viewSetIn, authorizedPath } from '%view'
+import { setAuthorized } from '%view'
 import dns from './dns'
 import { setAuthorization } from './request'
 
@@ -20,9 +20,7 @@ export default function(guest) {
         const { data, path } = receivedData
         switch (path) {
           case 'wechat_login':
-            if (STATE().view.getIn(authorizedPath) !== true) {
-              DISPATCH(viewSetIn(authorizedPath, true))
-            }
+            setAuthorized(true)
             setAuthorization(data)
             channel.unsubscribe()
             break

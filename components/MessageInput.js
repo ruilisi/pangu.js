@@ -40,10 +40,10 @@ export default ({ defaultText, onSend, roomId, subscription }) => {
         if (body.key) {
           subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text: `![pic](http://res.paiyou.co/${body.key})` } })
         } else {
-          console.info(body.error)
+          console.error(body.error)
         }
       })
-      .catch(error => console.info(error))
+      .catch(error => console.error(error))
   }
 
   return (

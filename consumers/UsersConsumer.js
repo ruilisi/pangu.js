@@ -1,17 +1,15 @@
 import React from 'react'
 import { Consumer } from '../contexts/ActionCableContext'
-import { viewSetIn, authorizedPath } from '%view'
+import { setAuthorized } from '%view'
 import { selfSet } from '../redux/modules/self'
 
 const UsersConsumer = () => {
   const onConnected = subscription => {
-    if (STATE().view.getIn(authorizedPath) !== true) {
-      DISPATCH(viewSetIn(authorizedPath, true))
-    }
+    DISPATCH(setAuthorized(true))
     subscription.perform('load', { path: 'self', data: {} })
   }
   const onUnauthorized = () => {
-    DISPATCH(viewSetIn(authorizedPath, false))
+    DISPATCH(setAuthorized(false))
   }
 
   const onReceived = (_subscription, receivedData) => {

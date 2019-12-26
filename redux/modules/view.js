@@ -68,28 +68,13 @@ export default function(aView = initialState, action) {
 export const viewSet = value => ({ type: VIEW_SET, value })
 export const viewSetIn = (path, value) => ({ type: VIEW_SET_IN, path, value })
 export const viewMergeIn = (path, value) => ({ type: VIEW_MERGE_IN, path, value })
-export const authorizedPath = ['login', 'authorized']
-export const setAuthorized = value => D => D(viewSetIn(authorizedPath, value))
+const authorizedPath = ['login', 'authorized']
 export const authorized = view => view.getIn(authorizedPath)
-export const setApiRoot = apiRoot => D => D(viewSetIn(['system', 'apiRoot'], apiRoot))
-export const setJwtToken = jwtToken => D => D(viewSetIn(['system', 'jwtToken'], jwtToken))
-
-const routeAuthorizedMap = [
-  [/^\/profile/, true],
-  [/^\/login/, false]
-]
-
-export const checkAuthorization = ({ router, store: { getState } }) => {
-  const result = routeAuthorizedMap.find(([routeRegex]) => routeRegex.test(router.route))
-  if (result) {
-    const [, requireAuthorized] = result
-    const { view } = getState()
-    if (requireAuthorized === !authorized(view)) {
-      if (requireAuthorized) {
-        router.push('/login')
-      } else {
-        router.push('/profile')
-      }
-    }
+export const setAuthorized = value => (D, S) => {
+  const { view } = S()
+  if (authorized(view) !== value) {
+    D(viewSetIn(authorizedPath, value))
   }
 }
+export const setApiRoot = apiRoot => D => D(viewSetIn(['system', 'apiRoot'], apiRoot))
+export const setJwtToken = jwtToken => D => D(viewSetIn(['system', 'jwtToken'], jwtToken))

@@ -15,7 +15,6 @@ const alignedRow = (left, right, key = '') => (
 const valuesToMarkdown = values => `${_.map(values, (list, field) => `## ${_.upperFirst(field)}\n${list.map(text => `* ${text}`).join('\n')}`).join('\n')}\n---`
 
 export default ({ roomId, subscription }) => {
-  console.info(subscription, roomId)
   const dp = useDispatch()
   return (
     <Formik

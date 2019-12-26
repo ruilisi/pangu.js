@@ -13,7 +13,8 @@ import { getApiRoot, getJwtToken, get } from '~/utils/request'
 import shortcuts from '../utils/shortcuts'
 import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 import UsersConsumer from '../consumers/UsersConsumer'
-import { checkAuthorization, viewSetIn } from '../redux/modules/view'
+import { viewSetIn } from '../redux/modules/view'
+import CheckLogin from '../components/CheckLogin'
 
 const localeData = { zh, en }
 
@@ -44,7 +45,6 @@ class MyApp extends App {
         store: { dispatch, getState }
       }
     } = this
-    checkAuthorization(this.props)
     window.DISPATCH = dispatch
     window.STATE = getState
     shortcuts()
@@ -71,6 +71,7 @@ class MyApp extends App {
       <IntlProvider locale={locale} messages={localeData[locale]}>
         <ActionCableProvider url={actionCableUrl} jwtToken={actionCableJwtToken}>
           <Provider store={store}>
+            <CheckLogin />
             <Head />
             <div style={{ minHeight: '100vh' }}>
               <Component {...pageProps} />

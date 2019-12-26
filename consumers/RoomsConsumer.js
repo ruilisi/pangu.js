@@ -14,14 +14,14 @@ const RoomsConsumer = ({ roomId, children }) => {
         break
       case 'add_message':
         if (data.error) {
-          console.info(data.error)
+          console.error(data.error)
           break
         }
         DISPATCH(roomsMessagesAdd(data.room_id, data.message))
         break
       case 'update_message':
         if (data.error) {
-          console.info(data.error)
+          console.error(data.error)
           break
         }
         DISPATCH(roomsMessagesUpdate(data.room_id, data.message))
