@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { createConsumer } from 'actioncable-jwt'
+import { getJwtToken } from '../utils/request'
 
 const Context = React.createContext()
 
@@ -7,7 +8,8 @@ const isFunction = functionToCheck => {
   return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
 }
 
-const Provider = ({ children, url, jwtToken }) => {
+const Provider = ({ children, url }) => {
+  const jwtToken = process.browser ? getJwtToken() : null
   const [cable, setCable] = useState(null)
 
   const disconnectCable = () => {

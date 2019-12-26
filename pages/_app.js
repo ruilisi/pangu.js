@@ -9,7 +9,7 @@ import zh from '../locale/zh.yml'
 import en from '../locale/en.yml'
 import 'antd/dist/antd.less'
 import '../styles/main.scss'
-import { getApiRoot, getJwtToken, get } from '~/utils/request'
+import { getApiRoot, get } from '~/utils/request'
 import shortcuts from '../utils/shortcuts'
 import { Provider as ActionCableProvider } from '../contexts/ActionCableContext'
 import UsersConsumer from '../consumers/UsersConsumer'
@@ -21,8 +21,7 @@ const localeData = { zh, en }
 class MyApp extends App {
   state = {
     locale: 'en',
-    actionCableUrl: '',
-    actionCableJwtToken: ''
+    actionCableUrl: ''
   }
 
   static async getInitialProps({ Component, ctx }) {
@@ -48,7 +47,6 @@ class MyApp extends App {
     window.DISPATCH = dispatch
     window.STATE = getState
     shortcuts()
-    this.setState({ actionCableJwtToken: getJwtToken() })
     getApiRoot().then(apiRoot => {
       this.setState({
         actionCableUrl: `${apiRoot}/cable`
@@ -65,11 +63,11 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps, store } = this.props
-    const { locale, actionCableJwtToken, actionCableUrl } = this.state
+    const { locale, actionCableUrl } = this.state
 
     return (
       <IntlProvider locale={locale} messages={localeData[locale]}>
-        <ActionCableProvider url={actionCableUrl} jwtToken={actionCableJwtToken}>
+        <ActionCableProvider url={actionCableUrl}>
           <Provider store={store}>
             <CheckLogin />
             <Head />
