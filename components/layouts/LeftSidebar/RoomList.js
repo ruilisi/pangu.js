@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import I from 'immutable'
 import { message, Dropdown, Menu } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import Link from 'next/link'
-import { post, httpDelete } from '../utils/request'
-import { roomsRemove } from '../redux/modules/rooms'
+import { get, post, httpDelete } from '~/utils/request'
+import { roomsRemove, roomsSet } from '%rooms'
 
 const quitRooms = async id => {
   const res = await post('rooms/quit_room', { id })
@@ -17,7 +18,14 @@ const deleteRooms = async id => {
 
 const Rooms = ({ rooms, roomId }) => {
   const self = useSelector(s => s.self)
-  const dispatch = useDispatch()
+  const dp = useDispatch()
+
+  useEffect(() => {
+    get('rooms').then(body => {
+      if (body.status === 401) return
+      dp(roomsSet(I.fromJS(body)))
+    })
+  }, [])
 
   const menu = id => (
     <Menu>
@@ -28,7 +36,7 @@ const Rooms = ({ rooms, roomId }) => {
             if (body.ok === false) {
               message.info('you are not the room owner')
             } else {
-              dispatch(roomsRemove(body.id))
+              dp(roomsRemove(body.id))
             }
           })
         }
@@ -39,7 +47,7 @@ const Rooms = ({ rooms, roomId }) => {
         key="2"
         onClick={() =>
           quitRooms(id).then(body => {
-            dispatch(roomsRemove(body.id))
+            dp(roomsRemove(body.id))
           })
         }
       >

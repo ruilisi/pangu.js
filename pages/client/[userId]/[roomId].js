@@ -1,4 +1,4 @@
-import I, { Map, List } from 'immutable'
+import { Map, List } from 'immutable'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -7,21 +7,12 @@ import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import { animateScroll } from 'react-scroll'
-import { get } from '~/utils/request'
-import { roomsSet } from '~/redux/modules/rooms'
 import { redirectIfAuthorized, viewSetIn, viewMergeIn } from '%view'
-import Setting from '~/components/Setting'
-import UserList from '~/components/UserList'
-import Rooms from '~/components/Rooms'
+import LeftSidebar from '~/components/layouts/LeftSidebar'
 import MessageInput from '~/components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
 import PPP from '~/components/PPP'
 import RoomsConsumer from '~/consumers/RoomsConsumer'
-
-const getRooms = async () => {
-  const res = await get('rooms')
-  return res
-}
 
 const md = new Remarkable({
   breaks: true,
@@ -76,13 +67,6 @@ const Chat = () => {
   const shortcuts = [[/\/PPP/, () => dp(viewMergeIn('game', { show: true, type: 'PPP' }))]]
 
   useEffect(() => {
-    getRooms().then(body => {
-      if (body.status === 401) return
-      dp(roomsSet(I.fromJS(body)))
-    })
-  }, [])
-
-  useEffect(() => {
     animateScroll.scrollToBottom({
       containerId: 'messages',
       duration: 0
@@ -105,24 +89,7 @@ const Chat = () => {
             {gameComponent(game, roomId, subscription)}
           </Modal>
           <Row>
-            <Col span={4} className="border-card" style={{ height: '100vh', background: '#3f0e40', overflow: 'hidden' }}>
-              <div className="FS-10 TA-C PT-20">
-                <Row style={{ display: 'flex', alignItems: 'center' }}>
-                  <Col span={12}>
-                    <Avatar src={self.getIn(['data', 'avatar'])} shape="circle" size="large" onClick={() => router.push('/profile')} />
-                  </Col>
-                  <Col span={12}>
-                    <Setting switchRoom={switchRoom} subscription={subscription} />
-                  </Col>
-                </Row>
-              </div>
-              <Card style={{ background: '#3f0e40', height: '40vh', overflowY: 'scroll' }} bordered={false}>
-                <Rooms rooms={rooms} roomId={roomId} />
-              </Card>
-              <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
-                <UserList id={roomId} style={{ height: '70vh' }} />
-              </Card>
-            </Col>
+            <LeftSidebar swtichRoom={switchRoom} subscription={subscription} />
             {!roomId ? (
               <Col span={20} style={{ textAlign: 'center', height: '100vh', lineHeight: '100vh' }}>
                 新建或加入一个房间开始你的聊天吧
