@@ -7,16 +7,16 @@ import { Remarkable } from 'remarkable'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import { animateScroll } from 'react-scroll'
-import { get } from '../utils/request'
-import { roomsSet } from '../redux/modules/rooms'
-import { redirectIfAuthorized, viewSetIn, viewMergeIn } from '../redux/modules/view'
-import Setting from '../components/Setting'
-import UserList from '../components/UserList'
-import Rooms from '../components/Rooms'
-import MessageInput from '../components/MessageInput'
+import { get } from '~/utils/request'
+import { roomsSet } from '~/redux/modules/rooms'
+import { redirectIfAuthorized, viewSetIn, viewMergeIn } from '%view'
+import Setting from '~/components/Setting'
+import UserList from '~/components/UserList'
+import Rooms from '~/components/Rooms'
+import MessageInput from '~/components/MessageInput'
 import 'emoji-mart/css/emoji-mart.css'
-import PPP from '../components/PPP'
-import RoomsConsumer from '../consumers/RoomsConsumer'
+import PPP from '~/components/PPP'
+import RoomsConsumer from '~/consumers/RoomsConsumer'
 
 const getRooms = async () => {
   const res = await get('rooms')
@@ -55,16 +55,17 @@ const gameComponent = (game, roomId, subscription) => {
 }
 
 const Chat = () => {
+  const router = useRouter()
+  const { query } = router
   redirectIfAuthorized('/login', false)
   const dp = useDispatch()
-  const [roomId, setRoomId] = useState('')
+  const [roomId, setRoomId] = useState(query.roomId)
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
   const avatars = view.getIn(['avatars']).toJS()
   const messageId = view.getIn(['messageId'])
   const room = rooms.get(roomId, Map())
-  const router = useRouter()
   const messages = room.get('messages', List())
   const game = view.get('game')
 
@@ -116,7 +117,7 @@ const Chat = () => {
                 </Row>
               </div>
               <Card style={{ background: '#3f0e40', height: '40vh', overflowY: 'scroll' }} bordered={false}>
-                <Rooms rooms={rooms} roomId={roomId} switchRoom={switchRoom} />
+                <Rooms rooms={rooms} roomId={roomId} />
               </Card>
               <Card style={{ background: '#3f0e40', height: '60vh', overflowY: 'scroll' }} bordered={false}>
                 <UserList id={roomId} style={{ height: '70vh' }} />

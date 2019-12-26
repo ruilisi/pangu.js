@@ -1,6 +1,7 @@
 import React from 'react'
 import { message, Dropdown, Menu } from 'antd'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import Link from 'next/link'
 import { post, httpDelete } from '../utils/request'
 import { roomsRemove } from '../redux/modules/rooms'
 
@@ -14,9 +15,9 @@ const deleteRooms = async id => {
   return res
 }
 
-const Rooms = props => {
+const Rooms = ({ rooms, roomId }) => {
+  const self = useSelector(s => s.self)
   const dispatch = useDispatch()
-  const { rooms, switchRoom, roomId } = props
 
   const menu = id => (
     <Menu>
@@ -55,9 +56,7 @@ const Rooms = props => {
           return (
             <Menu.Item key={id}>
               <Dropdown overlay={menu(id)} trigger={['contextMenu']}>
-                <p role="presentation" onClick={() => switchRoom(id)}>
-                  {title}
-                </p>
+                <Link href={`/client/${self.get('id')}/${id}`}>{title}</Link>
               </Dropdown>
             </Menu.Item>
           )
