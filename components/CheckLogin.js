@@ -5,7 +5,8 @@ import { useRouter } from 'next/router'
 const routeAuthorizedMap = [
   [/^\/profile/, true],
   [/^\/client/, true],
-  [/^\/login/, false]
+  [/^\/login/, false],
+  [/^\/signup/, false]
 ]
 
 const authorizedPath = ['login', 'authorized']

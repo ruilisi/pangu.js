@@ -3,12 +3,10 @@ import { message, Input, Button } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import Router from 'next/router'
 import { T, TR } from '../utils/translation'
-import { redirectIfAuthorized } from '../redux/modules/view'
 import { post } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
 
 const Signup = () => {
-  redirectIfAuthorized('/chat')
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

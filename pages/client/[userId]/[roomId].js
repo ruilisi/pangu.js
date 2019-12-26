@@ -48,7 +48,6 @@ const gameComponent = (game, roomId, subscription) => {
 const Chat = () => {
   const router = useRouter()
   const { query } = router
-  redirectIfAuthorized('/login', false)
   const dp = useDispatch()
   const [roomId, setRoomId] = useState(query.roomId)
   const rooms = useSelector(state => state.rooms)
