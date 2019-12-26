@@ -98,7 +98,7 @@ const Chat = () => {
                                 </div>
                               </div>
                               <div className="inline">
-                                <MessageContent message={v} avatars={avatars} s ubscription={subscription} />
+                                <MessageContent message={v} avatars={avatars} subscription={subscription} />
                               </div>
                             </>
                           )}

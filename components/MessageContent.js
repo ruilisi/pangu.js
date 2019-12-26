@@ -29,7 +29,6 @@ const md = new Remarkable({
 
 const Vote = ({ avatars, subscription, data: { title, choices }, id, room_id }) => {
   const state = useSelector(s => s)
-  console.info(state)
   return (
     <List
       header={<div>{title}</div>}
@@ -66,7 +65,6 @@ const Vote = ({ avatars, subscription, data: { title, choices }, id, room_id }) 
 }
 
 export default ({ message, subscription, avatars }) => {
-  console.info(message.toJS())
   if (message.getIn(['data', 'type']) === 'vote') {
     return <Vote subscription={subscription} avatars={avatars} {...message.toJS()} />
   }
