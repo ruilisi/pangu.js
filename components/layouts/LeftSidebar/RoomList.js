@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import I from 'immutable'
 import { message, Dropdown, Menu } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { get, post, httpDelete } from '~/utils/request'
 import { roomsRemove, roomsSet } from '%rooms'
 
@@ -17,6 +17,7 @@ const deleteRooms = async id => {
 }
 
 const Rooms = ({ rooms, roomId }) => {
+  const router = useRouter()
   const self = useSelector(s => s.self)
   const dp = useDispatch()
 
@@ -64,7 +65,9 @@ const Rooms = ({ rooms, roomId }) => {
           return (
             <Menu.Item key={id}>
               <Dropdown overlay={menu(id)} trigger={['contextMenu']}>
-                <Link href={`/client/${self.get('id')}/${id}`}>{title}</Link>
+                <p role="presentation" onClick={() => router.push(`/client/${self.get('id')}/${id}`)}>
+                  {title}
+                </p>
               </Dropdown>
             </Menu.Item>
           )

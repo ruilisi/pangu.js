@@ -23,6 +23,7 @@ const navigatorLanguage = () => {
 
 const Nav = ({ children }) => {
   const view = useSelector(state => state.view)
+  const self = useSelector(state => state.self)
 
   const PathFromPathname = pathname => {
     let path = pathname || ''
@@ -133,7 +134,7 @@ const Nav = ({ children }) => {
       <ul className="nav navbar-nav bold">
         {i18nMenuHorizontal()}
         <li className="mega-menu">
-          <Link href="/chat">
+          <Link href={`/client/${self.get('id')}`}>
             <a className="C-P underline">{T('Chat')}</a>
           </Link>
         </li>
@@ -152,7 +153,7 @@ const Nav = ({ children }) => {
     const menu = (
       <Menu>
         <Menu.Item>
-          <Link href="/chat">
+          <Link href={`/client/${self.get('id')}`}>
             <a> {T('Chat')}</a>
           </Link>
         </Menu.Item>
