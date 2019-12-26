@@ -1,4 +1,5 @@
 import React from 'react'
+import I from 'immutable'
 import { Consumer } from '../contexts/ActionCableContext'
 import { viewSetIn } from '%view'
 import { roomsMessagesSet, roomsMessagesAdd, roomsMessagesUpdate, roomsMessagesDelete } from '../redux/modules/rooms'
@@ -17,14 +18,14 @@ const RoomsConsumer = ({ roomId, children }) => {
           console.error(data.error)
           break
         }
-        DISPATCH(roomsMessagesAdd(data.room_id, data.message))
+        DISPATCH(roomsMessagesAdd(data.room_id, I.fromJS(data.message)))
         break
       case 'update_message':
         if (data.error) {
           console.error(data.error)
           break
         }
-        DISPATCH(roomsMessagesUpdate(data.room_id, data.message))
+        DISPATCH(roomsMessagesUpdate(data.room_id, I.fromJS(data.message)))
         break
       case 'delete_message':
         DISPATCH(roomsMessagesDelete(data.room_id, data.message_id))

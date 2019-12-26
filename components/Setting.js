@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import I from 'immutable'
 import { message, Row, Col, Icon, Dropdown, Menu, Modal, Input } from 'antd'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import { post } from '../utils/request'
 import { roomsAdd } from '../redux/modules/rooms'
 import { logout } from '../api/sessions'
@@ -17,11 +18,13 @@ const joinRooms = async title => {
   return res
 }
 
-const Setting = ({ switchRoom, subscription }) => {
+const Setting = ({ subscription }) => {
   const dispatch = useDispatch()
+  const self = useSelector(s => s.self)
   const [show, setShow] = useState(false)
   const [title, setTitle] = useState('')
   const [menuItem, setMenuItem] = useState('')
+  const router = useRouter()
 
   const handleOk = () => {
     if (menuItem === 'Create Room') {
@@ -30,7 +33,7 @@ const Setting = ({ switchRoom, subscription }) => {
           message.info('Failed to create room')
         } else {
           dispatch(roomsAdd(I.fromJS(body)))
-          switchRoom(Object.keys(body)[0])
+          router.push(`/client/${self.get('id')}/${Object.keys(body)[0]}`)
         }
         setTitle('')
         setShow(false)
@@ -42,7 +45,7 @@ const Setting = ({ switchRoom, subscription }) => {
         } else {
           dispatch(roomsAdd(I.fromJS(body)))
           const roomId = Object.keys(body)[0]
-          switchRoom(roomId)
+          router.push(`/client/${self.get('id')}/${roomId}`)
           subscription.perform('load', {
             path: 'join_room',
             data: { room_id: roomId, text: `joined ${Object.values(body)[0].title}` }

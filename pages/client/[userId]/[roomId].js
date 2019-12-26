@@ -23,9 +23,8 @@ const gameComponent = (game, roomId, subscription) => {
 
 const Chat = () => {
   const router = useRouter()
-  const { query } = router
+  const { roomId } = router.query
   const dp = useDispatch()
-  const [roomId, setRoomId] = useState(query.roomId)
   const rooms = useSelector(state => state.rooms)
   const view = useSelector(state => state.view)
   const self = useSelector(state => state.self)
@@ -34,10 +33,6 @@ const Chat = () => {
   const room = rooms.get(roomId, Map())
   const messages = room.get('messages', List())
   const game = view.get('game')
-
-  const switchRoom = id => {
-    setRoomId(id)
-  }
 
   const shortcuts = [[/\/PPP/, () => dp(viewMergeIn('game', { show: true, type: 'PPP' }))]]
 
@@ -64,7 +59,7 @@ const Chat = () => {
             {gameComponent(game, roomId, subscription)}
           </Modal>
           <Row>
-            <LeftSidebar swtichRoom={switchRoom} subscription={subscription} />
+            <LeftSidebar subscription={subscription} />
             {!roomId ? (
               <Col span={20} style={{ textAlign: 'center', height: '100vh', lineHeight: '100vh' }}>
                 新建或加入一个房间开始你的聊天吧
@@ -92,7 +87,7 @@ const Chat = () => {
                                     {new Date(v.get('created_at')).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                                   </span>
                                 </div>
-                                <MessageContent message={v} />
+                                <MessageContent message={v} avatars={avatars} subscription={subscription} />
                               </div>
                             </>
                           ) : (
@@ -103,7 +98,7 @@ const Chat = () => {
                                 </div>
                               </div>
                               <div className="inline">
-                                <MessageContent message={v} />
+                                <MessageContent message={v} avatars={avatars} s ubscription={subscription} />
                               </div>
                             </>
                           )}

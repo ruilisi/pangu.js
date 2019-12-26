@@ -10,7 +10,7 @@ export const ROOMS_MESSAGES_DELETE = 'ROOMS_MESSAGES_DELETE'
 
 const initialState = I.fromJS({})
 export default (rooms = initialState, action) => {
-  const { id } = action
+  const { id, message } = action
   switch (action.type) {
     case ROOMS_SET:
       return I.fromJS(action.rooms)
@@ -35,13 +35,9 @@ export default (rooms = initialState, action) => {
       // action.message.text
       // ) // 也可以
       return rooms.updateIn([id, 'messages'], messages =>
-        messages.update(
-          messages.findIndex(item => {
-            return item.get('id') === action.message.id
-          }),
-          item => {
-            return item.set('text', action.message.text)
-          }
+        messages.set(
+          messages.findIndex(item => item.get('id') === message.get('id')),
+          message
         )
       )
     case ROOMS_MESSAGES_DELETE:
