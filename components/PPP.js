@@ -14,14 +14,15 @@ const alignedRow = (left, right, key = '') => (
 
 const valuesToMarkdown = values => `${_.map(values, (list, field) => `## ${_.upperFirst(field)}\n${list.map(text => `* ${text}`).join('\n')}`).join('\n')}\n---`
 
-export default ({ roomId, channel }) => {
+export default ({ roomId, subscription }) => {
+  console.info(subscription, roomId)
   const dp = useDispatch()
   return (
     <Formik
       initialValues={{ past: [], plan: [], proposal: [] }}
       onSubmit={(values, { setSubmitting }) => {
         const text = valuesToMarkdown(values)
-        channel.load('add_message', { room_id: roomId, text })
+        subscription.perform('load', { path: 'add_message', data: { room_id: roomId, text } })
         dp(viewSetIn(['game', 'show'], false))
         setSubmitting(false)
       }}

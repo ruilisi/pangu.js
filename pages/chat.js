@@ -45,10 +45,10 @@ const md = new Remarkable({
   }
 })
 
-const gameComponent = (game, roomId, channel) => {
+const gameComponent = (game, roomId, subscription) => {
   switch (game.get('type')) {
     case 'PPP':
-      return <PPP channel={channel} roomId={roomId} />
+      return <PPP subscription={subscription} roomId={roomId} />
     default:
       return null
   }
@@ -101,7 +101,7 @@ const Chat = () => {
       {({ subscription }) => (
         <div>
           <Modal footer={null} visible={game.get('show')} onCancel={() => dp(viewSetIn(['game', 'show'], false))}>
-            {gameComponent(game, roomId)}
+            {gameComponent(game, roomId, subscription)}
           </Modal>
           <Row>
             <Col span={4} className="border-card" style={{ height: '100vh', background: '#3f0e40', overflow: 'hidden' }}>
