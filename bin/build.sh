@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t nextjs-pangu -f Dockerfile .
+docker build -t pangu.js -f Dockerfile .

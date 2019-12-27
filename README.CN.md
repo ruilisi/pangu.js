@@ -2,7 +2,7 @@
 
 [英文文档 English document](/README.md)
 
-`nextjs-pangu`是一个前端javascript入门工具包，它继承自[Next.js](https://github.com/zeit/next.js/)，并且非常依赖[Rails-pangu](https://github.com/ruilisi/rails-pangu)。其致力于成为`Next.js`应用的精简示例，同时处理`Next.js`尚未解决或不想解决的遗留问题。(比如，`Next.js`对于`IE9`的不支持问题)由于`nextjs-pangu`与`Rails`后端紧密连接，因此该项目还提供了用于进行后端工作的示例和解决方案，例如，与[action cable](https://github.com/rails/rails/tree/master/actioncable)进行连接操作并通过`jwt`验证该连接。
+`pangu.js`是一个前端javascript入门工具包，它继承自[Next.js](https://github.com/zeit/next.js/)，并且非常依赖[Rails-pangu](https://github.com/ruilisi/rails-pangu)。其致力于成为`Next.js`应用的精简示例，同时处理`Next.js`尚未解决或不想解决的遗留问题。(比如，`Next.js`对于`IE9`的不支持问题)由于`pangu.js`与`Rails`后端紧密连接，因此该项目还提供了用于进行后端工作的示例和解决方案，例如，与[action cable](https://github.com/rails/rails/tree/master/actioncable)进行连接操作并通过`jwt`验证该连接。
 
 
 
@@ -202,11 +202,11 @@ React很棒，完全可以使用React编写一个完整的应用程序。但是�
 
 `ZEIT Now`入门仅需几步，你就可以在不到一分钟的时间内启动并运行新项目。
 
-## nextjs-pangu的使用样例
+## pangu.js的使用样例
 
-**[样例](https://nextjs-pangu.now.sh)** (https://nextjs-pangu.now.sh)
+**[样例](https://pangu.js.now.sh)** (https://pangu.js.now.sh)
 
-在此示例中，前端使用 [nextjs-pangu](https://github.com/ruilisi/nextjs-pangu)实现，后端使用[rails-pangu](https://github.com/ruilisi/rails-pangu/)实现。本示例实现了如下功能：
+在此示例中，前端使用 [pangu.js](https://github.com/ruilisi/pangu.js)实现，后端使用[rails-pangu](https://github.com/ruilisi/rails-pangu/)实现。本示例实现了如下功能：
 
 > - 注册，登录，注销您的自定义帐户。
 > - 创建或删除您的聊天室，加入或退出某人的聊天室。

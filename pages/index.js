@@ -13,12 +13,12 @@ const IndexPage = () => {
       <div style={{ background: '#282D3C' }}>
         <div className="index-bg">
           <div className="container">
-            <p className="FS-20">NextJS Pangu</p>
+            <p className="FS-20">Pangu.js</p>
             <p className="FS-15 MB-30">Realtime interaction platform built with Next.js</p>
             <Button className="W-12 MLR-5" onClick={() => Router.push('/signup')}>
               Get Started
             </Button>
-            <Button className="W-12 MLR-5" onClick={() => window.open('https://github.com/ruilisi/nextjs-pangu')}>
+            <Button className="W-12 MLR-5" onClick={() => window.open('https://github.com/ruilisi/pangu.js')}>
               GitHub
             </Button>
           </div>
@@ -66,7 +66,7 @@ const IndexPage = () => {
         </Carousel>
       </Row>
       <Row className="index-content container TA-C">
-        <div className="TA-C MTB-20 FS-12 bold">Projects Using NextJS Pangu</div>
+        <div className="TA-C MTB-20 FS-12 bold">Projects Using Pangu.js</div>
         {[
           ['/static/imgs/1.png', 'https://data.lingti.io'],
           ['/static/imgs/2.png', 'https://devops.lingti.io'],

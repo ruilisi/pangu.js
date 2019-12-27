@@ -42,7 +42,7 @@ Jwt authentication for websocket is done by the package [ActionCable-jwt](https:
 
 #### CSS shortcuts
 
-Since we adopted NextJS, it supports CSS / Sass / Less / Stylus files, which is convenient for us to add CSS styles freely.
+Since we adopted Pangu.js, it supports CSS / Sass / Less / Stylus files, which is convenient for us to add CSS styles freely.
 
 ```js
 :global {
@@ -199,11 +199,11 @@ This module together with `eslint-import-resolver-babel-plugin-root-import` make
 
 Getting started with `ZEIT Now` takes just a few steps and lets you get up and running with your new project in less than a minute.
 
-## Example using nextjs-pangu
+## Example using pangu.js
 
-**[Example](https://nextjs-pangu.now.sh)** (https://nextjs-pangu.now.sh)
+**[Example](https://pangu.js.now.sh)** (https://pangu.js.now.sh)
 
-In this example, the front-end is implemented using [nextjs-pangu](https://github.com/ruilisi/nextjs-pangu), and the back-end is implemented using [rails-pangu](https://github.com/ruilisi/rails-pangu/). This example implements the following functions:
+In this example, the front-end is implemented using [pangu.js](https://github.com/ruilisi/pangu.js), and the back-end is implemented using [rails-pangu](https://github.com/ruilisi/rails-pangu/). This example implements the following functions:
 
 > - register, login, sign out your custom account;
 > - create or delete your chat room, join or quit someone's chat room;

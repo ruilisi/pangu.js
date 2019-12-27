@@ -1,5 +1,5 @@
 import { Map, List } from 'immutable'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { message, Icon, Popover, Modal, Col, Avatar, Row, Card } from 'antd'
