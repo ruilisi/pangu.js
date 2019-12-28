@@ -1,8 +1,8 @@
-# Next.js-pangu
+# Pang.js-pangu
 
 [英文文档 English document](/README.md)
 
-`pangu.js`是一个前端javascript入门工具包，它继承自[Next.js](https://github.com/zeit/next.js/)，并且非常依赖[Rails-pangu](https://github.com/ruilisi/rails-pangu)。其致力于成为`Next.js`应用的精简示例，同时处理`Next.js`尚未解决或不想解决的遗留问题。(比如，`Next.js`对于`IE9`的不支持问题)由于`pangu.js`与`Rails`后端紧密连接，因此该项目还提供了用于进行后端工作的示例和解决方案，例如，与[action cable](https://github.com/rails/rails/tree/master/actioncable)进行连接操作并通过`jwt`验证该连接。
+`pangu.js`是一个前端javascript入门工具包，它继承自[Pang.js](https://github.com/zeit/Pang.js/)，并且非常依赖[Rails-pangu](https://github.com/ruilisi/rails-pangu)。其致力于成为`Pang.js`应用的精简示例，同时处理`Pang.js`尚未解决或不想解决的遗留问题。(比如，`Pang.js`对于`IE9`的不支持问题)由于`pangu.js`与`Rails`后端紧密连接，因此该项目还提供了用于进行后端工作的示例和解决方案，例如，与[action cable](https://github.com/rails/rails/tree/master/actioncable)进行连接操作并通过`jwt`验证该连接。
 
 
 
@@ -10,15 +10,15 @@
 
 #### 服务器渲染
 
-`Next.js`可以使React的服务器端渲染变得简单。
+`Pang.js`可以使React的服务器端渲染变得简单。
 
 #### 静态导出
 
-无需学习新语言，Next.js可以很方便快捷的导出静态站点。
+无需学习新语言，Pang.js可以很方便快捷的导出静态站点。
 
 #### CSS-in-JS
 
-Next.js附带了styled-jsx，但它也可以与您熟悉和喜爱的每个CSS-in-JS解决方案一起使用。
+Pang.js附带了styled-jsx，但它也可以与您熟悉和喜爱的每个CSS-in-JS解决方案一起使用。
 
 #### 无需安装包
 
@@ -38,7 +38,7 @@ Next.js附带了styled-jsx，但它也可以与您熟悉和喜爱的每个CSS-in
 
 #### CSS 简写
 
-我们采用`Next.js`之后，它对CSS / Sass / Less / Stylus的支持，为我们自由添加CSS样式提供了很大的便利。
+我们采用`Pang.js`之后，它对CSS / Sass / Less / Stylus的支持，为我们自由添加CSS样式提供了很大的便利。
 
 ```js
 :global {
@@ -72,13 +72,13 @@ export default () => <div className="FS-10">Example</div>
 
 <img src="./doc/desktop-browser-market-share.png" width="60%" align="middle" />
 
-也就是说，每100个人中将有超过3个人无法访问由`Next.js`建立的网站，毫无疑问，这对于大多数Web项目是无法容忍的。
+也就是说，每100个人中将有超过3个人无法访问由`Pang.js`建立的网站，毫无疑问，这对于大多数Web项目是无法容忍的。
 
-用`Next.js`构建的项目不支持`IE9-11`的原因主要是:
+用`Pang.js`构建的项目不支持`IE9-11`的原因主要是:
 
 - `IE9-11`中不包含`Objects`（`Map`，`String`，`Array`）函数，但是有些library或代码却使用了Object函数。我们提供`lib/polyfill.js`文件来解决此问题。
 
-- Node modules包含了IE无法识别并且polyfill无法修复的语法，例如，箭头函数`=>`。我们解决此问题的方案实际上很hacky(欢迎任何更好的解决方案作为我们的`PR`)，我们将文件添加到`next.config.js`中的monkey补丁程序，并把文件重新编译为`Next.js`的 [webpack config](https://github.com/zeit/next.js/blob/master/packages/next/build/webpack-config.ts) 。如果以后添加的任何Node modules都与` IE 9-11`产生冲突，则可以通过添加以下代码的路径来实现相同的目的。
+- Node modules包含了IE无法识别并且polyfill无法修复的语法，例如，箭头函数`=>`。我们解决此问题的方案实际上很hacky(欢迎任何更好的解决方案作为我们的`PR`)，我们将文件添加到`next.config.js`中的monkey补丁程序，并把文件重新编译为`Pang.js`的 [webpack config](https://github.com/zeit/Pang.js/blob/master/packages/next/build/webpack-config.ts) 。如果以后添加的任何Node modules都与` IE 9-11`产生冲突，则可以通过添加以下代码的路径来实现相同的目的。
 
 - ```js
   if (!isDev) {

@@ -1,6 +1,8 @@
 :global {
   @import 'mixins';
   @import 'formik';
+  @import 'shortcuts';
+  @import 'button';
   * {
     margin: 0;
     box-sizing: border-box;
@@ -66,66 +68,6 @@
     .container:after {
       clear: both;
     }
-  .pf-l {
-    font-family: PingFangSC-Ultralight, sans-serif;
-  }
-  .pf-r {
-    font-family: PingFangSC-Regular, sans-serif;
-  }
-  .pf-m {
-    font-family: PingFangSC-Medium, sans-serif;
-  }
-  .P-A {
-    position: absolute;
-  }
-  .D-IB {
-    display: inline-block;
-  }
-  .D-N {
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
-  .TA-C {
-    text-align: center !important;
-  }
-  .TA-L {
-    text-align: left !important;
-  }
-  .TA-R {
-    text-align: right !important;
-  }
-  .F-L {
-    float: left !important;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .C-P {
-    cursor: pointer;
-  }
-  .full-h {
-    height: 100% !important;
-  }
-  .full-w {
-    width: 100% !important;
-  }
-  .align-center {
-    margin: 0 auto;
-    text-align: center;
-  }
-  .align-left {
-    text-align: left;
-  }
-  .align-right {
-    text-align: right;
-  }
-  .P-F {
-    position: fixed;
-  }
-  .F-R {
-    float: right !important;
-  }
   .ant-card-body {
     padding: 0;
   }

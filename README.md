@@ -1,15 +1,15 @@
-# Next.js-pangu
+# Pang.js-pangu
 
 [中文文档 Chinese document](/README.CN.md)
 
-`Next.js-Pangu` is a frontend starter kit inherited from [Next.js](https://github.com/zeit/next.js/) and is heavily depended on [Rails-pangu](https://github.com/ruilisi/rails-pangu) for backend. It focus on being an lean example of using `Next.js` while solving left issues which `Next.js` haven't solved or `Next.js` does not intend to solve(for example, support `IE9`). 
+`Pang.js-Pangu` is a frontend starter kit inherited from [Pang.js](https://github.com/zeit/Pang.js/) and is heavily depended on [Rails-pangu](https://github.com/ruilisi/rails-pangu) for backend. It focus on being an lean example of using `Pang.js` while solving left issues which `Pang.js` haven't solved or `Pang.js` does not intend to solve(for example, support `IE9`). 
 
 
-## Features offered by `Next.js`
+## Features offered by `Pang.js`
 
 * Server Rendering
-* Static Exporting: Exporting a static site with Next.js is as easy as a single command.
-* CSS-in-JS: Next.js comes with styled-jsx included, but it also works with every CSS-in-JS solution you know and love.
+* Static Exporting: Exporting a static site with Pang.js is as easy as a single command.
+* CSS-in-JS: Pang.js comes with styled-jsx included, but it also works with every CSS-in-JS solution you know and love.
 * Zero Setup: Automatic code splitting, filesystem based routing, hot code reloading and universal rendering.
 * Fully Extensible: Complete control over Babel and Webpack. Customizable server, routing and next-plugins.
 * Ready for Production: Optimized for a smaller build size, faster dev compilation and dozens of other improvements.
@@ -73,11 +73,11 @@ export default () => <div className="FS-10">Example</div>
 While `IE` stuff is fading out of browser world cause its weird implementation which results in poor support for new js/css syntax, `IE` family still shares a tremendous market of browsers. Statistics from [netmarketshare](https://gs.statcounter.com/browser-market-share/desktop/worldwide) shows that `IE` family still accounts for `3.67%` of the whole desktop market at the moment of writing this README (Dec 07, 2019).
 <img src="./doc/desktop-browser-market-share.png" width="60%" align="middle" />
 
-That's to say more than 3 out of 100 people will not be able to visit websites built by `Next.js`, which is intolerable for most web projects with out doubt.
-The reasons why projects built with `Next.js` does not support `IE 9-11` are mainly:
+That's to say more than 3 out of 100 people will not be able to visit websites built by `Pang.js`, which is intolerable for most web projects with out doubt.
+The reasons why projects built with `Pang.js` does not support `IE 9-11` are mainly:
 
 - `Objects`(`Map`, `String`, `Array`) in `IE 9-11` do not contain functions but libraries or code contain usages of them. We offer file `lib/polyfill.js` to resolve this issue.
-- Node modules contain syntax that IE can't recognize and polyfills can't fix, for example, arrow function `=>`. Our solution to solve this problem is actually hacky (any better solution is welcome as a `PR`) by adding files need to be transcompiled into [webpack config](https://github.com/zeit/next.js/blob/master/packages/next/build/webpack-config.ts) of `Next.js` through monkey patching in `next.config.js`. If any node module you added later offenses `IE 9-11`, you can do the same trick by adding paths with the code below.
+- Node modules contain syntax that IE can't recognize and polyfills can't fix, for example, arrow function `=>`. Our solution to solve this problem is actually hacky (any better solution is welcome as a `PR`) by adding files need to be transcompiled into [webpack config](https://github.com/zeit/Pang.js/blob/master/packages/next/build/webpack-config.ts) of `Pang.js` through monkey patching in `next.config.js`. If any node module you added later offenses `IE 9-11`, you can do the same trick by adding paths with the code below.
 
 ```js
 if (!isDev) {

@@ -182,7 +182,7 @@ const Nav = ({ children }) => {
               <div role="presentation" className="MT-15 navbar-brand C-P" style={{ textDecoration: 'none' }} onClick={() => Router.push('/')}>
                 <div className="logo" />
                 <div className="ML-5" style={{ fontWeight: 'bold' }}>
-                  pangu.js
+                  Pangu.js
                 </div>
               </div>
             </div>

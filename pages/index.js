@@ -7,23 +7,78 @@ const w = 'static/imgs/world.png'
 const d = 'static/imgs/deploy.png'
 const s = 'static/imgs/switch.png'
 
+const LandingPage = () => {
+  const grid = {
+    xs: {
+      span: 24
+    },
+    md: {
+      offset: 3,
+      span: 18
+    }
+  }
+  return (
+    <div style={{ background: '#282D3C' }}>
+      {props => console.info(props)}
+      <div className="index-bg">
+        <Row>
+          <Col {...grid}>
+            <Col span={12}>
+              <div className="name">Pangu.js</div>
+              <div className="slogan">React fullstack starter kit focusing on realtime app</div>
+              <div className="actions">
+                <Button type="primary" onClick={() => Router.push('/signup')}>
+                  Get Started
+                </Button>
+                <Button type="secondary" className="ML-20" onClick={() => window.open('https://github.com/ruilisi/pangu.js')}>
+                  GitHub
+                </Button>
+              </div>
+            </Col>
+            <Col span={12}>image</Col>
+          </Col>
+        </Row>
+      </div>
+      <style jsx>{`
+        .index-bg {
+          margin-top: 90px;
+          text-align: center;
+          background-size: cover;
+          background: rgba(221, 222, 230, 1);
+          background-position: center;
+          height: 600px;
+        }
+        .index-bg :global(.ant-btn) {
+          width: 220px;
+          height: 64px;
+          font-size: 24px;
+        }
+        .name {
+          margin-top: 147px;
+          font-size: 60px;
+          font-weight: bold;
+          color: rgba(51, 51, 51, 1);
+        }
+        .slogan {
+          margin-top: 39px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(51, 51, 51, 1);
+        }
+        .actions {
+          text-align: center;
+          position: absolute;
+          top: 346px;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 const IndexPage = () => {
   return (
     <Nav>
-      <div style={{ background: '#282D3C' }}>
-        <div className="index-bg">
-          <div className="container">
-            <p className="FS-20">Pangu.js</p>
-            <p className="FS-15 MB-30">Realtime interaction platform built with Next.js</p>
-            <Button className="W-12 MLR-5" onClick={() => Router.push('/signup')}>
-              Get Started
-            </Button>
-            <Button className="W-12 MLR-5" onClick={() => window.open('https://github.com/ruilisi/pangu.js')}>
-              GitHub
-            </Button>
-          </div>
-        </div>
-      </div>
+      <LandingPage />
       <Row className="index-content container">
         <div className="TA-C MTB-20 FS-12 bold">Unique core advantages</div>
         {[
@@ -82,18 +137,6 @@ const IndexPage = () => {
       </Row>
       <style jsx>
         {`
-          .index-bg {
-            margin-top: 90px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            background-size: cover;
-            background: url(/static/imgs/index-bg.png) no-repeat;
-            background-position: center;
-            height: 600px;
-          }
           .border-bg {
             background: url(/static/imgs/border.png) no-repeat;
             display: flex;
