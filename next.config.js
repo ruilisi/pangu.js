@@ -2,12 +2,8 @@ const path = require('path')
 const withCSS = require('@zeit/next-css')
 const withSass = require('@zeit/next-sass')
 const withLess = require('@zeit/next-less')
-const lessToJs = require('less-vars-to-js')
-const fs = require('fs')
 
 const reScript = /\.(js|jsx|mjs)$/
-
-const themeVariables = lessToJs(fs.readFileSync(path.resolve(__dirname, './antd-theme.less'), 'utf8'))
 
 const nextConfig = {
   webpack: config => {
@@ -17,7 +13,7 @@ const nextConfig = {
       fs: 'empty'
     }
 
-    // https://github.com/zeit/next.js/blob/master/packages/next/build/webpack-config.ts
+    // https://github.com/zeit/Pang.js/blob/master/packages/next/build/webpack-config.ts
     if (!isDev) {
       const moduleToBeResolved = /node_modules[\\\/](bizcharts|react-intl|intl-messageformat|intl-messageformat-parser|query-string|split-on-first|engine.io-client|strict-uri-encode)[\\\/]/
       config.module.rules[0].include.push(/(browser|common)\.js/, moduleToBeResolved)
@@ -76,7 +72,9 @@ const nextConfig = {
   },
   lessLoaderOptions: {
     javascriptEnabled: true,
-    modifyVars: themeVariables
+    modifyVars: {
+      hack: `true; @import "../../../antd-theme.less";`
+    }
   },
   serverRuntimeConfig: {
     // Will only be available on the server side
