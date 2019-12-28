@@ -1,8 +1,8 @@
-# Pang.js-pangu
+# Pang.js
 
 [中文文档 Chinese document](/README.CN.md)
 
-`Pang.js-Pangu` is a frontend starter kit inherited from [Pang.js](https://github.com/zeit/Pang.js/) and is heavily depended on [Rails-pangu](https://github.com/ruilisi/rails-pangu) for backend. It focus on being an lean example of using `Pang.js` while solving left issues which `Pang.js` haven't solved or `Pang.js` does not intend to solve(for example, support `IE9`). 
+`Pang.js` is a frontend starter kit inherited from [Pang.js](https://github.com/zeit/Pang.js/) and is heavily depended on [Rails-pangu](https://github.com/ruilisi/rails-pangu) for backend. It focus on being an lean example of using `Pang.js` while solving left issues which `Pang.js` haven't solved or `Pang.js` does not intend to solve(for example, support `IE9`). 
 
 
 ## Features offered by `Pang.js`

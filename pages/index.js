@@ -1,6 +1,5 @@
 import React from 'react'
-import { Button, Carousel, Row, Col } from 'antd'
-import Router from 'next/router'
+import { Button, Row, Col } from 'antd'
 import css from 'styled-jsx/css'
 import Nav from '../components/nav'
 import ResponsiveImg from '../components/ResponsiveImg'

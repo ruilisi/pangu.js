@@ -1,4 +1,4 @@
-# Pang.js-pangu
+# Pang.js
 
 [英文文档 English document](/README.md)
 
