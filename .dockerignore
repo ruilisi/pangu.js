@@ -1,0 +1,5 @@
+.git
+bin
+README*.md
+node_modules
+Dockerfile
