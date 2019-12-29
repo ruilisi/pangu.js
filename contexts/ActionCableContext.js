@@ -41,7 +41,7 @@ const Consumer = ({ children, channel, onReceived, onInitialized, onConnected, o
           disconnected: () => onDisconnected && onDisconnected(s),
           subscribed: () => onSubscribed && onSubscribed(s),
           rejected: () => onRejected && onRejected(s),
-          authorized: () => onUnauthorized && onUnauthorized(s)
+          unauthorized: () => onUnauthorized && onUnauthorized(s)
         })
         setSubscription(s)
       }

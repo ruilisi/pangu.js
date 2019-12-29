@@ -10,7 +10,6 @@ export default React.forwardRef(({ name, ext = 'png', ...props }, ref) => {
   const xl = useMediaQuery({ query: '(min-width: 1200px)' })
   const xll = useMediaQuery({ query: '(min-width: 1600px)' })
   let x
-  console.info(xll, xl, lg)
   switch (true) {
     case xll:
     case xl:
@@ -25,6 +24,5 @@ export default React.forwardRef(({ name, ext = 'png', ...props }, ref) => {
     default:
       x = ''
   }
-  console.info(`/static/imgs/${name}${x}.${ext}`)
   return <img alt="loading..." src={`/static/imgs/${name}${x}.${ext}`} ref={ref} {...props} />
 })

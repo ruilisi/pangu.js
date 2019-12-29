@@ -49,7 +49,29 @@ export const setAuthorization = s => {
   localStorage.setItem(authorizationKey, s)
 }
 
-export const getJwtToken = () => (getAuthorization() || '').split(' ')[1]
+const guestTokenKey = 'GUEST_TOKEN'
+
+export const guestToken = () => {
+  if (!process.browser) return null
+  let token = localStorage.getItem(guestTokenKey)
+  if (!token) {
+    token = 'GUEST'.concat(
+      Math.random()
+        .toString(36)
+        .substring(7)
+    )
+    localStorage.setItem(guestTokenKey, token)
+  }
+  return token
+}
+
+export const getJwtToken = () => {
+  const authorization = getAuthorization()
+  if (authorization) {
+    return authorization.split(' ')[1]
+  }
+  return guestToken()
+}
 
 export const removeAuthorization = () => {
   localStorage.removeItem(authorizationKey)

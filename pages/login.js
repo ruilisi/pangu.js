@@ -6,17 +6,10 @@ import { FormattedMessage } from 'react-intl'
 import QRCode from 'qrcode.react'
 import { TR } from '../utils/translation'
 import { setAuthorized } from '../redux/modules/view'
-import { post, removeAuthorization } from '../utils/request'
+import { post, removeAuthorization, guestToken } from '../utils/request'
 import FormUnderNavLayout from '../components/layouts/FormUnderNavLayout'
-import guestsChannel from '../utils/guestsChannel'
 import dns from '~/utils/dns'
-
-const guest = 'GUEST'.concat(
-  Math.random()
-    .toString(36)
-    .substring(7)
-)
-const redirectUri = `${dns.API_ROOT}/wechats/login_callback?guest=${guest}`
+import GuestsConsumer from '../consumers/GuestsConsumer'
 
 const Login = () => {
   const router = useRouter()
@@ -31,6 +24,7 @@ const Login = () => {
     const res = await post('users/sign_in', { user: { email: _username, password: _password } })
     return res
   }
+  const redirectUri = `${dns.API_ROOT}/wechats/login_callback?guest=${guestToken()}`
   const login = async (u, p) => {
     removeAuthorization()
     const res = await postLogin(u, p)
@@ -50,83 +44,84 @@ const Login = () => {
   }
 
   return (
-    <FormUnderNavLayout title={TR('Login')}>
-      <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
-        {TR('Not a member yet?')}
-        <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => router.push('/signup')}>
-          {TR('Sign Up here')}
-        </span>
-      </div>
-      <FormattedMessage id="Email">
-        {placeholder => (
-          <Input
-            key="1"
-            size="large"
-            type="text"
-            placeholder={placeholder}
-            autoFocus
-            className="H-24"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-          />
-        )}
-      </FormattedMessage>
-      <FormattedMessage id="Password">
-        {placeholder => (
-          <Input
-            key="2"
-            size="large"
-            type="password"
-            placeholder={placeholder}
-            className="MT-12 H-24"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            onKeyPress={onKeyPress}
-          />
-        )}
-      </FormattedMessage>
-      <div key="3" className="MT-22">
-        <Button
-          className="H-24"
-          type="primary"
-          size="large"
-          loading={submitting}
-          onClick={e => {
-            setSubmitting(true)
-            e.preventDefault()
-            login(username, password)
-          }}
-          style={{ width: '100%' }}
-        >
-          {TR('Login')}
-        </Button>
-      </div>
-      {wechatAppId ? (
+    <GuestsConsumer>
+      <FormUnderNavLayout title={TR('Login')}>
+        <div className="TA-C FS-7 MTB-20" style={{ color: 'white' }}>
+          {TR('Not a member yet?')}
+          <span role="presentation" className="C-P" style={{ textDecoration: 'underline' }} onClick={() => router.push('/signup')}>
+            {TR('Sign Up here')}
+          </span>
+        </div>
+        <FormattedMessage id="Email">
+          {placeholder => (
+            <Input
+              key="1"
+              size="large"
+              type="text"
+              placeholder={placeholder}
+              autoFocus
+              className="H-24"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+          )}
+        </FormattedMessage>
+        <FormattedMessage id="Password">
+          {placeholder => (
+            <Input
+              key="2"
+              size="large"
+              type="password"
+              placeholder={placeholder}
+              className="MT-12 H-24"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyPress={onKeyPress}
+            />
+          )}
+        </FormattedMessage>
         <div key="3" className="MT-22">
           <Button
             className="H-24"
-            type="secondary"
+            type="primary"
             size="large"
             loading={submitting}
-            onClick={() => {
-              setShowWechatLoginModal(true)
-              guestsChannel(guest)
+            onClick={e => {
+              setSubmitting(true)
+              e.preventDefault()
+              login(username, password)
             }}
             style={{ width: '100%' }}
           >
-            {TR('Wechat Login')}
+            {TR('Login')}
           </Button>
         </div>
-      ) : null}
-      <Modal title="Wechat Login" visible={showWechatLoginModal} onCancel={() => setShowWechatLoginModal(false)}>
-        <div className="TA-C">
-          <QRCode
-            size={256}
-            value={`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wechatAppId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect`}
-          />
-        </div>
-      </Modal>
-    </FormUnderNavLayout>
+        {wechatAppId ? (
+          <div key="3" className="MT-22">
+            <Button
+              className="H-24"
+              type="secondary"
+              size="large"
+              loading={submitting}
+              onClick={() => {
+                setShowWechatLoginModal(true)
+              }}
+              style={{ width: '100%' }}
+            >
+              {TR('Wechat Login')}
+            </Button>
+          </div>
+        ) : null}
+        <Modal title="Wechat Login" visible={showWechatLoginModal} onCancel={() => setShowWechatLoginModal(false)}>
+          <div className="TA-C">
+            <QRCode
+              size={256}
+              value={`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wechatAppId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect`}
+            />
+          </div>
+        </Modal>
+      </FormUnderNavLayout>
+    </GuestsConsumer>
   )
 }
 

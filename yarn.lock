@@ -5481,7 +5481,7 @@ next-redux-wrapper@^4.0.1:
   resolved "https://registry.npm.taobao.org/next-redux-wrapper/download/next-redux-wrapper-4.0.1.tgz#70f2d83b5bd0fb07ec19e6e70bea6b179d295fd7"
   integrity sha1-cPLYO1vQ+wfsGebnC+prF50pX9c=
 
-next@9.1.6:
+next@^9.1.6:
   version "9.1.6"
   resolved "https://registry.npm.taobao.org/next/download/next-9.1.6.tgz#b3ede59d9069214807d9bde7d05b42e7fabcae51"
   integrity sha1-s+3lnZBpIUgH2b3n0FtC5/q8rlE=
