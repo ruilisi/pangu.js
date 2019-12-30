@@ -24,5 +24,5 @@ export default React.forwardRef(({ name, ext = 'png', ...props }, ref) => {
     default:
       x = ''
   }
-  return <img alt="loading..." src={`/static/imgs/${name}${x}.${ext}`} ref={ref} {...props} />
+  return <img alt="loading..." src={`${name}${x}.${ext}`} ref={ref} {...props} />
 })

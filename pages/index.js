@@ -45,7 +45,7 @@ const IntroSec = () => {
               </div>
             </Col>
             <Col span={12}>
-              <ResponsiveImg name="newton-cradle" className={className} />
+              <ResponsiveImg name="/imgs/newton-cradle" className={className} />
             </Col>
           </Col>
         </Row>
