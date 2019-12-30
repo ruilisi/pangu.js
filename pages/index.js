@@ -92,10 +92,10 @@ const IndexPage = () => {
       <Row className="index-content container TA-C">
         <div className="TA-C MTB-20 FS-12 bold">Projects Using Pangu.js</div>
         {[
-          ['/static/imgs/1.png', 'https://data.lingti.io'],
-          ['/static/imgs/2.png', 'https://devops.lingti.io'],
-          ['/static/imgs/3.png', 'https://lingti.io'],
-          ['/static/imgs/4.png', 'https://esheep.xyz']
+          ['/projects/1.png', 'https://data.lingti.io'],
+          ['/projects/2.png', 'https://devops.lingti.io'],
+          ['/projects/3.png', 'https://lingti.io'],
+          ['/projects/4.png', 'https://esheep.xyz']
         ].map(v => (
           <Col span={6} className="MTB-20" key={v[1]}>
             <div className="C-P" role="presentation" onClick={() => window.open(v[1])}>
