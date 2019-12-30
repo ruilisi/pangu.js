@@ -4,8 +4,7 @@ import { setAuthorized } from '%view'
 import { setAuthorization } from '../utils/request'
 
 const GuestsConsumer = ({ children }) => {
-  const onReceived = receivedData => {
-    console.info('recdata', receivedData)
+  const onReceived = (_, receivedData) => {
     const { data, path } = receivedData
     switch (path) {
       case 'wechat_login':
